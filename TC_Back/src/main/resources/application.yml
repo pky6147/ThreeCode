@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: TC_back
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/mini_mes
+    username: root
+    password: 1234
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
