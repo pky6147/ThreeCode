@@ -23,6 +23,7 @@ const materialData = [
 ]
 const baseData = [
     {title: '라우팅 관리', path: '/base/route'},
+    {title: '업체 관리', path: '/base/company'},
     {title: '원자재 관리', path: '/base/material'},
     {title: '수주품목 관리', path: '/base/product'},
 ]
