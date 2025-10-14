@@ -8,7 +8,7 @@ function MenuArea({children}: MenuAreaProps) {
     return (
         <Box
             sx={{
-                width: '15%',
+                width: '280px',
                 minWidth: '165px',
                 height: '83.5vh',
                 backgroundColor: '#c7c3e8',

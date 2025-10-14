@@ -20,7 +20,7 @@ function TitleArea({title}: TitleAreaProps) {
             {/* 회사 로고 영역 */}
             <Box
                 sx={{
-                    width: '15%',
+                    width: '280px',
                     minWidth: '165px',
                     // backgroundColor: 'white',
                     // border: '1px solid white'
@@ -32,7 +32,7 @@ function TitleArea({title}: TitleAreaProps) {
             {/* 제목 영역 */}
             <Box
                 sx={{
-                    width: '85%',
+                    width: 'calc(100% - 280px)',
                     fontWeight: 'bold',
                     fontSize: '48px',
                     color: 'white',
