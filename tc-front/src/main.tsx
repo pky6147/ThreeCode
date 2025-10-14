@@ -6,10 +6,14 @@ import MenuArea from './layout/MenuArea'
 import ContentArea from './layout/ContentArea'
 import Menu from './component/Menu'
 import { Box } from '@mui/material'
+
+// 기준정보 관리
 import BaseRouting from './page/base/Routing'
 import BaseCompany from './page/base/Company'
 import BaseMaterial from './page/base/Material'
 import BaseProduct from './page/base/Product'
+// 수주대상 입출고 관리
+import ProductInputReg from './page/product/InputReg'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -28,7 +32,7 @@ createRoot(document.getElementById('root')!).render(
           <Routes>
             {/* <Route index element={<></>} /> */}
             {/* 수주대상 입출고 관리 */}
-            <Route path="/product" element={<></>} />
+            <Route path="/product/inputReg" element={<ProductInputReg/>} />
             {/* 원자재 입출고 관리 */}
             <Route path="/material" element={<></>} />
             {/* 기준정보 관리 */}
