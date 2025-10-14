@@ -7,7 +7,23 @@ const columns: GridColDef[] = [
     { field: 'idx', headerName: 'No', width: 70, headerAlign: 'center', align: 'center' },
     { field: 'company_name', headerName: '거래처명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
     { field: 'product_no', headerName: '품목번호', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
-    { field: 'product_name', headerName: '품목명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
+    { field: 'product_name', headerName: '품목명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center',
+        renderCell: (params) => (
+        <Typography
+            variant="body2"
+            sx={{ 
+                cursor: 'pointer', textDecoration: 'underline', color: 'blue', 
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                height: '100%', width: '100%'}}
+            onClick={() => {
+              alert('품목명 클릭')
+              console.log('클릭한 행의 데이터?', params.row)
+            }}
+        >
+          {params.value}
+        </Typography>
+      ),
+     },
     { field: 'category', headerName: '분류', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
     { field: 'paint_type', headerName: '도장방식', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
     { field: 'price', headerName: '단가', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'right',

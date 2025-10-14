@@ -7,7 +7,23 @@ const columns: GridColDef[] = [
     { field: 'idx', headerName: 'No', width: 70, headerAlign: 'center', align: 'center' },
     { field: 'company_name', headerName: '매입처명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
     { field: 'material_no', headerName: '품목번호', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
-    { field: 'material_name', headerName: '품목명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
+    { field: 'material_name', headerName: '품목명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center',
+        renderCell: (params) => (
+        <Typography
+            variant="body2"
+            sx={{ 
+                cursor: 'pointer', textDecoration: 'underline', color: 'blue', 
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                height: '100%', width: '100%'}}
+            onClick={() => {
+              alert('품목명 클릭')
+              console.log('클릭한 행의 데이터?', params.row)
+            }}
+        >
+          {params.value}
+        </Typography>
+      ),
+     },
     { field: 'spec', headerName: '규격', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
     { field: 'maker', headerName: '제조사', flex: 2, minWidth: 200, headerAlign: 'center', align: 'center' },
     { field: 'remark', headerName: '비고', flex: 3, minWidth: 400, headerAlign: 'center', align: 'left' },

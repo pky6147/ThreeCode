@@ -6,7 +6,23 @@ import type { GridColDef } from '@mui/x-data-grid'
 const columns: GridColDef[] = [
     { field: 'idx', headerName: 'No', width: 70, headerAlign: 'center', align: 'center' },
     { field: 'company_type', headerName: '업체유형', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
-    { field: 'company_name', headerName: '업체명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
+    { field: 'company_name', headerName: '업체명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center',
+        renderCell: (params) => (
+        <Typography
+            variant="body2"
+            sx={{ 
+                cursor: 'pointer', textDecoration: 'underline', color: 'blue', 
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                height: '100%', width: '100%'}}
+            onClick={() => {
+              alert('업체명 클릭')
+              console.log('클릭한 행의 데이터?', params.row)
+            }}
+        >
+          {params.value}
+        </Typography>
+      ),
+     },
     { field: 'ceo_name', headerName: '대표명', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
     { field: 'ceo_phone', headerName: '전화번호', flex: 2, minWidth: 200, headerAlign: 'center', align: 'center' },
     { field: 'address', headerName: '주소', flex: 3, minWidth: 400, headerAlign: 'center', align: 'left' },
