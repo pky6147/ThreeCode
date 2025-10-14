@@ -1,12 +1,11 @@
 package Company;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class CompanyController {
 
@@ -14,6 +13,7 @@ public class CompanyController {
     public final CompanyService companyService;
     private final CompanyRepository companyRepository;
 
+    //조회
     @GetMapping(value = "/company")
         public List<CompanyDto> getComany() {
             return CompanyService.findAll();
@@ -33,7 +33,7 @@ public class CompanyController {
 
     //삭제
     @PutMapping("/company")
-    public CompanyDto deleteCompany(@PathVariable("companyId") Long companyId {
+    public CompanyDto deleteCompany(@PathVariable("companyId") Long companyId) {
         return companyService.deleteCompany(companyId);
     }
 

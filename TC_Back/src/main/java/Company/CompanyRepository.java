@@ -1,6 +1,7 @@
 package Company;
 
+import org.springframework.data.repository.CrudRepository;
 
-public class CompanyRepository {
+public interface CompanyRepository extends CrudRepository<Company, String> {
 
 }
