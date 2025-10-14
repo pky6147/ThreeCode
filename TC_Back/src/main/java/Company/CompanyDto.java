@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Company {
+public class CompanyDto {
     public Long companyId;      //업체아이디 (BIGINT)
     public String companyType;  //업체유형 (거래처/매입처)
     public Long bizRegNo;       //사업자등록번호
@@ -25,7 +25,7 @@ public class Company {
     public String isDelete;    //상태변경삭제 (Y/N, soft delete)
 
     //삭제 기능: soft delete 로직
-public void softDelete() {
+    public void softDelete() {
     this.isDelete = "Y";
     }
 }
