@@ -53,16 +53,17 @@ function CompanyForm({ mode, initialData, onSubmit }: CompanyFormProps) {
   //등록/수정 처리
   const handleSubmit = async () => {
     try {
-      const url = mode === 'edit' ? `/api/company/${initialData.companyId}` : '/api/company';
-      const method = mode === 'edit' ? axios.put : axios.post;
-
-      await method(url, form);
-      alert(mode === 'edit' ? '업체 정보가 수정되었습니다.' : '업체가 등록되었습니다.');
-
+      if (mode === 'edit' && initialData?.id) {
+        await axios.put('/api/company', form);
+        alert('업체 정보가 수정되었습니다.');
+      } else {
+        await axios.post('/api/company', form);
+        alert('업체가 등록되었습니다.');
+      }
       if (onSubmit) onSubmit();
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || '저장 중 오류가 발생했습니다.');
+      alert('저장 중 오류가 발생했습니다.');
     }
   };
 
