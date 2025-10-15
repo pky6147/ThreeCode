@@ -131,7 +131,7 @@ function InputReg() {
                 <Box>
                     {/* Breadcrumbs 영역 */}
                     <Breadcrumbs sx={{padding: 2}}>
-                        <Typography sx={{ color: 'text.primary' }}>수주대상 입출고 관리</Typography>
+                        <Typography sx={{ color: 'text.primary' }}>원자재 입출고 관리</Typography>
                         <Typography sx={{ color: 'text.primary', fontWeight: 'bold' }}>입고 등록</Typography>
                     </Breadcrumbs>
                     {/* Content 영역 */}
@@ -139,7 +139,7 @@ function InputReg() {
                         <Box
                             sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}
                         >
-                            <Typography sx={{ fontSize: '24px', fontWeight: 'bold', paddingLeft: 2 }}>수주대상품목 입고 등록</Typography>
+                            <Typography sx={{ fontSize: '24px', fontWeight: 'bold', paddingLeft: 2 }}>원자재 품목 입고 등록</Typography>
                             <Box sx={{paddingRight: 2}}>
                                 <CustomBtn 
                                     text="엑셀"

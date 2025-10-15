@@ -21,6 +21,8 @@ import ProductOutputState from './page/product/OutputState'
 import MaterialInputReg from './page/material/InputReg'
 import MaterialInputState from './page/material/InputState'
 import MaterialOutputReg from './page/material/OutputReg'
+import MaterialOutputState from './page/material/OutputState'
+import MaterialStock from './page/material/Stock'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -47,6 +49,8 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/material/inputReg" element={<MaterialInputReg/>} />
             <Route path="/material/inputState" element={<MaterialInputState/>} />
             <Route path="/material/outputReg" element={<MaterialOutputReg/>} />
+            <Route path="/material/outputState" element={<MaterialOutputState/>} />
+            <Route path="/material/stock" element={<MaterialStock/>} />
             {/* 기준정보 관리 */}
             <Route path="/base/route" element={<BaseRouting/>} />
             <Route path="/base/company" element={<BaseCompany/>} />
