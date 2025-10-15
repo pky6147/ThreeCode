@@ -40,15 +40,15 @@ const columns: GridColDef[] = [
      },
     { field: 'del', headerName: '삭제', width: 100, headerAlign: 'center', align: 'center',
         renderCell: (params) => (
-      <CustomBtn
-        width="50px"
-        text="삭제"
-        backgroundColor='#fb1e1eff'
-        onClick={() => alert(params.row)}
-      >
-      </CustomBtn>
-    ),
-     },
+            <CustomBtn
+              width="50px"
+              text="삭제"
+              backgroundColor='#fb1e1eff'
+              onClick={() => alert(params.row)}
+            >
+            </CustomBtn>
+        ),
+    },
 ]
 
 const rows = [

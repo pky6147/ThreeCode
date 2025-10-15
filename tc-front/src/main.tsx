@@ -19,7 +19,8 @@ import ProductOutputReg from './page/product/OutputReg'
 import ProductOutputState from './page/product/OutputState'
 // 원자재 입출고 관리
 import MaterialInputReg from './page/material/InputReg'
-
+import MaterialInputState from './page/material/InputState'
+ 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
@@ -43,6 +44,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/product/OutputState" element={<ProductOutputState/>} />
             {/* 원자재 입출고 관리 */}
             <Route path="/material/inputReg" element={<MaterialInputReg/>} />
+            <Route path="/material/inputState" element={<MaterialInputState/>} />
             {/* 기준정보 관리 */}
             <Route path="/base/route" element={<BaseRouting/>} />
             <Route path="/base/company" element={<BaseCompany/>} />

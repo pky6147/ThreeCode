@@ -161,7 +161,7 @@ function OutputState() {
                 }
             }
         },
-        { field: 'del', headerName: '삭제', width: 80, headerAlign: 'center', align: 'center',
+        { field: 'del', headerName: '삭제', width: 90, headerAlign: 'center', align: 'center',
             renderCell: (params) => (
                 <CustomBtn
                     width="50px"
