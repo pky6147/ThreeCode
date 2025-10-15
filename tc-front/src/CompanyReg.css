@@ -1,0 +1,33 @@
+/* 전체 박스 */
+.company-container {
+  background-color: white;
+  width: 1600px;
+  min-height: 900px;
+  padding: 32px; /* MUI sx에서 p:4와 동일 */
+}
+
+/* 제목 스타일 */
+.company-container h5 {
+  margin-bottom: 24px; /* mb:3 */
+}
+
+/* 섹션 제목 */
+.company-section-title {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 500;
+  font-size: 1.25rem; /* h6 기준 */
+}
+
+/* 폼 필드 그룹 */
+.company-form-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 기본 4열 */
+  gap: 16px; /* spacing 2 */
+  margin-bottom: 16px;
+}
+
+/* 버튼 */
+.company-submit-btn {
+  margin-top: 24px;
+}

@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -16,27 +19,14 @@ public class CompanyService {
      * - 검색 조건: 업체유형, 업체명, 대표명
      * - 조회 항목: 업체유형, 업체명, 대표명, 전화번호, 주소, 비고
      */
-//    @Transactional(readOnly = true)
-//    public List<CompanyDto> findAll(CompanyDto searchDto) {
-//        List<Company> companies;
-//
-//        // 간단한 검색 기능 (null 체크)
-//        if ((searchDto.getCompanyType() == null || searchDto.getCompanyType().isEmpty())
-//                && (searchDto.getCompanyName() == null || searchDto.getCompanyName().isEmpty())
-//                && (searchDto.getCeoName() == null || searchDto.getCeoName().isEmpty())) {
-//            companies = companyRepository.findAllByIsDelete("N");
-//        } else {
-//            companies = companyRepository.findBySearchConditions(
-//                    searchDto.getCompanyType(),
-//                    searchDto.getCompanyName(),
-//                    searchDto.getCeoName()
-//            );
-//        }
-//
-//        return companies.stream()
-//                .map(this::toListDto)
-//                .collect(Collectors.toList());
-//    }
+    @Transactional(readOnly = true)
+    public List<CompanyDto> findAll() {
+        List<Company> companies = companyRepository.findAllByIsDelete("N");
+        return companies.stream()
+                .map(this::toListDto)
+                .collect(Collectors.toList());
+    }
+
 
     //상세 조회
     @Transactional(readOnly = true)
@@ -94,6 +84,9 @@ public class CompanyService {
                 .address(company.getAddress())
                 .remark(company.getRemark())
                 .isActive(company.getIsActive())
+                .contactName(company.getContactName())
+                .contactPhone(company.getContactPhone())
+                .contactEmail(company.getContactEmail())
                 .build();
     }
 

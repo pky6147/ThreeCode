@@ -11,6 +11,4 @@ public interface CompanyRepository extends CrudRepository<Company, Long> {
 
     Optional<Company> findByCompanyIdAndIsDelete(Long companyId, String isDelete);
 
-//    List<Company> findBySearchConditions(String companyType, String companyName, String ceoName);
-
 }

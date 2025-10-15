@@ -11,11 +11,11 @@ public class CompanyController {
 
     private final CompanyService companyService;
 
-    //목록 및 조회 검색
-//    @GetMapping
-//        public List<CompanyDto> getCompanies(@ModelAttribute CompanyDto searchDto) {
-//            return companyService.findAll(searchDto);
-//        }
+    //목록 및 조회 (검색 아직)
+    @GetMapping("/company")
+        public List<CompanyDto> getCompanies() {
+            return companyService.findAll();
+        }
 
     //상세 조회
     @GetMapping("/{companyId}")
@@ -24,14 +24,15 @@ public class CompanyController {
     }
 
     //등록
-    @PostMapping
+    @PostMapping("/{companyId}")
     public CompanyDto addCompnay(@RequestBody CompanyDto companyDto) {
         return companyService.addCompany(companyDto);
     }
 
     //수정
-    @PutMapping
-    public CompanyDto updateCompany(@RequestBody CompanyDto companyDto) {
+    @PutMapping("/{companyId}")
+    public CompanyDto updateCompany(@PathVariable Long companyId, @RequestBody CompanyDto companyDto) {
+        companyDto.setCompanyId(companyId);
         return companyService.updateCompany(companyDto);
     }
 
