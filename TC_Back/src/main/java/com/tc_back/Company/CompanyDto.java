@@ -1,4 +1,4 @@
-package Company;
+package com.tc_back.Company;
 
 import lombok.*;
 
@@ -15,7 +15,7 @@ public class CompanyDto {
     private String companyType;  //업체유형 (거래처/매입처)
     private String companyName;  //업체명
     private String ceoName;      //대표명
-    private Long ceoPhone;       //대표전화번호
+    private String ceoPhone;       //대표전화번호
     private String isActive;    //사용여부 (Y/N)
 
     //상세 정보
