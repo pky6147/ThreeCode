@@ -23,6 +23,7 @@ function CustomBtn(props: CustomButtonProps) {
                 fontSize: props.fontSize || '16px',
                 backgroundColor: props.backgroundColor || 'blue',
                 border: props.border || '',
+                borderRadius: 3
             }}
             onClick={props.onClick? props.onClick : ()=>{}}
         >
