@@ -3,6 +3,8 @@ import { Box, Breadcrumbs, Typography, Card, Dialog } from '@mui/material'
 import CustomBtn from '../../component/CustomBtn';
 import CommonTable from '../../component/CommonTable';
 import AlertPopup from '../../component/AlertPopup';
+import SearchBar from '../../component/SearchBar';
+import LabelInput from '../../component/LabelInput';
 import type { GridColDef } from '@mui/x-data-grid'
 
 interface RowData {
@@ -20,6 +22,13 @@ function Stock() {
     const [rows, setRows ] = useState<RowData[]>([])
     const [alertOpen, setAlertOpen] = useState(false)
     const [alertInfo, setAlertInfo] = useState({type: '', title: '', text: ''})
+    const [searchInfo, setSearchInfo] = useState({
+        company_name: '',
+        material_no: '',
+        material_name: ''
+    })
+    const [searchRows, setSearchRows] = useState<RowData[]>([])
+    const [isSearch, setIsSearch] = useState(false)
 
     useEffect(()=> {
         // Get 구문이 들어와야함
@@ -53,6 +62,7 @@ function Stock() {
         },
     ]
     
+    /* 팝업 관련함수 */
     const handleClose = () => {
         setAlertOpen(false)
     }
@@ -77,6 +87,29 @@ function Stock() {
     //     setTimeout(()=> setAlertOpen(false), 3000)
     // }
 
+    /* 검색/초기화 관련함수 */
+    const handleSearch = () => {
+        setIsSearch(true)
+        const filtered = rows.filter(row =>
+            row.company_name.toLowerCase().includes(searchInfo.company_name.toLowerCase()) &&
+            row.material_no.toLowerCase().includes(searchInfo.material_no.toLowerCase()) &&
+            row.material_name.toLowerCase().includes(searchInfo.material_name.toLowerCase()) 
+        )
+        setSearchRows(filtered)
+    }
+    const handleReset = () => {
+        setIsSearch(false)
+        setSearchInfo({
+            company_name: '',
+            material_no: '',
+            material_name: ''
+        })
+        setSearchRows(rows)
+    }
+    const handleSearchChange = (key: keyof typeof searchInfo, value: string) => {
+        setSearchInfo((prev) => ({ ...prev, [key]: value }));
+    };
+
     return (
             <Card
                 sx={{ height: '98%', margin: '0.5%'}}
@@ -88,6 +121,24 @@ function Stock() {
                         <Typography sx={{ color: 'text.primary', fontWeight: 'bold' }}>재고 현황</Typography>
                     </Breadcrumbs>
                     {/* Content 영역 */}
+                    <SearchBar onSearch={handleSearch} onReset={handleReset}>
+                        <LabelInput 
+                            labelText='매입처명'
+                            value={searchInfo.company_name}
+                            onChange={(e) => handleSearchChange('company_name', e.target.value)}
+                        />
+                        <LabelInput 
+                            labelText='품목번호'
+                            value={searchInfo.material_no}
+                            onChange={(e) => handleSearchChange('material_no', e.target.value)}
+                        />
+                        <LabelInput 
+                            labelText='품목명'
+                            value={searchInfo.material_name}
+                            onChange={(e) => handleSearchChange('material_name', e.target.value)}
+                        />
+                    </SearchBar>
+
                     <Box>
                         <Box
                             sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}
@@ -103,17 +154,27 @@ function Stock() {
                         </Box>
 
                         <Box sx={{padding: 2}}>
-                            <CommonTable 
+                            { isSearch ? (
+                                <CommonTable 
                                 columns={columns}
-                                rows={rows}
+                                rows={searchRows}
                                 // pageSize={10}
                                 // check={true}
                                 // height={630}
-                            />
+                                />
+                            ) : (
+                                <CommonTable 
+                                    columns={columns}
+                                    rows={rows}
+                                    // pageSize={10}
+                                    // check={true}
+                                    // height={630}
+                                />
+                            )}
                         </Box>
                     </Box>
                 </Box>
-                
+
                 {/* 팝업창 */}
                 <Dialog open={alertOpen} onClose={handleClose}>
                     <AlertPopup 
