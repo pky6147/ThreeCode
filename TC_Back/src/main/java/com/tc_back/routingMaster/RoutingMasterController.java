@@ -1,6 +1,7 @@
 package com.tc_back.routingMaster;
 
 import com.tc_back.routingMaster.dto.RoutingMasterDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public class RoutingMasterController {
 
     //등록
     @PostMapping("/routing-master")
-    public ResponseEntity<RoutingMasterDto> create(@RequestBody RoutingMasterDto dto) {
+    public ResponseEntity<RoutingMasterDto> create(@RequestBody @Valid RoutingMasterDto dto) {
         RoutingMasterDto saved = routingMasterService.create(dto);
         return ResponseEntity.ok(saved);
     }

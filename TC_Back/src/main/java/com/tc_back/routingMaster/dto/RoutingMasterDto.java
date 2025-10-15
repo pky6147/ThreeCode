@@ -2,6 +2,8 @@ package com.tc_back.routingMaster.dto;
 
 
 import com.tc_back.routingMaster.entity.RoutingMaster;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -12,10 +14,19 @@ import lombok.*;
 public class RoutingMasterDto {
 
     private Long routingMasterId;
+
+    @NotBlank(message = "processCode는 필수 입력입니다.")
     private String processCode;
+
+    @NotBlank(message = "processName은 필수 입력입니다.")
     private String processName;
+
+    @NotNull(message = "processTime은 필수 입력입니다.")
     private Integer processTime;
+
+    @NotNull(message = "processOrder는 필수 입력입니다.")
     private Integer processOrder;
+
     private String remark;
 
 

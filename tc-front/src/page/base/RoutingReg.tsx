@@ -1,21 +1,45 @@
 import { Box, Button, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
+import { createRouting } from '../../api/routingApi';
+import type { AxiosError } from 'axios';
 
-// interface rowData {
 
-// }
+interface RoutingRegProps {
+    doClose: () => void
+}
 
-export default function RoutingReg() {
+export default function RoutingReg({doClose}:RoutingRegProps) {
     const [data, setData] = useState({
         processCode: "",
         processName: "",
-        processTime: "",  // 숫자
-        processOrder: "", // 숫자
+        processTime: "", 
+        processOrder: "",
         remark: "",
   });
 
-    const handleSave = () => {
-        console.log("저장 데이터: ", data)
+
+    const handleSave = async () => {
+        try {
+            await createRouting({
+                processCode: data.processCode,
+                processName: data.processName,
+                processTime: Number(data.processTime),
+                processOrder: Number(data.processOrder),
+                remark: data.remark,
+            })
+        alert("저장되었습니다.")
+        doClose()
+        }catch(err) {
+        const axiosError = err as AxiosError;
+          console.error(err)
+            if (axiosError.response && axiosError.response.data) {
+           alert((axiosError.response.data as AxiosError).message || "저장을 실패했습니다.");
+         }else{
+            alert("저장을 실패했습니다.")
+          }
+          
+        }
+        
     }
 
     const handleCancel = () => {
@@ -26,6 +50,7 @@ export default function RoutingReg() {
       processOrder: "",
       remark: "",  
     });
+    doClose()
     
 
   };
