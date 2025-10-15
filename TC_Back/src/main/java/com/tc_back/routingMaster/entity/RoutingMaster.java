@@ -18,7 +18,7 @@ public class RoutingMaster {
         @Column(name = "routing_master_id")
         private Long routingMasterId;
 
-        @Column(name = "process_code", nullable = false, length = 20)
+        @Column(name = "process_code", nullable = false, length = 20, unique = true)
         private String processCode; // 공정 코드
 
         @Column(name = "process_name", nullable = false, length = 50)

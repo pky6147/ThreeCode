@@ -1,7 +1,15 @@
-import { Box, Breadcrumbs, Typography, Card } from '@mui/material'
+import { useState } from 'react'
+import { 
+    Box, 
+    Breadcrumbs, 
+    Typography, 
+    Card, 
+    Dialog
+} from '@mui/material'
 import CustomBtn from '../../component/CustomBtn';
 import CommonTable from '../../component/CommonTable';
 import type { GridColDef } from '@mui/x-data-grid'
+import RoutingReg from './RoutingReg'
 
 const columns: GridColDef[] = [
     { field: 'idx', headerName: 'No', width: 70, headerAlign: 'center', align: 'center' },
@@ -46,6 +54,13 @@ const rows = [
 ];
 
 function Routing() {
+    const [open, setOpen] = useState(false);
+
+    const handleRegist = () => {
+        setOpen(true);
+    }
+    const handleClose = () => setOpen(false); 
+    
     return (
         <Card
             sx={{ height: '98%', margin: '0.5%'}}
@@ -66,6 +81,7 @@ function Routing() {
                             <CustomBtn 
                                 text="등록"
                                 backgroundColor='green'
+                                onClick={()=> handleRegist()}
                             />
                         </Box>
                     </Box>
@@ -81,7 +97,14 @@ function Routing() {
                     </Box>
                 </Box>
             </Box>
+            <Dialog open={open} onClose={handleClose}
+                maxWidth={false}
+            >
+                <RoutingReg />
+            </Dialog>
         </Card>
+
+        
     )
 }
 

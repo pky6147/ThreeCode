@@ -17,6 +17,10 @@ public class RoutingMasterService {
 
     //등록
     public RoutingMasterDto create(RoutingMasterDto routingMasterDto) {
+        boolean exits = routingMasterRepository.existsByProcessCodeAndIsDelete(routingMasterDto.getProcessCode(),"N");
+        if (exits) {
+            throw new RuntimeException("공정코드 " + routingMasterDto.getProcessCode() + "이미 존재합니다.");
+        }
 
         RoutingMaster entity = routingMasterDto.toEntity();
         RoutingMaster saved = routingMasterRepository.save(entity);
@@ -31,6 +35,14 @@ public class RoutingMasterService {
     }
     //수정
     public RoutingMasterDto update(Long routingMasterId, RoutingMasterDto dto) {
+
+        boolean exits = routingMasterRepository.existsByProcessCodeAndIsDeleteAndRoutingMasterIdNot(dto.getProcessCode(),"N",routingMasterId );
+        if (exits) {
+            throw new RuntimeException("공정코드 " + dto.getProcessCode() + "이미 존재합니다.");
+
+        }
+
+
         RoutingMaster entity = routingMasterRepository.findById(routingMasterId)
                 .orElseThrow(() -> new RuntimeException("해당 아이디" + routingMasterId + "의 라우팅을 찾을 수 없습니다."));
 
