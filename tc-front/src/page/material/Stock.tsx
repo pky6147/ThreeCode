@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Box, Breadcrumbs, Typography, Card } from '@mui/material'
+import { Box, Breadcrumbs, Typography, Card, Dialog } from '@mui/material'
 import CustomBtn from '../../component/CustomBtn';
 import CommonTable from '../../component/CommonTable';
+import AlertPopup from '../../component/AlertPopup';
 import type { GridColDef } from '@mui/x-data-grid'
 
 interface RowData {
@@ -17,6 +18,8 @@ interface RowData {
 
 function Stock() {
     const [rows, setRows ] = useState<RowData[]>([])
+    const [alertOpen, setAlertOpen] = useState(false)
+    const [alertInfo, setAlertInfo] = useState({type: '', title: '', text: ''})
 
     useEffect(()=> {
         // Get 구문이 들어와야함
@@ -49,7 +52,30 @@ function Stock() {
             }
         },
     ]
-        
+    
+    const handleClose = () => {
+        setAlertOpen(false)
+    }
+    const handleAlertSuccess = () => {
+        setAlertInfo({
+            type: 'success',
+            title: '엑셀 다운로드',
+            text: '엑셀 다운로드가 완료되었습니다.'
+        })
+        setAlertOpen(true)
+
+        setTimeout(()=> setAlertOpen(false), 2000)
+    }
+    // const handleAlertFail = () => {
+    //     setAlertInfo({
+    //         type: 'error',
+    //         title: '엑셀 다운로드',
+    //         text: '실패'
+    //     })
+    //     setAlertOpen(true)
+
+    //     setTimeout(()=> setAlertOpen(false), 3000)
+    // }
 
     return (
             <Card
@@ -71,6 +97,7 @@ function Stock() {
                                 <CustomBtn 
                                     text="엑셀"
                                     backgroundColor='green'
+                                    onClick={()=>handleAlertSuccess()}
                                 />
                             </Box>
                         </Box>
@@ -86,6 +113,15 @@ function Stock() {
                         </Box>
                     </Box>
                 </Box>
+                
+                {/* 팝업창 */}
+                <Dialog open={alertOpen} onClose={handleClose}>
+                    <AlertPopup 
+                        type={alertInfo.type} 
+                        title={alertInfo.title} 
+                        text={alertInfo.text} 
+                    />
+                </Dialog>
             </Card>
     )
 }
