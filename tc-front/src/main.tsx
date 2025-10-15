@@ -16,6 +16,7 @@ import BaseProduct from './page/base/Product'
 import ProductInputReg from './page/product/InputReg'
 import ProductInputState from './page/product/InputState'
 import ProductOutputReg from './page/product/OutputReg'
+import ProductOutputState from './page/product/OutputState'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -37,7 +38,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/product/inputReg" element={<ProductInputReg/>} />
             <Route path="/product/inputState" element={<ProductInputState/>} />
             <Route path="/product/OutputReg" element={<ProductOutputReg/>} />
-            {/* <Route path="/product/OutputState" element={<ProductOutputState/>} /> */}
+            <Route path="/product/OutputState" element={<ProductOutputState/>} />
             {/* 원자재 입출고 관리 */}
             <Route path="/material" element={<></>} />
             {/* 기준정보 관리 */}
