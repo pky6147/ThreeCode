@@ -37,3 +37,8 @@ export const updateRoutings = async (id:number, data: {
   const response = await axios.put(`${BASE_URL}/routing-master/${id}`,data, getAxiosConfig());
   return response.data;
 };
+
+export const deleteRouting = async (id: number) => {
+  const response = await axios.delete(`${BASE_URL}/routing-master/${id}`, getAxiosConfig());
+  return response.data;
+};
