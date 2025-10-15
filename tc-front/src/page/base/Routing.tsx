@@ -119,11 +119,17 @@ function Routing() {
             alert("삭제되었습니다.");
 
     // 삭제 후 테이블 새로고침
-            setRows((prev) => prev.filter(row => row.routingMasterId !== id));
-        } catch (err) {
-            console.error(err);
-            alert("삭제 실패!");
-        }
+         setRows((prev) => {
+      const newRows = prev.filter(row => row.routingMasterId !== id);
+      return newRows.map((row, index) => ({
+        ...row,
+        idx: index + 1,   // idx 순차 재계산
+      }));
+    });
+  } catch (err) {
+    console.error(err);
+    alert("삭제 실패!");
+  }
         };
 
     return (
