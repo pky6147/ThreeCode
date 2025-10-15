@@ -27,6 +27,8 @@ function Stock() {
         material_no: '',
         material_name: ''
     })
+    const [searchRows, setSearchRows] = useState<RowData[]>([])
+    const [isSearch, setIsSearch] = useState(false)
 
     useEffect(()=> {
         // Get 구문이 들어와야함
@@ -87,15 +89,22 @@ function Stock() {
 
     /* 검색/초기화 관련함수 */
     const handleSearch = () => {
-        console.log('검색로직 넣으세요', searchInfo)
+        setIsSearch(true)
+        const filtered = rows.filter(row =>
+            row.company_name.toLowerCase().includes(searchInfo.company_name.toLowerCase()) &&
+            row.material_no.toLowerCase().includes(searchInfo.material_no.toLowerCase()) &&
+            row.material_name.toLowerCase().includes(searchInfo.material_name.toLowerCase()) 
+        )
+        setSearchRows(filtered)
     }
     const handleReset = () => {
+        setIsSearch(false)
         setSearchInfo({
             company_name: '',
             material_no: '',
             material_name: ''
         })
-        // 이미 검색된 적이 잇다면 테이블도 원본으로 복구
+        setSearchRows(rows)
     }
     const handleSearchChange = (key: keyof typeof searchInfo, value: string) => {
         setSearchInfo((prev) => ({ ...prev, [key]: value }));
@@ -145,13 +154,23 @@ function Stock() {
                         </Box>
 
                         <Box sx={{padding: 2}}>
-                            <CommonTable 
+                            { isSearch ? (
+                                <CommonTable 
                                 columns={columns}
-                                rows={rows}
+                                rows={searchRows}
                                 // pageSize={10}
                                 // check={true}
                                 // height={630}
-                            />
+                                />
+                            ) : (
+                                <CommonTable 
+                                    columns={columns}
+                                    rows={rows}
+                                    // pageSize={10}
+                                    // check={true}
+                                    // height={630}
+                                />
+                            )}
                         </Box>
                     </Box>
                 </Box>
