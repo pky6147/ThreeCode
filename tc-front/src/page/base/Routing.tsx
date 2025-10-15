@@ -10,7 +10,7 @@ import CustomBtn from '../../component/CustomBtn';
 import CommonTable from '../../component/CommonTable';
 import type { GridColDef } from '@mui/x-data-grid'
 import RoutingReg from './RoutingReg'
-import { getRoutings } from '../../api/routingApi';
+import { deleteRouting, getRoutings } from '../../api/routingApi';
 import RoutingEdit from './RoutingEdit';
 
 interface RoutingType {
@@ -79,7 +79,7 @@ function Routing() {
                 width="50px"
                 text="삭제"
                 backgroundColor='#fb1e1eff'
-                onClick={() => alert(params.row)}
+                onClick={() => handleDelete(params.row.routingMasterId)}
               >
               </CustomBtn>
             ),
@@ -105,6 +105,26 @@ function Routing() {
     const handleEditClose = () => {
         setEditOpen(false);
     };
+
+
+
+
+
+    //삭제
+    const handleDelete = async (id: number) => {
+        if (!confirm("정말 삭제하시겠습니까?")) return;
+
+        try {
+            await deleteRouting(id);
+            alert("삭제되었습니다.");
+
+    // 삭제 후 테이블 새로고침
+            setRows((prev) => prev.filter(row => row.routingMasterId !== id));
+        } catch (err) {
+            console.error(err);
+            alert("삭제 실패!");
+        }
+        };
 
     return (
         <Card
