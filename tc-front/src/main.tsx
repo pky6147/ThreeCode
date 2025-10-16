@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import TitleArea from './layout/TitleArea'
 import MenuArea from './layout/MenuArea'
 import ContentArea from './layout/ContentArea'
@@ -56,7 +56,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/base/company" element={<BaseCompany />} />
             <Route path="/base/material" element={<BaseMaterial/>} />
             <Route path="/base/product" element={<BaseProduct/>} />
-            <Route path='/base/companyReg' element={<CompanyReg/>} />
+            {/* <Route path='/base/companyReg' element={<CompanyReg/>} /> */}
           </Routes>
         </ContentArea>
       </Box>
