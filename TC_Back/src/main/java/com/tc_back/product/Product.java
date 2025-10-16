@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -54,8 +55,10 @@ public class Product {
     private String remark;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductImg> images;
+    @Builder.Default
+    private List<ProductImg> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RoutingStep> routingSteps;
+    @Builder.Default
+    private List<RoutingStep> routingSteps = new ArrayList<>();
 }

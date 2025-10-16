@@ -8,6 +8,7 @@ import com.tc_back.img.ProductImgRepository;
 import com.tc_back.product.dto.ProductDto;
 import com.tc_back.product.dto.ProductListDto;
 import com.tc_back.product.dto.ProductResponseDto;
+import com.tc_back.product.dto.ProductUpdateDto;
 import com.tc_back.routingMaster.RoutingMasterRepository;
 import com.tc_back.routingMaster.entity.RoutingMaster;
 import com.tc_back.routingStep.RoutingStepRepository;
@@ -105,7 +106,7 @@ public class ProductService {
     }
 
 
-
+    //첫화면조회
     @Transactional(readOnly = true)
     public  List<ProductListDto> findAll() {
         return productRepository.findAll()
@@ -124,7 +125,7 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-
+    //상세조회
     @Transactional(readOnly = true)
     public ProductResponseDto findDetail(Long productId) {
         Product product = productRepository.findById(productId)
@@ -155,4 +156,84 @@ public class ProductService {
         );
     }
 
+    @Transactional
+    public ProductResponseDto updateProduct(Long productId, ProductUpdateDto dto, List<MultipartFile> images) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("해당 품목을 찾을 수 없습니다."));
+
+        // 1. 기본 정보 수정
+        product.setPaintType(dto.getPaintType());
+        product.setProductName(dto.getProductName());
+        product.setProductNo(dto.getProductNo());
+        product.setCategory(dto.getCategory());
+        product.setPrice(dto.getPrice());
+        product.setColor(dto.getColor());
+        product.setRemark(dto.getRemark());
+        product.setIsActive(dto.getIsActive());
+
+        // 2. 이미지 수정
+        if (images != null && !images.isEmpty()) {
+            // 기존 이미지 삭제
+            product.getImages().forEach(img -> fileStorageService.deleteFile(img.getImgPath()));
+            product.getImages().clear(); // orphanRemoval = true
+
+            // 새 이미지 저장
+            int idx = 0;
+            for (MultipartFile file : images) {
+                String path = fileStorageService.storeFile(file);
+                ProductImg img = ProductImg.builder()
+                        .product(product)
+                        .imgPath(path)
+                        .top(idx == 0 ? "Y" : "N")
+                        .build();
+                product.getImages().add(img); // 양방향 연관관계 유지
+                idx++;
+            }
+        }
+
+        // 3. 라우팅스텝 수정
+        if (dto.getRoutingSteps() != null) {
+            // 기존 스텝 전부 제거
+            routingStepRepository.deleteAll(product.getRoutingSteps());
+            product.getRoutingSteps().clear();
+
+            int seq = 1;
+            for (RoutingStepDto stepDto : dto.getRoutingSteps()) {
+                RoutingMaster master = routingMasterRepository.findById(stepDto.getRoutingMasterId())
+                        .orElseThrow(() -> new RuntimeException("라우팅 마스터 없음: " + stepDto.getRoutingMasterId()));
+
+                RoutingStep step = RoutingStep.builder()
+                        .product(product)
+                        .routingMaster(master)
+                        .processSeq(seq++)
+                        .build();
+
+                product.getRoutingSteps().add(step);
+            }
+        }
+        // 4. DTO로 변환 후 반환
+        List<String> imagePaths = product.getImages().stream()
+                .map(ProductImg::getImgPath)
+                .collect(Collectors.toList());
+
+        List<RoutingStepInfo> routingSteps = product.getRoutingSteps().stream()
+                .sorted(Comparator.comparingInt(RoutingStep::getProcessSeq))
+                .map(rs -> new RoutingStepInfo(rs.getRoutingMaster().getProcessName(), rs.getProcessSeq()))
+                .collect(Collectors.toList());
+
+        return new ProductResponseDto(
+                product.getProductId(),
+                product.getCompany().getCompanyName(),
+                product.getPaintType(),
+                product.getProductName(),
+                product.getProductNo(),
+                product.getCategory(),
+                product.getPrice(),
+                product.getColor(),
+                product.getRemark(),
+                product.getIsActive(),
+                imagePaths,
+                routingSteps
+        );
+        }
 }

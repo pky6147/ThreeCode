@@ -60,11 +60,11 @@ public class FileStorageServiceImpl implements FileStorageService {
         }
     }
 
-//    @Override
-//    public void deleteFile(String filePath) {
-//        File file = new File(filePath);
-//        if(file.exists()) file.delete();
-//    }
+    @Override
+    public void deleteFile(String filePath) {
+        File file = new File(filePath);
+        if(file.exists()) file.delete();
+    }
 
 
 
