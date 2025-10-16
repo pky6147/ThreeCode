@@ -23,6 +23,7 @@ export default function LabelInput({labelText, value, color, inputWidth, disable
                 value={value || ''}
                 onChange={onChange}
                 disabled={disabled || false}
+                inputProps={{ autoFocus: true }}
             />
         </Box>
     )

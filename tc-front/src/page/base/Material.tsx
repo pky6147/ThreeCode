@@ -94,7 +94,7 @@ function Material() {
                 setSearchInfo(prev => ({
                     ...prev,
                     // company_id: selectedActive.id,
-                    is_active: selectedActive.name,
+                    isActive: selectedActive.name,
                 }))
             }
     }

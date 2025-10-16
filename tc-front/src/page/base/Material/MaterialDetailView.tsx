@@ -4,17 +4,16 @@ import CustomBtn from '../../../component/CustomBtn';
 import LabelInput from '../../../component/LabelInput';
 
 interface MaterialDataType {
-    company_id?: number | string;
-    company_name?: string;
-    material_no?: string;
-    material_name?: string;
+    companyName?: string;
+    materialNo?: string;
+    materialName?: string;
     category?: string;
     color?: string;
     spec?: string;
-    spec_value?: number | string;
+    specValue?: string;
     maker?: string;
     remark?: string;
-    is_active?: string;
+    isActive?: string;
 }
 
 interface DetailProps {
@@ -59,13 +58,13 @@ export default function MaterialDetailView({row, doCancle}:DetailProps) {
                             <LabelInput 
                                 color='black'
                                 labelText='매입처명'
-                                value={rowData.company_name}
+                                value={rowData.companyName}
                                 disabled={true}
                             />
                             <LabelInput 
                                 color='black'
                                 labelText='품목번호'
-                                value={rowData.material_no}
+                                value={rowData.materialNo}
                                 disabled={true}
                             />
                             <LabelInput 
@@ -85,13 +84,13 @@ export default function MaterialDetailView({row, doCancle}:DetailProps) {
                             <LabelInput
                                 color='black' 
                                 labelText='사용여부'
-                                value={rowData.is_active}
+                                value={rowData.isActive}
                                 disabled={true}
                             />
                             <LabelInput 
                                 color='black'
                                 labelText='품목명'
-                                value={rowData.material_name}
+                                value={rowData.materialName}
                                 disabled={true}
                             />
                             <LabelInput 
@@ -103,7 +102,7 @@ export default function MaterialDetailView({row, doCancle}:DetailProps) {
                             <LabelInput 
                                 color='black'
                                 labelText='제원'
-                                value={rowData.spec_value}
+                                value={rowData.specValue}
                                 disabled={true}
                             />
                         </Box>
