@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/product-output")
+@RequestMapping("/product-output")
 @RequiredArgsConstructor
 public class ProductOutputController {
 
