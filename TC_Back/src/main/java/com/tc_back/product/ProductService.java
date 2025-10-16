@@ -2,6 +2,8 @@ package com.tc_back.product;
 
 import com.tc_back.Company.Company;
 import com.tc_back.Company.CompanyRepository;
+import com.tc_back.img.FileStorageService;
+import com.tc_back.img.ProductImg;
 import com.tc_back.img.ProductImgRepository;
 import com.tc_back.product.dto.ProductDto;
 import com.tc_back.routingMaster.RoutingMasterRepository;
@@ -12,6 +14,7 @@ import com.tc_back.routingStep.entity.RoutingStep;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Comparator;
 import java.util.List;
@@ -26,6 +29,7 @@ public class ProductService {
     private final RoutingStepRepository routingStepRepository;
     private final RoutingMasterRepository routingMasterRepository;
     private final CompanyRepository companyRepository;
+    private final FileStorageService fileStorageService;
 
     @Transactional
     public Product createProduct(ProductDto dto) {
@@ -47,6 +51,27 @@ public class ProductService {
                 .build();
 
         Product saved = productRepository.save(product);
+
+        //이미지저장
+        int nowimg = productImgRepository.countByProduct(product);
+        if (nowimg + dto.getImages().size() > 3) {
+            throw new RuntimeException("이미지는 최대 3개까지 업로드 가능합니다.");
+        }
+
+        if (dto.getImages() != null && !dto.getImages().isEmpty()) {
+            int idx = 0;
+            for (MultipartFile file : dto.getImages()) {
+                String path = fileStorageService.storeFile(file);
+                ProductImg img = ProductImg.builder()
+                        .product(saved)
+                        .imgPath(path)
+                        .top(idx == 0 ? "Y" : "N")
+                        .build();
+                productImgRepository.save(img);
+                idx++;
+            }
+        }
+
 
         //라우팅스텝저장
         if (dto.getRoutingSteps() != null) {
