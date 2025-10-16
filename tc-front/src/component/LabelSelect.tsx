@@ -1,0 +1,43 @@
+import {
+    Box, 
+    Typography,
+    FormControl,
+    MenuItem,
+    Select
+} from '@mui/material'
+import type { SelectChangeEvent } from '@mui/material'
+
+interface LabelSelectProps {
+    // Label
+    labelText?: string;
+    color?: string;
+    // SelectBox
+    value?: string;
+    onChange?: (event: SelectChangeEvent<string>) => void;
+    options: { id: string; name: string}[];
+}
+
+export default function LabelSelect({labelText, color, value,  onChange, options}: LabelSelectProps) {
+
+    return (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1}}>
+            <Typography sx={{
+                color: color || 'white', fontSize: 18, fontWeight: 'bold'
+            }}
+            >{labelText}</Typography>
+            <FormControl sx={{width: '230px', height: '40px'}}>
+                <Select
+                    onChange={onChange}
+                    value={value || ''}
+                    sx={{ height: '100%', backgroundColor: 'white'}}
+                >
+                    {options.map(opt => (
+                        <MenuItem key={opt.id} value={opt.id}>
+                            {opt.name}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+        </Box>
+    )
+}

@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react'
-import { Box, Breadcrumbs, Typography, Card } from '@mui/material'
+import { Box, Breadcrumbs, Typography, Card, Dialog, type SelectChangeEvent } from '@mui/material'
 import CustomBtn from '../../component/CustomBtn';
 import CommonTable from '../../component/CommonTable';
 import type { GridColDef } from '@mui/x-data-grid'
 import LabelInput from '../../component/LabelInput';
+import LabelSelect from '../../component/LabelSelect'
 import SearchBar from '../../component/SearchBar';
-
-
-
+import MaterialReg from './Material/MaterialReg';
+import MaterialDetailView from './Material/MaterialDetailView';
+import MaterialEdit from './Material/MaterialEdit';
 
 interface RowData {
     id?: number;
     idx?: number;
+    material_id?: number | string;
     company_id?: number | string;
     company_name?: string;
     material_no?: string;
@@ -26,15 +28,25 @@ interface RowData {
 }
 
 function Material() {
-    const [rows, setRows ] = useState<RowData[]>([])
+    const [rows, setRows ] = useState<RowData[]>([]) // tableData
+    const [clickedRow, setClickedRow] = useState<RowData>({})
+    /* Search */
     const [searchInfo, setSearchInfo] = useState({
             company_name: '',
             material_no: '',
             material_name: '',
-            is_active: 'Y'
+            is_active: 'Y',
         })
+    const [listActiveYN] = useState<{id: string; name:string}[]>([
+            {id: 'Y', name: 'Y'},
+            {id: 'N', name: 'N'},
+    ])
     const [searchRows, setSearchRows] = useState<RowData[]>([])
     const [isSearch, setIsSearch] = useState(false)
+    /* Dialog open */
+    const [open, setOpen] = useState(false) // Reg on/off
+    const [openDetail, setOpenDetail] = useState(false) // Detail on/off
+    const [openEdit, setOpenEdit] = useState(false) // Edit on/off
 
     useEffect(()=> {
         // Get 구문이 들어와야함
@@ -48,57 +60,27 @@ function Material() {
 
         setRows(baseRow)
 
+        
     }, [])
 
-    const columns: GridColDef[] = [
-        { field: 'idx', headerName: 'No', width: 70, headerAlign: 'center', align: 'center' },
-        { field: 'company_name', headerName: '매입처명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
-        { field: 'material_no', headerName: '품목번호', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
-        { field: 'material_name', headerName: '품목명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center',
-            renderCell: (params) => (
-            <Typography
-                variant="body2"
-                sx={{ 
-                    cursor: 'pointer', textDecoration: 'underline', color: 'blue', 
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    height: '100%', width: '100%'}}
-                onClick={() => {
-                  alert('품목명 클릭')
-                  console.log('클릭한 행의 데이터?', params.row)
-                }}
-            >
-              {params.value}
-            </Typography>
-          ),
-         },
-        { field: 'spec', headerName: '규격', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
-        { field: 'maker', headerName: '제조사', flex: 2, minWidth: 200, headerAlign: 'center', align: 'center' },
-        { field: 'remark', headerName: '비고', flex: 3, minWidth: 400, headerAlign: 'center', align: 'left' },
-        { field: 'is_active', headerName: '사용여부', width: 100, headerAlign: 'center', align: 'center' },
-        { field: 'edit', headerName: '수정', width: 100, headerAlign: 'center', align: 'center',
-            renderCell: (params) => (
-          <CustomBtn
-            width="50px"
-            text="수정"
-            onClick={() => alert(params.row)}
-          >
-          </CustomBtn>
-        ),
-         },
-        { field: 'del', headerName: '삭제', width: 100, headerAlign: 'center', align: 'center',
-            renderCell: (params) => (
-                <CustomBtn
-                  width="50px"
-                  text="삭제"
-                  backgroundColor='#fb1e1eff'
-                  onClick={() => alert(params.row)}
-                >
-                </CustomBtn>
-            ),
-        },
-    ]
+    const BoardRefresh = () => {
+        console.log('테이블 리프레시')
+    }
 
     /* 검색/초기화 관련함수 */
+    const handleSelectChange = (event: SelectChangeEvent<string>) => {
+            const selectedId = event.target.value;
+            const selectedActive = listActiveYN.find(c => c.id === selectedId)
+    
+            if(selectedActive) {
+                setSearchInfo(prev => ({
+                    ...prev,
+                    // company_id: selectedActive.id,
+                    is_active: selectedActive.name,
+                }))
+            }
+    }
+
     const handleSearch = () => {
         setIsSearch(true)
         const filtered = rows.filter(row =>
@@ -123,6 +105,89 @@ function Material() {
         setSearchInfo((prev) => ({ ...prev, [key]: value }));
     };
 
+    /* 등록 페이지 */
+    const handleOpenReg = () => {
+        setOpen(true)
+    }
+    const handleCloseReg = () => {
+        setOpen(false)
+    }
+    const handleRegDone = () => {
+        BoardRefresh()
+        handleCloseReg()
+    }
+    /* 수정 페이지 */
+    const handleOpenEdit = (row: RowData) => {
+        setClickedRow(row)
+        setOpenEdit(true)
+    }
+    const handleCloseEdit = () => {
+        setOpenEdit(false)
+    }
+    const handleEditDone = () => {
+        BoardRefresh()
+        handleCloseEdit()
+    }
+
+    /* 품목명 클릭시 상세조회 */
+    const handleOpenDetail = (row: RowData) => {
+        setClickedRow(row)
+        setOpenDetail(true)
+    }
+    const handleCloseDetail = () => {
+        setOpenDetail(false)
+    }
+    /* 삭제 */
+    const handleDelete = (row: RowData) => {
+        console.log('Delete', row)
+    }
+
+    /* 테이블 헤더 */
+    const columns: GridColDef[] = [
+        { field: 'idx', headerName: 'No', width: 70, headerAlign: 'center', align: 'center' },
+        { field: 'company_name', headerName: '매입처명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
+        { field: 'material_no', headerName: '품목번호', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
+        { field: 'material_name', headerName: '품목명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center',
+            renderCell: (params) => (
+            <Typography
+                variant="body2"
+                sx={{ 
+                    cursor: 'pointer', textDecoration: 'underline', color: 'blue', 
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    height: '100%', width: '100%'}}
+                onClick={()=> handleOpenDetail(params.row)}
+            >
+              {params.value}
+            </Typography>
+          ),
+         },
+        { field: 'spec', headerName: '규격', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
+        { field: 'maker', headerName: '제조사', flex: 2, minWidth: 200, headerAlign: 'center', align: 'center' },
+        { field: 'remark', headerName: '비고', flex: 3, minWidth: 400, headerAlign: 'center', align: 'left' },
+        { field: 'is_active', headerName: '사용여부', width: 100, headerAlign: 'center', align: 'center' },
+        { field: 'edit', headerName: '수정', width: 100, headerAlign: 'center', align: 'center',
+            renderCell: (params) => (
+          <CustomBtn
+            width="50px"
+            text="수정"
+            onClick={() => handleOpenEdit(params.row)}
+          >
+          </CustomBtn>
+        ),
+         },
+        { field: 'del', headerName: '삭제', width: 100, headerAlign: 'center', align: 'center',
+            renderCell: (params) => (
+                <CustomBtn
+                  width="50px"
+                  text="삭제"
+                  backgroundColor='#fb1e1eff'
+                  onClick={() => handleDelete(params.row)}
+                >
+                </CustomBtn>
+            ),
+        },
+    ]
+
     return (
         <Card
             sx={{ height: '98%', margin: '0.5%'}}
@@ -134,6 +199,7 @@ function Material() {
                     <Typography sx={{ color: 'text.primary', fontWeight: 'bold' }}>원자재 관리</Typography>
                 </Breadcrumbs>
                 {/* Content 영역 */}
+                {/* 검색필터 */}
                 <SearchBar onSearch={handleSearch} onReset={handleReset}>
                     <LabelInput 
                         labelText='매입처명'
@@ -150,13 +216,20 @@ function Material() {
                         value={searchInfo.material_name}
                         onChange={(e) => handleSearchChange('material_name', e.target.value)}
                     />
-                    <LabelInput 
+                    {/* <LabelInput 
                         labelText='사용여부'
                         value={searchInfo.is_active}
                         onChange={(e) => handleSearchChange('is_active', e.target.value)}
+                    /> */}
+                    <LabelSelect 
+                        labelText='사용여부'
+                        value={searchInfo.is_active?.toString() || ''}
+                        onChange={handleSelectChange}
+                        options={listActiveYN}
                     />
                 </SearchBar>
                 <Box>
+                    {/* 등록, 엑셀버튼 영역 */}
                     <Box
                         sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}
                     >
@@ -165,31 +238,38 @@ function Material() {
                             <CustomBtn 
                                 text="등록"
                                 backgroundColor='green'
+                                onClick={handleOpenReg}
                             />
                         </Box>
                     </Box>
-
+                    {/* 테이블 영역 */}
                     <Box sx={{padding: 2}}>
                         { isSearch ? (
                             <CommonTable 
                             columns={columns}
                             rows={searchRows}
-                            // pageSize={10}
-                            // check={true}
-                            // height={630}
                             />
                         ) : (
                             <CommonTable 
                                 columns={columns}
                                 rows={rows}
-                                // pageSize={10}
-                                // check={true}
-                                // height={630}
                             />
                         )}
                     </Box>
                 </Box>
             </Box>
+            {/* 등록 페이지 */}
+            <Dialog open={open} onClose={handleCloseReg} maxWidth={false}>
+                <MaterialReg doFinish={handleRegDone} doCancle={handleCloseReg} />
+            </Dialog>
+            {/* 품목명 클릭시 상세조회 */}
+            <Dialog open={openDetail} onClose={handleCloseDetail} maxWidth={false}>
+                <MaterialDetailView row={clickedRow} doCancle={handleCloseDetail} />
+            </Dialog>
+            {/* 수정 페이지 */}
+            <Dialog open={openEdit} onClose={handleCloseEdit} maxWidth={false}>
+                <MaterialEdit row={clickedRow} doFinish={handleEditDone} doCancle={handleCloseEdit} />
+            </Dialog>
         </Card>
     )
 }
