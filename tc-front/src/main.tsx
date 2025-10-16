@@ -14,7 +14,15 @@ import BaseMaterial from './page/base/Material'
 import BaseProduct from './page/base/Product'
 // 수주대상 입출고 관리
 import ProductInputReg from './page/product/InputReg'
-import CompanyReg from './page/base/CompanyReg';
+import ProductInputState from './page/product/InputState'
+import ProductOutputReg from './page/product/OutputReg'
+import ProductOutputState from './page/product/OutputState'
+// 원자재 입출고 관리
+import MaterialInputReg from './page/material/InputReg'
+import MaterialInputState from './page/material/InputState'
+import MaterialOutputReg from './page/material/OutputReg'
+import MaterialOutputState from './page/material/OutputState'
+import MaterialStock from './page/material/Stock'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -34,8 +42,15 @@ createRoot(document.getElementById('root')!).render(
             {/* <Route index element={<></>} /> */}
             {/* 수주대상 입출고 관리 */}
             <Route path="/product/inputReg" element={<ProductInputReg/>} />
+            <Route path="/product/inputState" element={<ProductInputState/>} />
+            <Route path="/product/OutputReg" element={<ProductOutputReg/>} />
+            <Route path="/product/OutputState" element={<ProductOutputState/>} />
             {/* 원자재 입출고 관리 */}
-            <Route path="/material" element={<></>} />
+            <Route path="/material/inputReg" element={<MaterialInputReg/>} />
+            <Route path="/material/inputState" element={<MaterialInputState/>} />
+            <Route path="/material/outputReg" element={<MaterialOutputReg/>} />
+            <Route path="/material/outputState" element={<MaterialOutputState/>} />
+            <Route path="/material/stock" element={<MaterialStock/>} />
             {/* 기준정보 관리 */}
             <Route path="/base/route" element={<BaseRouting/>} />
             <Route path="/base/company" element={<BaseCompany />} />
