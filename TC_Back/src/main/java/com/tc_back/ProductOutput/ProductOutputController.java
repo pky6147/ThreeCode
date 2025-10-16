@@ -15,32 +15,32 @@ public class ProductOutputController {
 
     // 출고 등록
     @PostMapping
-    public ResponseEntity<ProductOutput> createOutput(@RequestBody ProductOutputDto dto) {
-        ProductOutput created = productOutputService.createOutput(dto);
+    public ResponseEntity<ProductOutputDto> createOutput(@RequestBody ProductOutputDto dto) {
+        ProductOutputDto created = productOutputService.createOutputDto(dto);
         return ResponseEntity.ok(created);
     }
 
     //전체 출고 목록 조회 (삭제되지 않은 것만)
     @GetMapping
-    public ResponseEntity<List<ProductOutput>> getAllOutputs() {
-        List<ProductOutput> outputs = productOutputService.getAllOutputs();
+    public ResponseEntity<List<ProductOutputDto>> getAllOutputs() {
+        List<ProductOutputDto> outputs = productOutputService.getAllOutputDtos();
         return ResponseEntity.ok(outputs);
     }
 
     //출고 단건 조회
     @GetMapping("/{id}")
-    public ResponseEntity<ProductOutput> getOutputById(@PathVariable Long id) {
-        ProductOutput output = productOutputService.getOutputById(id);
+    // 반환 타입을 ProductOutputDto로 변경하고 Service의 DTO 메서드를 호출
+    public ResponseEntity<ProductOutputDto> getOutputById(@PathVariable Long id) {
+        ProductOutputDto output = productOutputService.getOutputDtoById(id);
         return ResponseEntity.ok(output);
     }
 
     //출고 수정 (출고수량, 출고일자)
     @PutMapping("/{id}")
-    public ResponseEntity<ProductOutput> updateOutput(
+    public ResponseEntity<ProductOutputDto> updateOutput(
             @PathVariable Long id,
             @RequestBody ProductOutputDto dto) {
-
-        ProductOutput updated = productOutputService.updateOutput(id, dto);
+        ProductOutputDto updated = productOutputService.updateOutput(id, dto);
         return ResponseEntity.ok(updated);
     }
 

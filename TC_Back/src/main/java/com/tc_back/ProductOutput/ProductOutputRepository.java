@@ -3,6 +3,7 @@ package com.tc_back.ProductOutput;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -16,4 +17,7 @@ public interface ProductOutputRepository extends JpaRepository<ProductOutput, Lo
 
     // 출고번호 기준 조회
     ProductOutput findByProductOutputNoAndIsDelete(String productOutputNo, String isDelete);
+
+    // 오늘 날짜 기준 출고 수 카운트 (출고번호 생성용)
+    long countByProductOutputDate(LocalDate productOutputDate);
 }

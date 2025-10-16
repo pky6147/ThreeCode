@@ -10,22 +10,22 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import '../../OutputState.css';
 import { productOutputApi } from '../../api/ProductApi';
 
-// 백엔드에서 필요한 JOIN 정보가 포함된 응답 구조를 예상하여 인터페이스 정의
+// 프론트용 Dto
 interface OutputData {
-    id: number; // DataGrid에서 사용하는 필수 PK (productOutputId 값)
-    productOutputId: number; // 백엔드 PK
+    id: number; 
+    productOutputId: number; 
     product_output_no: string;
-    company_name: string; // ✅ 백엔드에서 JOIN되어 넘어와야 함
-    product_no: string; // ✅ 백엔드에서 JOIN되어 넘어와야 함
-    product_name: string; // ✅ 백엔드에서 JOIN되어 넘어와야 함
-    category: string; // ✅ 백엔드에서 JOIN되어 넘어와야 함
-    paint_type: string; // ✅ 백엔드에서 JOIN되어 넘어와야 함
+    company_name: string; 
+    product_no: string; 
+    product_name: string; 
+    category: string; 
+    paint_type: string; 
     product_output_qty: number | string;
     product_output_date: string;
     isEditing?: boolean;
 }
 
-// 백엔드 응답의 필드명 (CamelCase)을 명시적으로 정의 (BackendOutput 필드명은 백엔드 응답 형태에 맞게 조정 필요)
+// 백엔드 응답 타입
 interface BackendOutput {
     productOutputId: number;
     productOutputNo: string;
@@ -36,7 +36,6 @@ interface BackendOutput {
     productName: string;
     category: string;
     paintType: string;
-    // ... 기타 필드 (productInputId, createdAt, isDelete 등)
 }
 
 
@@ -47,41 +46,36 @@ function OutputState() {
 
     // API 호출 후 데이터 가져오기
     const fetchData = async () => {
-        try {
-            const res = await productOutputApi.getAll(); // GET /product-output 호출
-            
-            // 2. 받은 데이터를 OutputData 인터페이스에 맞게 매핑
-            if (res.data && res.data.length > 0) {
-                const mappedData: OutputData[] = res.data
-                    .filter((item: BackendOutput) => item) // 혹시 모를 null/undefined 필터링
-                    .map((item: BackendOutput) => {
-                        // 백엔드 필드명(CamelCase)을 프론트 필드명(Snake_case)에 매핑
-                        return {
-                            id: item.productOutputId, // ✨ DataGrid의 필수 PK
-                            productOutputId: item.productOutputId,
-                            product_output_no: item.productOutputNo,
-                            
-                            // 백엔드 응답 필드명에 맞게 매핑 (대소문자 주의)
-                            company_name: item.companyName, 
-                            product_no: item.productNo,
-                            product_name: item.productName,
-                            category: item.category,
-                            paint_type: item.paintType,
-                            
-                            product_output_qty: item.productOutputQty,
-                            product_output_date: item.productOutputDate,
-                            isEditing: false,
-                        };
-                    });
-                setRows(mappedData);
-            } else {
-                 setRows([]); // 데이터가 없으면 테이블 비우기
-            }
-        } catch (err) {
-            console.error(err);
-            alert('출고 목록을 불러오는 중 오류가 발생했습니다.');
+    try {
+        const res = await productOutputApi.getAll(); // GET /product-output 호출
+        
+        if (res.data && res.data.length > 0) {
+            const mappedData: OutputData[] = res.data
+    .filter((item: BackendOutput) => item)
+    .map((item: BackendOutput, index: number) => ({
+        id: item.productOutputId ?? index + 1, // productOutputId 없으면 index 사용
+        productOutputId: item.productOutputId,
+        product_output_no: item.productOutputNo || '-',
+        company_name: item.companyName || '-',
+        product_no: item.productNo || '-',
+        product_name: item.productName || '-',
+        category: item.category || '-',
+        paint_type: item.paintType || '-',
+        product_output_qty: item.productOutputQty ?? 0,
+        product_output_date: item.productOutputDate || '-',
+        isEditing: false,
+    }));
+
+            setRows(mappedData);
+        } else {
+            setRows([]);
         }
-    };
+    } catch (err) {
+        console.error(err);
+        alert('출고 목록을 불러오는 중 오류가 발생했습니다.');
+    }
+};
+
 
 
     useEffect(() => {
@@ -106,22 +100,20 @@ function OutputState() {
             alert('출고일자와 출고 수량을 모두 입력해주세요.');
             return;
         }
-
         try {
-            // ✅ API 호출 시, DataGrid ID(row.id) 대신 실제 PK(row.productOutputId) 사용
             await productOutputApi.update(row.productOutputId, {
-                // 백엔드 DTO 필드명에 맞게 전송
                 productOutputQty: Number(row.product_output_qty),
                 productOutputDate: row.product_output_date
             });
             alert('수정 완료되었습니다.');
-            handleEdit(row, false); // 편집 모드 종료
-            fetchData(); // 데이터 새로고침
+            handleEdit(row, false);
+            fetchData();
         } catch (err) {
             console.error(err);
             alert('수정 중 오류가 발생했습니다.');
         }
     };
+
 
     const handleCancel = (row: OutputData) => {
         if (!temp) return;
@@ -139,13 +131,12 @@ function OutputState() {
         );
     };
 
-    const handleDelete = async (row: OutputData) => {
+     const handleDelete = async (row: OutputData) => {
         if (!window.confirm(`출고번호 ${row.product_output_no} 정보를 정말 삭제하시겠습니까?`)) return;
         try {
-            // ✅ API 호출 시, DataGrid ID(row.id) 대신 실제 PK(row.productOutputId) 사용
             await productOutputApi.remove(row.productOutputId); 
             alert('삭제 완료되었습니다.');
-            fetchData(); // 데이터 새로고침
+            fetchData();
         } catch (err) {
             console.error(err);
             alert('삭제 중 오류가 발생했습니다.');
@@ -153,9 +144,9 @@ function OutputState() {
     };
     
     const handleGuide = (row: OutputData) => {
-        // 출하증 출력 로직 구현
         console.log(`출하증 출력: ${row.product_output_no}`);
     };
+
 
     // ... (columns 정의는 필드명을 OutputData에 맞게 사용하여 그대로 유지)
     const columns: GridColDef[] = [
@@ -205,7 +196,7 @@ function OutputState() {
             <CustomBtn text="출하증" width="90px" backgroundColor="green" onClick={() => handleGuide(params.row)} />
         }
     ];
-    // ... (return 문은 그대로 유지)
+
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Card className="outputCard">
