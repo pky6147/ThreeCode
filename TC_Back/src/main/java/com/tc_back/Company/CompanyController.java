@@ -6,13 +6,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/company")
 @RequiredArgsConstructor
 public class CompanyController {
 
     private final CompanyService companyService;
 
     //목록 및 조회 (검색 아직)
-    @GetMapping("/company")
+    @GetMapping
         public List<CompanyDto> getCompanies() {
             return companyService.findAll();
         }
@@ -24,7 +25,7 @@ public class CompanyController {
     }
 
     //등록
-    @PostMapping("/{companyId}")
+    @PostMapping
     public CompanyDto addCompnay(@RequestBody CompanyDto companyDto) {
         return companyService.addCompany(companyDto);
     }

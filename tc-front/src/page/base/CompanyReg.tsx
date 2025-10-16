@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { TextField, Button, Typography, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
-import axios from 'axios';
 import '../../CompanyReg.css';
+import { createCompany, updateCompany } from '../../api/CompanyApi';
 
 interface CompanyFormProps {
   mode: 'create' | 'edit'; // 등록 or 수정 모드
@@ -22,6 +22,7 @@ function CompanyForm({ mode, initialData, onSubmit }: CompanyFormProps) {
     contactEmail: '',
     contactAddress: '',
     contactRemark: '',
+    isActive: 'Y', // 기본값 사용
   });
 
   //수정 모드일 때 기존 데이터 채워넣기
@@ -40,11 +41,12 @@ function CompanyForm({ mode, initialData, onSubmit }: CompanyFormProps) {
       contactEmail: initialData.contactEmail || '',
       contactAddress: initialData.contactAddress || '', 
       contactRemark: initialData.contactRemark || '',   
+      isActive: initialData.isActive || 'Y',
     });
   }
 }, [mode, initialData]);
 
-//폼 변경 방지
+//폼 변경 처리
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
@@ -53,11 +55,11 @@ function CompanyForm({ mode, initialData, onSubmit }: CompanyFormProps) {
   //등록/수정 처리
   const handleSubmit = async () => {
     try {
-      if (mode === 'edit' && initialData?.id) {
-        await axios.put('/api/company', form);
+      if (mode === 'edit' && initialData?.companyId) {
+        await updateCompany(initialData.companyId, form);
         alert('업체 정보가 수정되었습니다.');
       } else {
-        await axios.post('/api/company', form);
+        await createCompany(form);
         alert('업체가 등록되었습니다.');
       }
       if (onSubmit) onSubmit();
@@ -94,6 +96,18 @@ function CompanyForm({ mode, initialData, onSubmit }: CompanyFormProps) {
         <TextField label="담당자 전화번호" name="contactPhone" value={form.contactPhone} onChange={handleChange} fullWidth />
         <TextField label="담당자 이메일" name="contactEmail" value={form.contactEmail} onChange={handleChange} fullWidth />
       </div>
+
+      {/* 수정 모드에서만 사용여부 표시 */}
+      {mode === 'edit' && (
+        <FormControl component="fieldset" style={{ marginTop: 16 }}>
+          <FormLabel component="legend">사용여부</FormLabel>
+          <RadioGroup row name="isActive" value={form.isActive} onChange={handleChange}>
+            <FormControlLabel value="Y" control={<Radio />} label="사용" />
+            <FormControlLabel value="N" control={<Radio />} label="미사용" />
+          </RadioGroup>
+        </FormControl>
+      )}
+
 
       <Button variant="contained" color="primary" onClick={handleSubmit}>
         {mode === 'edit' ? '수정 완료' : '등록'}

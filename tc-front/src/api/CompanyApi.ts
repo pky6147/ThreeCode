@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+const BASE_URL = import.meta.env.VITE_API_URL || '';
+
 export interface CompanyDto {
   companyId?: number;
   companyType: string;
@@ -18,24 +20,29 @@ export interface CompanyDto {
 
 // 업체 목록 조회
 export const getCompanies = async () => {
-  const res = await axios.get<CompanyDto[]>('/api/company');
+  const res = await axios.get<CompanyDto[]>(`${BASE_URL}/company`);
   return res.data;
 };
 
-// 업체 등록
 export const createCompany = async (data: CompanyDto) => {
-  const res = await axios.post<CompanyDto>('/api/company', data);
+  const res = await axios.post<CompanyDto>(
+    `/api/company`,  // /api 추가
+    data,
+    { headers: { 'Content-Type': 'application/json' } }
+  );
   return res.data;
 };
 
-// 업체 수정
 export const updateCompany = async (companyId: number, data: CompanyDto) => {
-  const res = await axios.put<CompanyDto>(`/api/company/${companyId}`, data);
+  const res = await axios.put<CompanyDto>(
+    `/api/company/${companyId}`, // /api 추가
+    data,
+    { headers: { 'Content-Type': 'application/json' } }
+  );
   return res.data;
 };
 
-// 업체 삭제
 export const deleteCompany = async (companyId: number) => {
-  const res = await axios.delete<number>(`/api/company/${companyId}`);
+  const res = await axios.delete<number>(`${BASE_URL}/company/${companyId}`);
   return res.data;
 };
