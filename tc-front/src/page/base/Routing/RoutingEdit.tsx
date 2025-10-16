@@ -2,7 +2,7 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 
 import type { AxiosError } from 'axios';
-import { updateRoutings } from '../../api/routingApi';
+import { updateRoutings } from '../../../api/routingApi';
 
 interface RoutingEditProps {
   doClose: () => void;

@@ -51,7 +51,9 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
         try {
             const data = await getCompanies();
 
-            const result = data.map((row) => ({
+            const result = data
+            .filter((row) => row.companyType === '매입처')
+            .map((row) => ({
                 id: String(row.companyId),
                 name: row.companyName
             }))

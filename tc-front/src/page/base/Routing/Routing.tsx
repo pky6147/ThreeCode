@@ -6,11 +6,11 @@ import {
     Card, 
     Dialog
 } from '@mui/material'
-import CustomBtn from '../../component/CustomBtn';
-import CommonTable from '../../component/CommonTable';
+import CustomBtn from '../../../component/CustomBtn';
+import CommonTable from '../../../component/CommonTable';
 import type { GridColDef } from '@mui/x-data-grid'
 import RoutingReg from './RoutingReg'
-import { deleteRouting, getRoutings } from '../../api/routingApi';
+import { deleteRouting, getRoutings } from '../../../api/routingApi';
 import RoutingEdit from './RoutingEdit';
 
 interface RoutingType {

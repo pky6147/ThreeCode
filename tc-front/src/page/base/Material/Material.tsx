@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react'
 import { Box, Breadcrumbs, Typography, Card, Dialog, type SelectChangeEvent } from '@mui/material'
-import CustomBtn from '../../component/CustomBtn';
-import CommonTable from '../../component/CommonTable';
+import CustomBtn from '../../../component/CustomBtn';
+import CommonTable from '../../../component/CommonTable';
 import type { GridColDef } from '@mui/x-data-grid'
-import LabelInput from '../../component/LabelInput';
-import LabelSelect from '../../component/LabelSelect'
-import SearchBar from '../../component/SearchBar';
-import MaterialReg from './Material/MaterialReg';
-import MaterialDetailView from './Material/MaterialDetailView';
-import MaterialEdit from './Material/MaterialEdit';
-import { getMaterial, deleteMaterial } from '../../api/materialApi';
-import AlertPopup from '../../component/AlertPopup';
+import LabelInput from '../../../component/LabelInput';
+import LabelSelect from '../../../component/LabelSelect'
+import SearchBar from '../../../component/SearchBar';
+import MaterialReg from './MaterialReg';
+import MaterialDetailView from './MaterialDetailView';
+import MaterialEdit from './MaterialEdit';
+import { getMaterial, deleteMaterial } from '../../../api/materialApi';
+import AlertPopup from '../../../component/AlertPopup';
 
 interface RowData {
     id?: number;
@@ -68,7 +68,7 @@ function Material() {
                 id: row.materialId,
                 idx: index+1,
             }))
-            
+
             setRows(result)
         }
         catch(err) {
