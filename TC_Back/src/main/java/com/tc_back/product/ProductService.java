@@ -6,10 +6,13 @@ import com.tc_back.img.FileStorageService;
 import com.tc_back.img.ProductImg;
 import com.tc_back.img.ProductImgRepository;
 import com.tc_back.product.dto.ProductDto;
+import com.tc_back.product.dto.ProductListDto;
+import com.tc_back.product.dto.ProductResponseDto;
 import com.tc_back.routingMaster.RoutingMasterRepository;
 import com.tc_back.routingMaster.entity.RoutingMaster;
 import com.tc_back.routingStep.RoutingStepRepository;
 import com.tc_back.routingStep.dto.RoutingStepDto;
+import com.tc_back.routingStep.dto.RoutingStepInfo;
 import com.tc_back.routingStep.entity.RoutingStep;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -100,4 +103,56 @@ public class ProductService {
         }
         return saved;
     }
+
+
+
+    @Transactional(readOnly = true)
+    public  List<ProductListDto> findAll() {
+        return productRepository.findAll()
+                .stream()
+                .map(p -> new ProductListDto(
+                        p.getProductId(),
+                        p.getCompany().getCompanyName(),
+                        p.getProductNo(),
+                        p.getProductName(),
+                        p.getCategory(),
+                        p.getPaintType(),
+                        p.getPrice(),
+                        p.getRemark(),
+                        p.getIsActive()
+                ))
+                .collect(Collectors.toList());
+    }
+
+
+    @Transactional(readOnly = true)
+    public ProductResponseDto findDetail(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("해당 " + productId +" 품목이 없습니다."));
+
+        List<String> images  = product.getImages().stream()
+                .map(img -> img.getImgPath())
+                .collect(Collectors.toList());
+
+        List<RoutingStepInfo> steps = product.getRoutingSteps().stream()
+                .sorted(Comparator.comparingInt(RoutingStep::getProcessSeq))
+                .map(rs -> new RoutingStepInfo(rs.getRoutingMaster().getProcessName(), rs.getProcessSeq()))
+                .collect(Collectors.toList());
+
+        return new ProductResponseDto(
+                product.getProductId(),
+                product.getCompany().getCompanyName(),
+                product.getPaintType(),
+                product.getProductName(),
+                product.getProductNo(),
+                product.getCategory(),
+                product.getPrice(),
+                product.getColor(),
+                product.getRemark(),
+                product.getIsActive(),
+                images,
+                steps
+        );
+    }
+
 }
