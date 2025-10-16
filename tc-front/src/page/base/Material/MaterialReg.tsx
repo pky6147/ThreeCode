@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react'
-import { Box, Typography, type SelectChangeEvent } from '@mui/material'
+import { Box, Typography, type SelectChangeEvent, Dialog } from '@mui/material'
 import CustomBtn from '../../../component/CustomBtn';
 import LabelInput from '../../../component/LabelInput';
 import LabelSelect from '../../../component/LabelSelect';
+import { getCompanies } from '../../../api/CompanyApi'
+import { createMaterial } from '../../../api/materialApi'
+import type { AxiosError } from 'axios';
+import AlertPopup from '../../../component/AlertPopup';
 
 interface RegProps {
     doFinish: ()=> void;
@@ -10,22 +14,27 @@ interface RegProps {
 }
 
 interface MaterialDataType {
-    company_id?: number | string;
-    company_name?: string;
-    material_no?: string;
-    material_name?: string;
+    companyId?: number;
+    companyName?: string;
+    materialNo?: string;
+    materialName?: string;
     category?: string;
     color?: string;
     spec?: string;
-    spec_value?: number | string;
+    specValue?: string;
     maker?: string;
     remark?: string;
-    is_active?: string;
+    isActive?: string;
+}
+interface AlertInfo {
+  type?: 'error' | 'warning' | 'info' | 'success';
+  title?: string;
+  text?: string;
 }
 
 export default function MaterialReg({doFinish, doCancle}:RegProps) {
     const [newData, setNewData] = useState<MaterialDataType>({
-        is_active: 'Y'
+        isActive: 'Y'
     })
 
     const [listCompany, setListCompany] = useState<{id:string; name:string}[]>([])
@@ -33,14 +42,29 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
         {id: 'Y', name: 'Y'},
         {id: 'N', name: 'N'},
     ])
+
+    /* Alert */
+    const [alertOpen, setAlertOpen] = useState(false)
+    const [alertInfo, setAlertInfo] = useState<AlertInfo>({})
+
+    const getCompanyData = async () => {
+        try {
+            const data = await getCompanies();
+
+            const result = data.map((row) => ({
+                id: String(row.companyId),
+                name: row.companyName
+            }))
+
+            setListCompany(result)
+        } catch (err) {
+            console.error(err);
+            alert("조회 실패")
+        }
+    }
     
     useEffect(()=> {
-        // company 데이터를 갖고올 때 id를 string으로 변환해야함
-        setListCompany([
-            {id: '1', name: '회사A'},
-            {id: '2', name: '회사B'},
-            {id: '3', name: '회사C'},
-        ])
+        getCompanyData();
     }, [])
 
     const handleSelectCompanyChange = (event: SelectChangeEvent<string>) => {
@@ -50,8 +74,8 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
         if(selectedCompany) {
             setNewData(prev => ({
                 ...prev,
-                company_id: selectedCompany.id,
-                company_name: selectedCompany.name,
+                companyId: Number(selectedCompany.id),
+                companyName: selectedCompany.name,
             }))
         }
     }
@@ -62,7 +86,7 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
         if(selectedActiveYN) {
             setNewData(prev => ({
                 ...prev,
-                is_active: selectedActiveYN.name,
+                isActive: selectedActiveYN.name,
             }))
         }
     }
@@ -72,13 +96,64 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
     };
 
 
-    const handleRegist = () => {
-        console.log('저장', newData)
-        doFinish()
+    const handleRegist = async () => {
+        try {
+            await createMaterial({
+                companyId: newData.companyId,
+                materialNo: newData.materialNo,
+                materialName: newData.materialName,
+                category: newData.category,
+                color: newData.color,
+                spec: newData.spec,
+                specValue: newData.specValue,
+                maker: newData.maker,
+                remark: newData.remark,
+                isActive: newData.isActive
+            })
+            handleAlertSuccess()
+            doFinish()
+        } catch(err) {
+            const axiosError = err as AxiosError;
+            console.error(err)
+            if (axiosError.response && axiosError.response.data) {
+                handleAlertFail()
+                // alert((axiosError.response.data as AxiosError).message || "저장을 실패했습니다.");
+            } else {
+                handleAlertFail()
+            }
+        }
     }
 
     const handleCancle = () => {
+        setNewData({
+            isActive: 'Y'
+        })
         doCancle()
+    }
+
+    /* Alert 팝업 */
+    const handleCloseAlert = () => {
+        setAlertOpen(false)
+    }
+    const handleAlertSuccess = () => {
+        setAlertInfo({
+            type: 'success',
+            title: '원자재 등록',
+            text: '원자재 정보 등록 성공'
+        })
+        setAlertOpen(true)
+
+        setTimeout(() => setAlertOpen(false), 2000)
+    }
+    const handleAlertFail = () => {
+        setAlertInfo({
+            type: 'error',
+            title: '원자재 등록',
+            text: '원자재 정보 등록 실패'
+        })
+        setAlertOpen(true)
+
+        setTimeout(()=> setAlertOpen(false), 3000)
     }
 
     return (
@@ -111,15 +186,15 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
                             <LabelSelect 
                                 color='black'
                                 labelText='매입처명'
-                                value={newData.company_id?.toString() || ''}
+                                value={newData.companyId?.toString() || ''}
                                 onChange={handleSelectCompanyChange}
                                 options={listCompany}
                             />
                             <LabelInput 
                                 color='black'
                                 labelText='품목번호'
-                                value={newData.material_no}
-                                onChange={(e) => handleInputChange('material_no', e.target.value)}
+                                value={newData.materialNo}
+                                onChange={(e) => handleInputChange('materialNo', e.target.value)}
                             />
                             <LabelInput 
                                 color='black'
@@ -138,15 +213,15 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
                             <LabelSelect 
                                 color='black'
                                 labelText='사용여부'
-                                value={newData.is_active?.toString() || ''}
+                                value={newData.isActive?.toString() || ''}
                                 onChange={handleSelectActiveYNChange}
                                 options={listActiveYN}
                             />
                             <LabelInput 
                                 color='black'
                                 labelText='품목명'
-                                value={newData.material_name}
-                                onChange={(e) => handleInputChange('material_name', e.target.value)}
+                                value={newData.materialName}
+                                onChange={(e) => handleInputChange('materialName', e.target.value)}
                             />
                             <LabelInput 
                                 color='black'
@@ -158,8 +233,8 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
                             <LabelInput 
                                 color='black'
                                 labelText='제원'
-                                value={newData.spec_value}
-                                onChange={(e) => handleInputChange('spec_value', e.target.value)}
+                                value={newData.specValue}
+                                onChange={(e) => handleInputChange('specValue', e.target.value)}
                             />
                         </Box>
                     </Box>
@@ -181,6 +256,14 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
                     </Box>
                 </Box>
             </Box>
+            {/* 팝업창 */}
+            <Dialog open={alertOpen} onClose={handleCloseAlert}>
+                <AlertPopup 
+                    type={alertInfo.type || 'success'} 
+                    title={alertInfo.title} 
+                    text={alertInfo.text} 
+                />
+            </Dialog>
         </Box>
     )
 }

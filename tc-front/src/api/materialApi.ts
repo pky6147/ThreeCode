@@ -8,18 +8,18 @@ const getAxiosConfig = () => ({
 });
 
 // 원자재 등록
-export const createMaterial = async (data: {
-  companyId: number,
+export const createMaterial = async (data: Partial<{
+  companyId: number;
   materialName: string;
   materialNo: string;
   category: string;
   color: string;
   spec: string;
-  spec_value: string;
+  specValue: string;
   maker: string;
   isActive: string;
   remark?: string;
-}) => {
+}>) => {
   const response = await axios.post(`${BASE_URL}/material`, data, getAxiosConfig());
   return response.data;
 };
@@ -31,18 +31,18 @@ export const getMaterial = async () => {
 };
 
 // 원자재 수정
-export const updateMaterial = async (id:number, data: {
+export const updateMaterial = async (id:number, data: Partial<{
   companyId: number,
   materialName: string;
   materialNo: string;
   category: string;
   color: string;
   spec: string;
-  spec_value: string;
+  specValue: string;
   maker: string;
   isActive: string;
   remark?: string;
-}) => {
+}>) => {
   const response = await axios.put(`${BASE_URL}/material/${id}`,data, getAxiosConfig());
   return response.data;
 };

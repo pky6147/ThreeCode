@@ -1,7 +1,7 @@
 import { Alert, AlertTitle, Stack } from '@mui/material'
 
 interface AlertProps {
-    type?: string;
+    type?: 'error' | 'warning' | 'info' | 'success';
     title?: string;
     text?: string;
 }
@@ -9,7 +9,7 @@ interface AlertProps {
 export default function AlertPopup(props: AlertProps) {
     return (
         <Stack sx={{ width:'100%' }} spacing={2}>
-            <Alert security={ props.type || 'success' }>
+            <Alert severity={ props.type || 'success' }>
                 <AlertTitle>{props.title || 'title' }</AlertTitle>
                 {props.text || 'text 구문을 입력하세요'}
             </Alert>

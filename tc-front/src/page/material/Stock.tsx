@@ -18,10 +18,16 @@ interface RowData {
     count?: number | string; // 재고량   
 }
 
+interface AlertInfo {
+  type?: 'error' | 'warning' | 'info' | 'success';
+  title?: string;
+  text?: string;
+}
+
 function Stock() {
     const [rows, setRows ] = useState<RowData[]>([])
     const [alertOpen, setAlertOpen] = useState(false)
-    const [alertInfo, setAlertInfo] = useState({type: '', title: '', text: ''})
+    const [alertInfo, setAlertInfo] = useState<AlertInfo>({})
     const [searchInfo, setSearchInfo] = useState({
         company_name: '',
         material_no: '',
