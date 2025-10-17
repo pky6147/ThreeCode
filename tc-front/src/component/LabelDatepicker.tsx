@@ -11,7 +11,7 @@ interface LabelDatepickerProps {
 
 export default function LabelDatepicker({labelText, value, color, onChange}: LabelDatepickerProps) {
     return (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '310px'}}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: '320px'}}>
             <Typography sx={{
                 color: color || 'white', fontSize: 18, fontWeight: 'bold', minWidth: '70px'
             }}

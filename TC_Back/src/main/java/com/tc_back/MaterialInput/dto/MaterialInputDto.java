@@ -43,6 +43,7 @@ public class MaterialInputDto {
     private String materialNo;
     private String spec;
     private String specValue;
+    private String maker;
 
 
     public MaterialInput toEntity(Material material) {
@@ -79,6 +80,7 @@ public class MaterialInputDto {
                 .materialNo(material.getMaterialNo())
                 .spec(material.getSpec())
                 .specValue(material.getSpecValue())
+                .maker(material.getMaker())
                 .build();
     }
 }

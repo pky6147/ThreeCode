@@ -212,7 +212,7 @@ function InputState() {
     );
 
     const columns: GridColDef[] = [
-        { field: 'materialInputNo', headerName: '입고번호', width: 150, headerAlign: 'center', align: 'center' },
+        { field: 'materialInputNo', headerName: '입고번호', width: 200, headerAlign: 'center', align: 'center' },
         { field: 'companyName', headerName: '거래처명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
         { field: 'materialNo', headerName: '품목번호', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
         { field: 'materialName', headerName: '품목명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
@@ -300,6 +300,7 @@ function InputState() {
                 }
             }
         },
+        { field: 'maker', headerName: '제조사', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
         { field: 'edit', headerName: '수정', width: 150, headerAlign: 'center', align: 'center',
             renderCell: (params) => {
                 if(params.row.isEditing) {
@@ -377,9 +378,8 @@ function InputState() {
                             />
                             <LabelDatepicker 
                                 labelText='입고일자'
-                                value={searchInfo.materialInputNo}
-                                // onChange={(e) => handleSearchChange('materialInputNo', e.target.value)}
-                                onChange={(date) => handleSearchChange('materialInputNo', date ? date.format('YYYY-MM-DD') : '')}
+                                value={searchInfo.materialInputDate}
+                                onChange={(date) => handleSearchChange('materialInputDate', date ? date.format('YYYY-MM-DD') : '')}
                             />
                         </SearchBar>
                     </Box>

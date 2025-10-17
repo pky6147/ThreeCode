@@ -21,12 +21,12 @@ interface LabelSelectProps {
 export default function LabelSelect({labelText, color, value,  onChange, options, disabled}: LabelSelectProps) {
 
     return (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1}}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: '320px'}}>
             <Typography sx={{
-                color: color || 'white', fontSize: 18, fontWeight: 'bold'
+                color: color || 'white', fontSize: 18, fontWeight: 'bold', minWidth: '70px'
             }}
             >{labelText}</Typography>
-            <FormControl sx={{width: '230px', height: '40px'}}>
+            <FormControl sx={{width: '246px', height: '40px', minWidth: '246px'}}>
                 <Select
                     onChange={onChange}
                     value={value || ''}

@@ -12,13 +12,13 @@ interface LabelInputProps {
 
 export default function LabelInput({labelText, value, color, inputWidth, disabled, onChange}: LabelInputProps) {
     return (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '310px'}}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: '320px'}}>
             <Typography sx={{
                 color: color || 'white', fontSize: 18, fontWeight: 'bold', minWidth: '70px'
             }}
             >{labelText}</Typography>
             <TextField 
-                sx={{backgroundColor: 'white', borderRadius: 1, border: '1px solid', width: inputWidth || '230px' }}
+                sx={{backgroundColor: 'white', borderRadius: 1, border: '1px solid', width: inputWidth || '246px', minWidth: '246px' }}
                 size= "small"
                 value={value || ''}
                 onChange={onChange}
