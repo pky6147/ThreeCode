@@ -14,6 +14,7 @@ public class ProductOutputService {
 
     private final ProductOutputRepository repository;
 //    private final ProductInputRepository productInputRepository;
+// private final ProductRepository productRepository;
 
     /* 출고 등록 (DTO로 반환) */
     public ProductOutputDto createOutputDto(ProductOutputDto dto) {
@@ -97,5 +98,18 @@ public class ProductOutputService {
         LocalDate today = LocalDate.now();
         long countToday = repository.countByProductOutputDate(today); // Repository에 구현 필요
         return String.format("OUT-%s-%04d", today.toString().replace("-", ""), countToday + 1);
+    }
+
+    public ProductOutputDto getDeliveryNoteByOutputId(Long id) {
+        // 기존 단건 조회 로직 재사용
+        ProductOutputDto output = getOutputDtoById(id);
+
+        // 수신인, 주소, 연락처 등은 프론트에서 입력 가능하게 빈값으로 세팅
+        if (output != null) {
+            output.setRemark("");          // 필요시 출하증 용도로 초기화
+            // 나머지 필드들은 DTO에 이미 있음
+        }
+
+        return output;
     }
 }

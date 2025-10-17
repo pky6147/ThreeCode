@@ -7,7 +7,7 @@ import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { productOutputApi } from '../../api/ProductApi';
+import { productOutputApi } from '../../api/ProductOutputApi';
 
 interface RowData {
     id: number;

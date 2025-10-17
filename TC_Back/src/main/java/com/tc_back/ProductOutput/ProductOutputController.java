@@ -50,4 +50,12 @@ public class ProductOutputController {
         productOutputService.softDeleteOutput(id);
         return ResponseEntity.ok("출고 정보가 삭제되었습니다.");
     }
+
+    // 출하증 단건 조회 (ProductOutput 기반)
+    @GetMapping("/{id}/delivery-note")
+    public ResponseEntity<ProductOutputDto> getDeliveryNoteByOutputId(@PathVariable Long id) {
+        ProductOutputDto note = productOutputService.getDeliveryNoteByOutputId(id);
+        return ResponseEntity.ok(note);
+    }
+
 }
