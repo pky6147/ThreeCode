@@ -1,9 +1,17 @@
-import { Box, Breadcrumbs, Typography, Card } from '@mui/material'
+import { Box, Breadcrumbs, Typography, Card, Dialog } from '@mui/material'
 import CustomBtn from '../../component/CustomBtn';
 import CommonTable from '../../component/CommonTable';
 import type { GridColDef } from '@mui/x-data-grid'
+import { useState } from 'react';
+import ProductReg from './ProductReg';
 
-const columns: GridColDef[] = [
+
+function Company() {
+    const [open, setOpen] = useState(false);
+
+
+
+    const columns: GridColDef[] = [
     { field: 'idx', headerName: 'No', width: 70, headerAlign: 'center', align: 'center' },
     { field: 'company_name', headerName: '거래처명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
     { field: 'product_no', headerName: '품목번호', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
@@ -64,7 +72,24 @@ const rows = [
   { id: 4, idx: 4, company_name: '업체2', product_no: 'P100', product_name: 'Test2', category: '일반', paint_type: '분체', price: 1000, remark: '비고4', is_active: 'N' },
 ];
 
-function Company() {
+
+
+
+    const handleRegist = () => {
+        setOpen(true);
+    }
+    const handleClose = () => {
+        setOpen(false);
+    }
+    const handleRegistFinish = () => {
+        // tableRefresh();
+        handleClose();
+    }
+
+
+
+
+
     return (
         <Card
             sx={{ height: '98%', margin: '0.5%'}}
@@ -85,6 +110,7 @@ function Company() {
                             <CustomBtn 
                                 text="등록"
                                 backgroundColor='green'
+                                onClick={()=> handleRegist()}
                             />
                         </Box>
                     </Box>
@@ -100,6 +126,14 @@ function Company() {
                     </Box>
                 </Box>
             </Box>
+
+            <Dialog open={open} onClose={handleClose} //저장
+                            maxWidth={false}
+                        >
+                    <ProductReg doClose={handleRegistFinish} />
+            </Dialog>
+
+
         </Card>
     )
 }
