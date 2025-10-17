@@ -35,12 +35,21 @@ export default function RoutingEdit({ doClose, data, onUpdated }: RoutingEditPro
     } catch (err) {
       const axiosError = err as AxiosError;
       console.error(err);
+
       if (axiosError.response && axiosError.response.data) {
-        alert((axiosError.response.data as AxiosError).message || "수정을 실패했습니다.");
+          const errors = axiosError.response.data;
+
+          if (Array.isArray(errors)) {
+              alert(errors.join("\n")); // 여러 메시지를 줄바꿈으로 표시
+          } else if ((errors as AxiosError).message) {
+              alert((errors as AxiosError).message);
+          } else {
+              alert("저장을 실패했습니다.");
+          }
       } else {
-        alert("수정을 실패했습니다.");
+          alert("저장을 실패했습니다.");
       }
-    }
+  }
   };
 
   const handleCancel = () => {

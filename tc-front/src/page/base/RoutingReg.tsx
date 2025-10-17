@@ -29,16 +29,24 @@ export default function RoutingReg({doClose}:RoutingRegProps) {
             })
         alert("저장되었습니다.")
         doClose()
-        }catch(err) {
-        const axiosError = err as AxiosError;
-          console.error(err)
-            if (axiosError.response && axiosError.response.data) {
-           alert((axiosError.response.data as AxiosError).message || "저장을 실패했습니다.");
-         }else{
-            alert("저장을 실패했습니다.")
+        }catch (err) {
+          const axiosError = err as AxiosError;
+          console.error(err);
+  
+          if (axiosError.response && axiosError.response.data) {
+              const errors = axiosError.response.data;
+  
+              if (Array.isArray(errors)) {
+                  alert(errors.join("\n")); // 여러 메시지를 줄바꿈으로 표시
+              } else if ((errors as AxiosError).message) {
+                  alert((errors as AxiosError).message);
+              } else {
+                  alert("저장을 실패했습니다.");
+              }
+          } else {
+              alert("저장을 실패했습니다.");
           }
-          
-        }
+      }
         
     }
 

@@ -4,6 +4,7 @@ package com.tc_back.routingMaster;
 import com.tc_back.routingMaster.dto.RoutingMasterDto;
 import com.tc_back.routingMaster.entity.RoutingMaster;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,9 +18,9 @@ public class RoutingMasterService {
 
     //등록
     public RoutingMasterDto create(RoutingMasterDto routingMasterDto) {
-        boolean exits = routingMasterRepository.existsByProcessCodeAndIsDelete(routingMasterDto.getProcessCode(),"N");
+        boolean exits = routingMasterRepository.existsByProcessCode(routingMasterDto.getProcessCode());
         if (exits) {
-            throw new RuntimeException("공정코드 " + routingMasterDto.getProcessCode() + "이미 존재합니다.");
+            throw new DuplicateKeyException("공정코드 " + routingMasterDto.getProcessCode() + "이미 존재합니다.");
         }
 
         RoutingMaster entity = routingMasterDto.toEntity();
@@ -36,9 +37,9 @@ public class RoutingMasterService {
     //수정
     public RoutingMasterDto update(Long routingMasterId, RoutingMasterDto dto) {
 
-        boolean exits = routingMasterRepository.existsByProcessCodeAndIsDeleteAndRoutingMasterIdNot(dto.getProcessCode(),"N",routingMasterId );
+        boolean exits = routingMasterRepository.existsByProcessCode(dto.getProcessCode());
         if (exits) {
-            throw new RuntimeException("공정코드 " + dto.getProcessCode() + "이미 존재합니다.");
+            throw new DuplicateKeyException("공정코드 " + dto.getProcessCode() + "이미 존재합니다.");
 
         }
 

@@ -9,5 +9,8 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
+
+file:
+  upload-dir: C:/uploads/
