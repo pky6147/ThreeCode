@@ -11,8 +11,10 @@ import MaterialDetailView from './MaterialDetailView';
 import MaterialEdit from './MaterialEdit';
 import { getMaterial, deleteMaterial } from '../../../api/materialApi';
 import AlertPopup from '../../../component/AlertPopup';
+import ExcelBtn from '../../../component/ExcelBtn';
 
 interface RowData {
+    [key: string]: string | number | undefined;
     id?: number;
     idx?: number;
     materialId?: number;
@@ -195,6 +197,40 @@ function Material() {
         setTimeout(()=> setAlertOpen(false), 3000)
     }
 
+    /* ExcelBtn Props */
+    interface ExcelData {
+        idx: number;
+        companyName: string;
+        materialName: string;
+        materialNo: string;
+        spec: string;
+        maker: string;
+        remark: string;
+        isActive: string;
+    }
+    // 엑셀 컬럼 헤더 매핑 정의
+    const headerMap: Record<keyof ExcelData, string> = {
+        idx: 'Seq',
+        companyName: '기업명',
+        materialName: '품목명',
+        materialNo: '품목번호',
+        spec: '규격',
+        maker: '제조사',
+        remark: '비고',
+        isActive: '사용여부'
+    }
+    const excelData = rows.map(row =>
+        (Object.keys(headerMap) as (keyof ExcelData)[]).reduce<Record<string, string>> (
+            (acc, key) => {
+                const value = row[key];
+                acc[headerMap[key]] = value != null ? String(value) : '';
+                return acc;
+            },
+            {}
+        )
+    );
+    
+
     /* 테이블 헤더 */
     const columns: GridColDef[] = [
         { field: 'idx', headerName: 'No', width: 70, headerAlign: 'center', align: 'center' },
@@ -282,7 +318,8 @@ function Material() {
                         sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}
                     >
                         <Typography sx={{ fontSize: '24px', fontWeight: 'bold', paddingLeft: 2 }}>원자재 정보</Typography>
-                        <Box sx={{paddingRight: 2}}>
+                        <Box sx={{ display:'flex', paddingRight: 2, gap: 2}}>
+                            <ExcelBtn mappingdata={excelData} sheetName="원자재품목" fileName="원자재품목" />
                             <CustomBtn 
                                 text="등록"
                                 backgroundColor='green'
