@@ -149,12 +149,12 @@ return (
           <span className="delivery-note-value">{modalRow.product_output_qty}</span>
         </div>
         <div className="delivery-note-row">
-          <span className="delivery-note-label">출고일자</span>
-          <span className="delivery-note-value">{modalRow.product_output_date}</span>
-        </div>
-        <div className="delivery-note-row">
           <span className="delivery-note-label">입고일자</span>
           <span className="delivery-note-value">{modalRow.product_input_date || '-'}</span>
+        </div>
+        <div className="delivery-note-row">
+          <span className="delivery-note-label">출고일자</span>
+          <span className="delivery-note-value">{modalRow.product_output_date}</span>
         </div>
       </div>
       <div className="delivery-note-actions">
