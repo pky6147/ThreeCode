@@ -59,6 +59,17 @@ public class Product {
     private List<ProductImg> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
     private List<RoutingStep> routingSteps = new ArrayList<>();
+
+
+    // 헬퍼 메서드 (양방향 연관관계 유지)
+    public void addRoutingStep(RoutingStep step) {
+        routingSteps.add(step);
+        step.setProduct(this);
+    }
+
+    public void clearRoutingSteps() {
+        routingSteps.forEach(step -> step.setProduct(null));
+        routingSteps.clear();
+    }
 }

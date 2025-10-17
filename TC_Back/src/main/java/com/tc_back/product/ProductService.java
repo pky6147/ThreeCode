@@ -108,8 +108,8 @@ public class ProductService {
 
     //첫화면조회
     @Transactional(readOnly = true)
-    public  List<ProductListDto> findAll() {
-        return productRepository.findAll()
+    public List<ProductListDto> findAll() {
+        return productRepository.findByIsDelete("N")
                 .stream()
                 .map(p -> new ProductListDto(
                         p.getProductId(),
@@ -192,26 +192,32 @@ public class ProductService {
         }
 
         // 3. 라우팅스텝 수정
-        if (dto.getRoutingSteps() != null) {
-            // 기존 스텝 전부 제거
-            routingStepRepository.deleteAll(product.getRoutingSteps());
-            product.getRoutingSteps().clear();
 
+        // 기존 스텝 강제 로딩
+        product.getRoutingSteps().clear(); // orphanRemoval = true → 삭제 반영
+
+// 새 스텝 추가
+        if (dto.getRoutingSteps() != null) {
             int seq = 1;
             for (RoutingStepDto stepDto : dto.getRoutingSteps()) {
                 RoutingMaster master = routingMasterRepository.findById(stepDto.getRoutingMasterId())
                         .orElseThrow(() -> new RuntimeException("라우팅 마스터 없음: " + stepDto.getRoutingMasterId()));
 
                 RoutingStep step = RoutingStep.builder()
-                        .product(product)
                         .routingMaster(master)
                         .processSeq(seq++)
                         .build();
 
+                // 양방향 연관관계 유지
+                step.setProduct(product);
                 product.getRoutingSteps().add(step);
+
+                // repository.save는 선택적, cascade = ALL이면 없어도 됨
+                routingStepRepository.save(step);
             }
         }
-        // 4. DTO로 변환 후 반환
+
+        // 4. DTO 변환 후 반환
         List<String> imagePaths = product.getImages().stream()
                 .map(ProductImg::getImgPath)
                 .collect(Collectors.toList());
@@ -235,5 +241,16 @@ public class ProductService {
                 imagePaths,
                 routingSteps
         );
-        }
+}
+    //삭제
+    @Transactional
+    public void deleteProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("해당 품목을 찾을 수 없습니다."));
+
+        // 논리 삭제
+        product.setIsDelete("Y");
+
+        // JPA가 트랜잭션 끝나면 자동 flush → DB 반영
+    }
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tc_back.product.dto.*;
 import com.tc_back.routingStep.dto.RoutingStepDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,6 +52,12 @@ public class ProductController {
                 form.toUpdateDto(routingSteps),
                 form.getImages()
         );
+    }
+    //삭제
+    @DeleteMapping("/product/{id}")
+    public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.ok("삭제되었습니다.");
     }
 
 }
