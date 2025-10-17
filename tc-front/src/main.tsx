@@ -56,6 +56,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/base/company" element={<BaseCompany />} />
             <Route path="/base/material" element={<BaseMaterial/>} />
             <Route path="/base/product" element={<BaseProduct/>} />
+            {/* <Route path="/delivery-note" element={<DeliveryNote />} /> */}
             {/* <Route path='/base/companyReg' element={<CompanyReg/>} /> */}
           </Routes>
         </ContentArea>

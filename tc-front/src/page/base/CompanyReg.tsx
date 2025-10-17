@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { TextField, Button, Typography, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
-import '../../CompanyReg.css';
+import '../../css/CompanyReg.css';
 import { createCompany, updateCompany } from '../../api/CompanyApi';
 
 interface CompanyFormProps {

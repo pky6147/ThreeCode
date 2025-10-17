@@ -1,0 +1,24 @@
+.outputCard {
+  height: 98%;
+  margin: 0.5%;
+}
+
+.outputBreadcrumb {
+  padding: 16px;
+}
+
+.outputHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.outputTitle {
+  font-size: 24px;
+  font-weight: bold;
+  padding-left: 16px;
+}
+
+.outputExcelBtn {
+  padding-right: 16px;
+}
