@@ -309,11 +309,13 @@ function InputState() {
                             <CustomBtn
                                 backgroundColor='green'
                                 text="저장"
+                                icon="check"
                                 onClick={() => handleSave(params.row)}
                             />
                             <CustomBtn
                                 backgroundColor='red'
                                 text="취소"
+                                icon="close"
                                 onClick={() => handleCancel(params.row)}
                             />
                         </Box>
@@ -324,6 +326,7 @@ function InputState() {
                         <CustomBtn
                             width="50px"
                             text="수정"
+                            icon="edit"
                             onClick={() => handleEdit(params.row, true)}
                         />
                     )
@@ -336,6 +339,7 @@ function InputState() {
                     <CustomBtn
                         width="50px"
                         text="삭제"
+                        icon="delete"
                         backgroundColor='red'
                         onClick={() => handleDelete(params.row.materialInputId)}
                     />

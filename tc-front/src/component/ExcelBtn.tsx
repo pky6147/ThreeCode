@@ -33,7 +33,7 @@ export default function ExcelBtn(
             text="엑셀"
             backgroundColor='green'
             onClick={handleExcel}
-            startIcon={<FileDownloadIcon/>}
+            endIcon={<FileDownloadIcon/>}
         />
     )
 }

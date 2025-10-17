@@ -259,6 +259,7 @@ function Material() {
           <CustomBtn
             width="50px"
             text="수정"
+            icon="edit"
             onClick={() => handleOpenEdit(params.row)}
           >
           </CustomBtn>
@@ -270,6 +271,7 @@ function Material() {
                   width="50px"
                   text="삭제"
                   backgroundColor='#fb1e1eff'
+                  icon="delete"
                   onClick={() => handleDelete(params.row.materialId)}
                 >
                 </CustomBtn>
@@ -321,6 +323,7 @@ function Material() {
                             <ExcelBtn mappingdata={excelData} sheetName="원자재품목" fileName="원자재품목" />
                             <CustomBtn 
                                 text="등록"
+                                icon="add"
                                 backgroundColor='green'
                                 onClick={handleOpenReg}
                             />

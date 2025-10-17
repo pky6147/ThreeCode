@@ -63,6 +63,7 @@ function Routing() {
               <CustomBtn
                 width="50px"
                 text="수정"
+                icon="edit"
                 onClick={() => handleEdit(params.row)}
               >
               </CustomBtn>
@@ -74,6 +75,7 @@ function Routing() {
                 width="50px"
                 text="삭제"
                 backgroundColor='#fb1e1eff'
+                icon="delete"
                 onClick={() => handleDelete(params.row.routingMasterId)}
               >
               </CustomBtn>
@@ -137,13 +139,14 @@ function Routing() {
                 {/* Content 영역 */}
                 <Box>
                     <Box
-                        sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}
+                        sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 2}}
                     >
                         <Typography sx={{ fontSize: '24px', fontWeight: 'bold', paddingLeft: 2 }}>라우팅 정보</Typography>
                         <Box sx={{paddingRight: 2}}>
                             <CustomBtn 
                                 text="등록"
                                 backgroundColor='green'
+                                icon="add"
                                 onClick={()=> handleRegist()}
                             />
                         </Box>

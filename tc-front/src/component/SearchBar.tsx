@@ -36,8 +36,8 @@ export default function SearchBar({children, onSearch, onReset}: SearchBarProps)
                     width: '10%', padding: 2
                 }}
             >
-                <CustomBtn color="" backgroundColor='#0d47a1' text="검색" onClick={onSearch} />
-                <CustomBtn color="" backgroundColor='#003c8f' text="초기화" onClick={onReset} />
+                <CustomBtn width='100px' icon="search" color="" backgroundColor='#0d47a1' text="검색" onClick={onSearch} />
+                <CustomBtn width='100px' icon="reset" color="" backgroundColor='#003c8f' text="초기화" onClick={onReset} />
             </Box>
         </Card>
     )

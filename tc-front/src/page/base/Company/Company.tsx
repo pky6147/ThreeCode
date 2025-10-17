@@ -182,7 +182,7 @@ function Company() {
       width: 100,
       headerAlign: 'center',
       align: 'center',
-      renderCell: (params) => <CustomBtn width="50px" text="수정" onClick={() => handleOpenForm(params.row)} />,
+      renderCell: (params) => <CustomBtn icon="edit" width="50px" text="수정" onClick={() => handleOpenForm(params.row)} />,
     },
     {
       field: 'del',
@@ -191,7 +191,7 @@ function Company() {
       headerAlign: 'center',
       align: 'center',
       renderCell: (params) => (
-        <CustomBtn width="50px" text="삭제" backgroundColor="#fb1e1eff" onClick={() => handleDelete(params.row)} />
+        <CustomBtn width="50px" icon="delete" text="삭제" backgroundColor="#fb1e1eff" onClick={() => handleDelete(params.row)} />
       ),
     },
   ];
@@ -229,7 +229,7 @@ function Company() {
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingX: 2 }}>
           <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>업체 정보</Typography>
-          <CustomBtn text="등록" backgroundColor="green" onClick={() => handleOpenForm()} />
+          <CustomBtn icon="add" text="등록" backgroundColor="green" onClick={() => handleOpenForm()} />
         </Box>
 
         <Box sx={{ padding: 2 }}>

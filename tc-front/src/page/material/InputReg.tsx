@@ -278,6 +278,7 @@ function InputReg() {
                 <CustomBtn
                   width="50px"
                   text="등록"
+                  icon="check"
                   onClick={() => handleInput(params.row)}
                 >
                 </CustomBtn>
