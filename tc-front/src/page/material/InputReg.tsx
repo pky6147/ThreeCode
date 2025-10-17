@@ -9,16 +9,19 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { getMaterial } from '../../api/materialApi';
+import { getCompanies } from '../../api/CompanyApi';
 import LabelInput from '../../component/LabelInput';
 import SearchBar from '../../component/SearchBar';
 import ExcelBtn from '../../component/ExcelBtn';
 import type { AxiosError } from 'axios';
 import AlertPopup from '../../component/AlertPopup';
 import { createMaterialInput } from '../../api/materialInputApi';
+import type { CompanyRow } from '../base/Company/Company'
 
 interface RowData {
     id?: number;
     idx?: number;
+    companyId?: number;
     companyName?: string;
     materialId?: number;
     materialNo?: string;
@@ -54,10 +57,17 @@ function InputReg() {
 
     const getMaterialData = async () => {
         try {
-            const data = await getMaterial();
+            const companyData = await getCompanies();
+            const materialData = await getMaterial();
             
-            const result = data
-            .filter((row:RowData) => row.isActive === 'Y')
+            const filteredCompany = companyData.filter((row) => row.isActive === 'Y' && row.companyType === '매입처') // 업체사용여부 Y, 매입처
+            const filteredMaterial = materialData
+            .filter((row: RowData) => row.isActive === 'Y') // 원자재 사용여부 Y 인것
+            .filter((row: CompanyRow) =>
+              filteredCompany.some((company) => company.companyId === row.companyId)
+            );
+            // => 업체 매입처, 사용여부 Y, 원자재 사용여부 Y인 것만 노출
+            const result = filteredMaterial
             .map((row:RowData, index:number) => ({
                 ...row,
                 id: row.materialId,
