@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
-import { Box, Breadcrumbs, Card, Typography } from '@mui/material';
-import type { GridColDef } from '@mui/x-data-grid';
-import CommonTable from '../../component/CommonTable';
+import { useState, useEffect } from 'react'
+import { Box, Breadcrumbs, Typography, Card } from '@mui/material'
+// import CustomBC from '../../component/CustomBC';
 import CustomBtn from '../../component/CustomBtn';
+import CommonTable from '../../component/CommonTable';
+import type { GridColDef } from '@mui/x-data-grid'
 import { productOutputApi } from '../../api/ProductOutputApi';
 import '../../css/DeliveryNote.css';
 
@@ -24,7 +25,7 @@ interface OutputData {
 
 function OutputState() {
   const [rows, setRows] = useState<OutputData[]>([]);
-  const [temp, setTemp] = useState<OutputData | null>(null);
+//   const [temp, setTemp] = useState<OutputData | null>(null);
   const [modalRow, setModalRow] = useState<OutputData | null>(null);
   // 모달 닫기
 const handleCloseModal = () => setModalRow(null);
@@ -58,29 +59,29 @@ const handleCloseModal = () => setModalRow(null);
     fetchData();
   }, []);
 
-  const handleEdit = <K extends keyof OutputData>(id: number, field: K, value: OutputData[K]) => {
-    setRows(prev => prev.map(r => (r.id === id ? { ...r, [field]: value } : r)));
-  };
+//   const handleEdit = <K extends keyof OutputData>(id: number, field: K, value: OutputData[K]) => {
+//     setRows(prev => prev.map(r => (r.id === id ? { ...r, [field]: value } : r)));
+//   };
 
-  const handleSave = (row: OutputData) => {
-    alert('수정 기능은 아직 구현되지 않았습니다.');
-    setRows(prev => prev.map(r => (r.id === row.id ? { ...r, isEditing: false } : r)));
-  };
+//   const handleSave = (row: OutputData) => {
+//     alert('수정 기능은 아직 구현되지 않았습니다.');
+//     setRows(prev => prev.map(r => (r.id === row.id ? { ...r, isEditing: false } : r)));
+//   };
 
-  const handleCancel = (row: OutputData) => {
-    if (!temp) return;
-    setRows(prev =>
-      prev.map(r =>
-        r.id === row.id
-          ? { ...r, isEditing: false, product_output_qty: temp.product_output_qty, product_output_date: temp.product_output_date }
-          : r
-      )
-    );
-  };
+//   const handleCancel = (row: OutputData) => {
+//     if (!temp) return;
+//     setRows(prev =>
+//       prev.map(r =>
+//         r.id === row.id
+//           ? { ...r, isEditing: false, product_output_qty: temp.product_output_qty, product_output_date: temp.product_output_date }
+//           : r
+//       )
+//     );
+//   };
 
-  const handleDelete = (row: OutputData) => {
-    alert('삭제 기능은 아직 구현되지 않았습니다.');
-  };
+//   const handleDelete = (row: OutputData) => {
+//     alert('삭제 기능은 아직 구현되지 않았습니다.');
+//   };
 
   // 출하증 모달
   const handleOpenDeliveryNote = (row: OutputData) => {setModalRow(row);};

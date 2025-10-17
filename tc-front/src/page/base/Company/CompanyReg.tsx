@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { TextField, Button, Typography, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
-import '../../css/CompanyReg.css';
-import { createCompany, updateCompany } from '../../api/CompanyApi';
+import '../../../CompanyReg.css';
+import { createCompany, updateCompany } from '../../../api/CompanyApi';
 
 interface CompanyFormProps {
   mode: 'create' | 'edit'; // 등록 or 수정 모드

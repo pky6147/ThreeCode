@@ -12,9 +12,9 @@ interface LabelInputProps {
 
 export default function LabelInput({labelText, value, color, inputWidth, disabled, onChange}: LabelInputProps) {
     return (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1}}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '310px'}}>
             <Typography sx={{
-                color: color || 'white', fontSize: 18, fontWeight: 'bold'
+                color: color || 'white', fontSize: 18, fontWeight: 'bold', minWidth: '70px'
             }}
             >{labelText}</Typography>
             <TextField 
@@ -23,6 +23,7 @@ export default function LabelInput({labelText, value, color, inputWidth, disable
                 value={value || ''}
                 onChange={onChange}
                 disabled={disabled || false}
+                inputProps={{ autoFocus: true }}
             />
         </Box>
     )

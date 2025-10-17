@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Box, Breadcrumbs, Typography, Card, Dialog } from '@mui/material';
-import CustomBtn from '../../component/CustomBtn';
-import CommonTable from '../../component/CommonTable';
+import { Box, Typography, Card, Dialog, type SelectChangeEvent } from '@mui/material';
+import CustomBC from '../../../component/CustomBC';
+import CustomBtn from '../../../component/CustomBtn';
+import CommonTable from '../../../component/CommonTable';
+import SearchBar from '../../../component/SearchBar';
+import LabelInput from '../../../component/LabelInput';
+import LabelSelect from '../../../component/LabelSelect'
 import type { GridColDef } from '@mui/x-data-grid';
 import axios from 'axios';
 
@@ -32,6 +36,22 @@ function Company() {
   const [detailData, setDetailData] = useState<CompanyRow | null>(null);
   const [openForm, setOpenForm] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
+  const [searchInfo, setSearchInfo] = useState({
+          companyType: '거래처',
+          companyName: '',
+          ceoName: '',
+          isActive: 'Y',
+      })
+  const [listActiveYN] = useState<{id: string; name:string}[]>([
+          {id: 'Y', name: 'Y'},
+          {id: 'N', name: 'N'},
+  ])
+  const [listType] = useState<{id: string; name:string}[]>([
+          {id: '거래처', name: '거래처'},
+          {id: '매입처', name: '매입처'},
+  ])
+  const [searchRows, setSearchRows] = useState<CompanyRow[]>([])
+  const [isSearch, setIsSearch] = useState(false)
 
   // 전체 회사 조회
   const fetchCompanies = async () => {
@@ -81,6 +101,53 @@ function Company() {
     }
   };
 
+  /* 검색/초기화 관련함수 */
+  const handleSelectChange_CompanyType = (event: SelectChangeEvent<string>) => {
+          const selectedId = event.target.value;
+          const selectedType = listType.find(c => c.id === selectedId)
+  
+          if(selectedType) {
+              setSearchInfo(prev => ({
+                  ...prev,
+                  companyType: selectedType.name,
+              }))
+          }
+  }
+  const handleSelectChange_IsActive = (event: SelectChangeEvent<string>) => {
+          const selectedId = event.target.value;
+          const selectedActive = listActiveYN.find(c => c.id === selectedId)
+  
+          if(selectedActive) {
+              setSearchInfo(prev => ({
+                  ...prev,
+                  isActive: selectedActive.name,
+              }))
+          }
+  }
+  const handleSearch = () => {
+      setIsSearch(true)
+      const filtered = companies.filter(row =>
+          (row.companyType?.toLowerCase() || '').includes(searchInfo.companyType.toLowerCase()) &&
+          (row.companyName?.toLowerCase() || '').includes(searchInfo.companyName.toLowerCase()) &&
+          (row.ceoName?.toLowerCase() || '').includes(searchInfo.ceoName.toLowerCase()) &&
+          (row.isActive?.toLowerCase() || '').includes(searchInfo.isActive.toLowerCase()) 
+      )
+      setSearchRows(filtered)
+  }
+  const handleReset = () => {
+      setIsSearch(false)
+      setSearchInfo({
+          companyType: '거래처',
+          companyName: '',
+          ceoName: '',
+          isActive: 'Y'
+      })
+      setSearchRows(companies)
+  }
+  const handleSearchChange = (key: keyof typeof searchInfo, value: string) => {
+      setSearchInfo((prev) => ({ ...prev, [key]: value }));
+  };
+
   const columns: GridColDef[] = [
     { field: 'idx', headerName: 'No', width: 70, headerAlign: 'center', align: 'center' },
     { field: 'companyType', headerName: '업체유형', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
@@ -94,7 +161,10 @@ function Company() {
       renderCell: (params) => (
         <Typography
           variant="body2"
-          sx={{ cursor: 'pointer', textDecoration: 'underline', color: 'blue' }}
+          sx={{ cursor: 'pointer', textDecoration: 'underline', color: 'blue',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                height: '100%', width: '100%'
+           }}
           onClick={() => handleOpenDetail(params.row)}
         >
           {params.value}
@@ -129,10 +199,33 @@ function Company() {
   return (
     <Card sx={{ height: '98%', margin: '0.5%' }}>
       <Box>
-        <Breadcrumbs sx={{ padding: 2 }}>
-          <Typography sx={{ color: 'text.primary' }}>기준정보 관리</Typography>
-          <Typography sx={{ color: 'text.primary', fontWeight: 'bold' }}>업체 관리</Typography>
-        </Breadcrumbs>
+        <CustomBC text="업체 관리" subText='기준정보 관리' />
+        <Box sx={{padding: 2}}>
+          <SearchBar onSearch={handleSearch} onReset={handleReset}>
+            <LabelSelect 
+                labelText='업체유형'
+                value={searchInfo.companyType?.toString() || ''}
+                onChange={handleSelectChange_CompanyType}
+                options={listType}
+            />
+            <LabelInput 
+                labelText='업체명'
+                value={searchInfo.companyName}
+                onChange={(e) => handleSearchChange('companyName', e.target.value)}
+            />
+            <LabelInput 
+                labelText='대표명'
+                value={searchInfo.ceoName}
+                onChange={(e) => handleSearchChange('ceoName', e.target.value)}
+            />
+            <LabelSelect 
+                labelText='사용여부'
+                value={searchInfo.isActive?.toString() || ''}
+                onChange={handleSelectChange_IsActive}
+                options={listActiveYN}
+            />
+          </SearchBar>
+        </Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingX: 2 }}>
           <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>업체 정보</Typography>
@@ -140,7 +233,18 @@ function Company() {
         </Box>
 
         <Box sx={{ padding: 2 }}>
-          <CommonTable columns={columns} rows={companies} />
+          {/* <CommonTable columns={columns} rows={companies} /> */}
+          { isSearch ? (
+                            <CommonTable 
+                            columns={columns}
+                            rows={searchRows}
+                            />
+                        ) : (
+                            <CommonTable 
+                                columns={columns}
+                                rows={companies}
+                            />
+                        )}
         </Box>
       </Box>
 

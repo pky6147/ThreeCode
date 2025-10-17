@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Box, Breadcrumbs, Typography, Card, Dialog } from '@mui/material'
+import { Box, Typography, Card, Dialog } from '@mui/material'
+import CustomBC from '../../component/CustomBC';
 import CustomBtn from '../../component/CustomBtn';
 import CommonTable from '../../component/CommonTable';
 import AlertPopup from '../../component/AlertPopup';
@@ -122,10 +123,7 @@ function Stock() {
             >
                 <Box>
                     {/* Breadcrumbs 영역 */}
-                    <Breadcrumbs sx={{padding: 2}}>
-                        <Typography sx={{ color: 'text.primary' }}>원자재 입출고 관리</Typography>
-                        <Typography sx={{ color: 'text.primary', fontWeight: 'bold' }}>재고 현황</Typography>
-                    </Breadcrumbs>
+                    <CustomBC text="재고 현황" subText='원자재 입출고 관리' />
                     {/* Content 영역 */}
                     <SearchBar onSearch={handleSearch} onReset={handleReset}>
                         <LabelInput 

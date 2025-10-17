@@ -42,6 +42,12 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
         {id: 'Y', name: 'Y'},
         {id: 'N', name: 'N'},
     ])
+    const [listCategory] = useState([
+        {id: '페인트', name: '페인트'},
+        {id: '신나', name: '신나'},
+        {id: '세척제', name: '세척제'},
+        {id: '경화제', name: '경화제'},
+    ])
 
     /* Alert */
     const [alertOpen, setAlertOpen] = useState(false)
@@ -51,7 +57,9 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
         try {
             const data = await getCompanies();
 
-            const result = data.map((row) => ({
+            const result = data
+            .filter((row) => row.companyType === '매입처')
+            .map((row) => ({
                 id: String(row.companyId),
                 name: row.companyName
             }))
@@ -67,7 +75,7 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
         getCompanyData();
     }, [])
 
-    const handleSelectCompanyChange = (event: SelectChangeEvent<string>) => {
+    const handleSelectChange_Company = (event: SelectChangeEvent<string>) => {
         const selectedId = event.target.value;
         const selectedCompany = listCompany.find(c => c.id === selectedId)
 
@@ -79,7 +87,7 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
             }))
         }
     }
-    const handleSelectActiveYNChange = (event: SelectChangeEvent<string>) => {
+    const handleSelectChange_Active = (event: SelectChangeEvent<string>) => {
         const selectedId = event.target.value;
         const selectedActiveYN = listActiveYN.find(c => c.id === selectedId)
 
@@ -87,6 +95,17 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
             setNewData(prev => ({
                 ...prev,
                 isActive: selectedActiveYN.name,
+            }))
+        }
+    }
+    const handleSelectChange_Category = (event: SelectChangeEvent<string>) => {
+        const selectedId = event.target.value;
+        const selectedCategory = listCategory.find(c => c.id === selectedId)
+
+        if(selectedCategory) {
+            setNewData(prev => ({
+                ...prev,
+                category: selectedCategory.name,
             }))
         }
     }
@@ -187,7 +206,7 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
                                 color='black'
                                 labelText='매입처명'
                                 value={newData.companyId?.toString() || ''}
-                                onChange={handleSelectCompanyChange}
+                                onChange={handleSelectChange_Company}
                                 options={listCompany}
                             />
                             <LabelInput 
@@ -196,11 +215,12 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
                                 value={newData.materialNo}
                                 onChange={(e) => handleInputChange('materialNo', e.target.value)}
                             />
-                            <LabelInput 
+                            <LabelSelect 
                                 color='black'
                                 labelText='분류'
-                                value={newData.category}
-                                onChange={(e) => handleInputChange('category', e.target.value)}
+                                value={newData.category?.toString() || ''}
+                                onChange={handleSelectChange_Category}
+                                options={listCategory}
                             />
                             <LabelInput 
                                 color='black'
@@ -214,7 +234,7 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
                                 color='black'
                                 labelText='사용여부'
                                 value={newData.isActive?.toString() || ''}
-                                onChange={handleSelectActiveYNChange}
+                                onChange={handleSelectChange_Active}
                                 options={listActiveYN}
                             />
                             <LabelInput 

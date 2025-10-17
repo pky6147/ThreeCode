@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Box, Breadcrumbs, Typography, Card, TextField } from '@mui/material'
+import { Box, Typography, Card, TextField } from '@mui/material'
+import CustomBC from '../../component/CustomBC';
 import CustomBtn from '../../component/CustomBtn';
 import CommonTable from '../../component/CommonTable';
 import type { GridColDef } from '@mui/x-data-grid'
@@ -46,21 +47,21 @@ function OutputReg() {
 
         try {
         // API 호출 결과를 res 변수에 저장
-        const res = await productOutputApi.create({
-            productInputId: row.id,
-            productOutputQty: Number(row.product_output_qty),
-            productOutputDate: dayjs(row.product_output_date).format('YYYY-MM-DD'),
-        });
+            const res = await productOutputApi.create({
+                productInputId: row.id,
+                productOutputQty: Number(row.product_output_qty),
+                productOutputDate: dayjs(row.product_output_date).format('YYYY-MM-DD'),
+            });
 
-       if (res) {
-      alert('출고 등록 완료!');
-      // 등록 후 상태 업데이트 -> 등록된 출고 데이터도 관리하고 싶으면 여기서 rows 업데이트 가능
-    }
-  } catch (err) {
-    console.error(err);
-    alert('출고 등록 중 오류가 발생했습니다.');
-  }
-};
+            if (res) {
+                alert('출고 등록 완료!');
+                // 등록 후 상태 업데이트 -> 등록된 출고 데이터도 관리하고 싶으면 여기서 rows 업데이트 가능
+            }
+        } catch (err) {
+            console.error(err);
+            alert('출고 등록 중 오류가 발생했습니다.');
+        }
+    };
 
     // 테이블 컬럼 설정 
     const columns: GridColDef[] = [
@@ -101,11 +102,9 @@ function OutputReg() {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Card sx={{ height: '98%', margin: '0.5%' }}>
                 <Box>
-                    <Breadcrumbs sx={{ padding: 2 }}>
-                        <Typography>수주대상 입출고 관리</Typography>
-                        <Typography sx={{ fontWeight: 'bold' }}>출고 등록</Typography>
-                    </Breadcrumbs>
-
+                    {/* Breadcrumbs 영역 */}
+                    <CustomBC text="출고 등록" subText='수주대상 입출고 관리' />
+                    {/* Content 영역 */}
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 2 }}>
                         <Typography sx={{ fontSize: 24, fontWeight: 'bold' }}>수주대상품목 출고 등록</Typography>
                         <CustomBtn text="엑셀" backgroundColor="green" />

@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Box, Breadcrumbs, Typography, Card, TextField } from '@mui/material'
+import { Box, Typography, Card, TextField } from '@mui/material'
+import CustomBC from '../../component/CustomBC';
 import CustomBtn from '../../component/CustomBtn';
 import CommonTable from '../../component/CommonTable';
 import type { GridColDef } from '@mui/x-data-grid'
@@ -214,10 +215,7 @@ function InputState() {
             >
                 <Box>
                     {/* Breadcrumbs 영역 */}
-                    <Breadcrumbs sx={{padding: 2}}>
-                        <Typography sx={{ color: 'text.primary' }}>수주대상 입출고 관리</Typography>
-                        <Typography sx={{ color: 'text.primary', fontWeight: 'bold' }}>입고 현황</Typography>
-                    </Breadcrumbs>
+                    <CustomBC text="입고 현황" subText='수주대상 입출고 관리' />
                     {/* Content 영역 */}
                     <Box>
                         <Box
