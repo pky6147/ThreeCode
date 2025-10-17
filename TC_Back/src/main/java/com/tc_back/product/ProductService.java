@@ -5,6 +5,7 @@ import com.tc_back.Company.CompanyRepository;
 import com.tc_back.img.FileStorageService;
 import com.tc_back.img.ProductImg;
 import com.tc_back.img.ProductImgRepository;
+import com.tc_back.product.dto.ProductDto;
 import com.tc_back.product.dto.ProductListDto;
 import com.tc_back.product.dto.ProductResponseDto;
 import com.tc_back.product.dto.ProductUpdateDto;
@@ -35,7 +36,7 @@ public class ProductService {
     private final FileStorageService fileStorageService;
 
     @Transactional
-    public Product createProduct(ProductUpdateDto dto, List<MultipartFile> images) {
+    public Product createProduct(ProductDto dto) {
         Company company = companyRepository.findById(dto.getCompanyId())
                 .orElseThrow(() -> new RuntimeException("업체를 찾을 수 없습니다."));
 
@@ -57,13 +58,13 @@ public class ProductService {
 
         //이미지저장
         int nowimg = productImgRepository.countByProduct(product);
-        if (nowimg + images.size() > 3) {
+        if (nowimg + dto.getImages().size() > 3) {
             throw new RuntimeException("이미지는 최대 3개까지 업로드 가능합니다.");
         }
 
-        if (images != null && images.isEmpty()) {
+        if (dto.getImages() != null && dto.getImages().isEmpty()) {
             int idx = 0;
-            for (MultipartFile file : images) {
+            for (MultipartFile file : dto.getImages()) {
                 String path = fileStorageService.storeFile(file);
                 ProductImg img = ProductImg.builder()
                         .product(saved)
@@ -77,7 +78,7 @@ public class ProductService {
 
 
         //라우팅스텝저장
-        if (dto.getRoutingSteps() != null && !dto.getRoutingSteps().isEmpty()) {
+        if (dto.getRoutingSteps() != null) {
             List<Long> selectedIds = dto.getRoutingSteps()
                     .stream()
                     .map(RoutingStepDto::getRoutingMasterId)
@@ -85,12 +86,14 @@ public class ProductService {
 
             List<RoutingMaster> masters = routingMasterRepository.findAllById(selectedIds);
 
+            masters.sort(Comparator.comparingInt(RoutingMaster::getProcessOrder));
+
             // 없는 ID 체크
             if (masters.size() != selectedIds.size()) {
                 throw new RuntimeException("존재하지 않는 라우팅마스터 ID가 있습니다.");
             }
 
-            masters.sort(Comparator.comparingInt(RoutingMaster::getProcessOrder));
+
 
             int seq = 1;
             for (RoutingMaster master : masters) {
