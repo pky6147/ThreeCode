@@ -43,6 +43,12 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
         {id: 'Y', name: 'Y'},
         {id: 'N', name: 'N'},
     ])
+    const [listCategory] = useState([
+        {id: '페인트', name: '페인트'},
+        {id: '신나', name: '신나'},
+        {id: '세척제', name: '세척제'},
+        {id: '경화제', name: '경화제'},
+    ])
 
     const [alertOpen, setAlertOpen] = useState(false)
     const [alertInfo, setAlertInfo] = useState<AlertInfo>({})
@@ -68,7 +74,7 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
         getCompanyData();
     }, [])
 
-    const handleSelectCompanyChange = (event: SelectChangeEvent<string>) => {
+    const handleSelectChange_Company = (event: SelectChangeEvent<string>) => {
         const selectedId = event.target.value;
         const selectedCompany = listCompany.find(c => c.id === selectedId)
 
@@ -80,7 +86,7 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
             }))
         }
     }
-    const handleSelectActiveYNChange = (event: SelectChangeEvent<string>) => {
+    const handleSelectChange_Active = (event: SelectChangeEvent<string>) => {
         const selectedId = event.target.value;
         const selectedActiveYN = listActiveYN.find(c => c.id === selectedId)
 
@@ -88,6 +94,17 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
             setEditData(prev => ({
                 ...prev,
                 isActive: selectedActiveYN.name,
+            }))
+        }
+    }
+    const handleSelectChange_Category = (event: SelectChangeEvent<string>) => {
+        const selectedId = event.target.value;
+        const selectedCategory = listCategory.find(c => c.id === selectedId)
+
+        if(selectedCategory) {
+            setEditData(prev => ({
+                ...prev,
+                category: selectedCategory.name,
             }))
         }
     }
@@ -192,8 +209,9 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
                                     color='black'
                                     labelText='매입처명'
                                     value={editData.companyId?.toString() || ''}
-                                    onChange={handleSelectCompanyChange}
+                                    onChange={handleSelectChange_Company}
                                     options={listCompany}
+                                    disabled={true}
                                 />
                             )}
                             <LabelInput 
@@ -202,12 +220,13 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
                                 value={editData.materialNo}
                                 onChange={(e) => handleInputChange('materialNo', e.target.value)}
                             />
-                            <LabelInput 
-                                color='black'
-                                labelText='분류'
-                                value={editData.category}
-                                onChange={(e) => handleInputChange('category', e.target.value)}
-                            />
+                            <LabelSelect 
+                                    color='black'
+                                    labelText='분류'
+                                    value={editData.category?.toString() || ''}
+                                    onChange={handleSelectChange_Category}
+                                    options={listCategory}
+                                />
                             <LabelInput 
                                 color='black'
                                 labelText='규격'
@@ -220,7 +239,7 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
                                 color='black'
                                 labelText='사용여부'
                                 value={editData.isActive?.toString() || ''}
-                                onChange={handleSelectActiveYNChange}
+                                onChange={handleSelectChange_Active}
                                 options={listActiveYN}
                             />
                             <LabelInput 

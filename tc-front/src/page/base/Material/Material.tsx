@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Box, Breadcrumbs, Typography, Card, Dialog, type SelectChangeEvent } from '@mui/material'
+import { Box, Typography, Card, Dialog, type SelectChangeEvent } from '@mui/material'
+import CustomBC from '../../../component/CustomBC';
 import CustomBtn from '../../../component/CustomBtn';
 import CommonTable from '../../../component/CommonTable';
 import type { GridColDef } from '@mui/x-data-grid'
@@ -14,7 +15,6 @@ import AlertPopup from '../../../component/AlertPopup';
 import ExcelBtn from '../../../component/ExcelBtn';
 
 interface RowData {
-    [key: string]: string | number | undefined;
     id?: number;
     idx?: number;
     materialId?: number;
@@ -283,35 +283,34 @@ function Material() {
         >
             <Box>
                 {/* Breadcrumbs 영역 */}
-                <Breadcrumbs sx={{padding: 2}}>
-                    <Typography sx={{ color: 'text.primary' }}>기준정보 관리</Typography>
-                    <Typography sx={{ color: 'text.primary', fontWeight: 'bold' }}>원자재 관리</Typography>
-                </Breadcrumbs>
+                <CustomBC text="원자재 관리" subText='기준정보 관리' />
                 {/* Content 영역 */}
                 {/* 검색필터 */}
-                <SearchBar onSearch={handleSearch} onReset={handleReset}>
-                    <LabelInput 
-                        labelText='매입처명'
-                        value={searchInfo.companyName}
-                        onChange={(e) => handleSearchChange('companyName', e.target.value)}
-                    />
-                    <LabelInput 
-                        labelText='품목번호'
-                        value={searchInfo.materialNo}
-                        onChange={(e) => handleSearchChange('materialNo', e.target.value)}
-                    />
-                    <LabelInput 
-                        labelText='품목명'
-                        value={searchInfo.materialName}
-                        onChange={(e) => handleSearchChange('materialName', e.target.value)}
-                    />
-                    <LabelSelect 
-                        labelText='사용여부'
-                        value={searchInfo.isActive?.toString() || ''}
-                        onChange={handleSelectChange}
-                        options={listActiveYN}
-                    />
-                </SearchBar>
+                <Box sx={{padding: 2}}>
+                    <SearchBar onSearch={handleSearch} onReset={handleReset}>
+                        <LabelInput 
+                            labelText='매입처명'
+                            value={searchInfo.companyName}
+                            onChange={(e) => handleSearchChange('companyName', e.target.value)}
+                        />
+                        <LabelInput 
+                            labelText='품목번호'
+                            value={searchInfo.materialNo}
+                            onChange={(e) => handleSearchChange('materialNo', e.target.value)}
+                        />
+                        <LabelInput 
+                            labelText='품목명'
+                            value={searchInfo.materialName}
+                            onChange={(e) => handleSearchChange('materialName', e.target.value)}
+                        />
+                        <LabelSelect 
+                            labelText='사용여부'
+                            value={searchInfo.isActive?.toString() || ''}
+                            onChange={handleSelectChange}
+                            options={listActiveYN}
+                        />
+                    </SearchBar>
+                </Box>
                 <Box>
                     {/* 등록, 엑셀버튼 영역 */}
                     <Box

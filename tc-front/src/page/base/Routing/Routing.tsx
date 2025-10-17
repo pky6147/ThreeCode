@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react'
-import { 
-    Box, 
-    Breadcrumbs, 
-    Typography, 
-    Card, 
-    Dialog
-} from '@mui/material'
+import { Box, Typography, Card, Dialog } from '@mui/material'
+import CustomBC from '../../../component/CustomBC';
 import CustomBtn from '../../../component/CustomBtn';
 import CommonTable from '../../../component/CommonTable';
 import type { GridColDef } from '@mui/x-data-grid'
@@ -138,10 +133,7 @@ function Routing() {
         >
             <Box>
                 {/* Breadcrumbs 영역 */}
-                <Breadcrumbs sx={{padding: 2}}>
-                    <Typography sx={{ color: 'text.primary' }}>기준정보 관리</Typography>
-                    <Typography sx={{ color: 'text.primary', fontWeight: 'bold' }}>라우팅 관리</Typography>
-                </Breadcrumbs>
+                <CustomBC text="라우팅 관리" subText='기준정보 관리' />
                 {/* Content 영역 */}
                 <Box>
                     <Box

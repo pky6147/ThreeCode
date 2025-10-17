@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Box, Breadcrumbs, Typography, Card, Dialog, type SelectChangeEvent } from '@mui/material';
+import { Box, Typography, Card, Dialog, type SelectChangeEvent } from '@mui/material';
+import CustomBC from '../../../component/CustomBC';
 import CustomBtn from '../../../component/CustomBtn';
 import CommonTable from '../../../component/CommonTable';
 import SearchBar from '../../../component/SearchBar';
@@ -198,35 +199,33 @@ function Company() {
   return (
     <Card sx={{ height: '98%', margin: '0.5%' }}>
       <Box>
-        <Breadcrumbs sx={{ padding: 2 }}>
-          <Typography sx={{ color: 'text.primary' }}>기준정보 관리</Typography>
-          <Typography sx={{ color: 'text.primary', fontWeight: 'bold' }}>업체 관리</Typography>
-        </Breadcrumbs>
-
-        <SearchBar onSearch={handleSearch} onReset={handleReset}>
-          <LabelSelect 
-              labelText='업체유형'
-              value={searchInfo.companyType?.toString() || ''}
-              onChange={handleSelectChange_CompanyType}
-              options={listType}
-          />
-          <LabelInput 
-              labelText='업체명'
-              value={searchInfo.companyName}
-              onChange={(e) => handleSearchChange('companyName', e.target.value)}
-          />
-          <LabelInput 
-              labelText='대표명'
-              value={searchInfo.ceoName}
-              onChange={(e) => handleSearchChange('ceoName', e.target.value)}
-          />
-          <LabelSelect 
-              labelText='사용여부'
-              value={searchInfo.isActive?.toString() || ''}
-              onChange={handleSelectChange_IsActive}
-              options={listActiveYN}
-          />
-        </SearchBar>
+        <CustomBC text="업체 관리" subText='기준정보 관리' />
+        <Box sx={{padding: 2}}>
+          <SearchBar onSearch={handleSearch} onReset={handleReset}>
+            <LabelSelect 
+                labelText='업체유형'
+                value={searchInfo.companyType?.toString() || ''}
+                onChange={handleSelectChange_CompanyType}
+                options={listType}
+            />
+            <LabelInput 
+                labelText='업체명'
+                value={searchInfo.companyName}
+                onChange={(e) => handleSearchChange('companyName', e.target.value)}
+            />
+            <LabelInput 
+                labelText='대표명'
+                value={searchInfo.ceoName}
+                onChange={(e) => handleSearchChange('ceoName', e.target.value)}
+            />
+            <LabelSelect 
+                labelText='사용여부'
+                value={searchInfo.isActive?.toString() || ''}
+                onChange={handleSelectChange_IsActive}
+                options={listActiveYN}
+            />
+          </SearchBar>
+        </Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingX: 2 }}>
           <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>업체 정보</Typography>

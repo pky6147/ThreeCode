@@ -14,10 +14,9 @@ export default function SearchBar({children, onSearch, onReset}: SearchBarProps)
             sx={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                width: '97.5%',
+                width: '100%',
                 minHeight: '140px',
                 height: '140px',
-                margin: 2,
                 backgroundColor: '#1e88e5'
             }}
         >

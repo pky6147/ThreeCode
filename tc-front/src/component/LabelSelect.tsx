@@ -15,9 +15,10 @@ interface LabelSelectProps {
     value?: string;
     onChange?: (event: SelectChangeEvent<string>) => void;
     options: { id: string; name: string}[];
+    disabled?: boolean
 }
 
-export default function LabelSelect({labelText, color, value,  onChange, options}: LabelSelectProps) {
+export default function LabelSelect({labelText, color, value,  onChange, options, disabled}: LabelSelectProps) {
 
     return (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1}}>
@@ -30,6 +31,7 @@ export default function LabelSelect({labelText, color, value,  onChange, options
                     onChange={onChange}
                     value={value || ''}
                     sx={{ height: '100%', backgroundColor: 'white'}}
+                    disabled={disabled || false}
                 >
                     {options.map(opt => (
                         <MenuItem key={opt.id} value={opt.id}>
