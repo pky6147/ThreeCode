@@ -37,11 +37,10 @@ export const createProduct = async (product: ProductDto) => {
   formData.append("isActive", product.isActive);
   formData.append("remark", product.remark);
 
-  // 라우팅 스텝 JSON 문자열로 추가
-  formData.append(
-    "routingStepsJson",
-    JSON.stringify(product.routingIds.map((id) => ({ routingMasterId: id })))
-  );
+  // ✅ routingStepsJson 대신 FormData로 펼쳐서 전송
+  product.routingIds.forEach((id, index) => {
+    formData.append(`routingSteps[${index}].routingMasterId`, String(id));
+  });
 
   // 이미지 파일 추가
   if (product.images) {
