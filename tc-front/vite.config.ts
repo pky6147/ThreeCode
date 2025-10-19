@@ -11,6 +11,10 @@ export default defineConfig({
         target: "http://localhost:8080",
         rewrite:(path) => path.replace(/^\/api/,""),
         changeOrigin: true
+      },
+      '/images': {               // ✅ 이미지 요청도 프록시
+        target: "http://localhost:8080",
+        changeOrigin: true
       }
     }
   }

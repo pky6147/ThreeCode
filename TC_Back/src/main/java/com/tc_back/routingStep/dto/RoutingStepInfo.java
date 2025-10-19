@@ -9,7 +9,10 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class RoutingStepInfo {
-    private String processName;
     private int processSeq;
+    private String processCode;
+    private String processName;
+    private double processTime; // 혹은 BigDecimal
+    private String remark;
 
 }

@@ -37,7 +37,7 @@ export const createProduct = async (product: ProductDto) => {
   formData.append("isActive", product.isActive);
   formData.append("remark", product.remark);
 
-  // ✅ routingStepsJson 대신 FormData로 펼쳐서 전송
+  //routingStepsJson 대신 FormData로 펼쳐서 전송
   product.routingIds.forEach((id, index) => {
     formData.append(`routingSteps[${index}].routingMasterId`, String(id));
   });
@@ -55,6 +55,20 @@ export const createProduct = async (product: ProductDto) => {
 
   return res.data;
 };
+
+
+// 첫화면조회
+export const getProducts = async () => {
+  const res = await axios.get(`${BASE_URL}/product`);
+  return res.data; // List<ProductListDto> 형태로 반환됨
+};
+
+// 상세조회
+export const getProductDetail = async (productId: number) => {
+  const res = await axios.get(`${BASE_URL}/product/${productId}`);
+  return res.data;
+};
+
 
 // 제품 수정 (ID 기반)
 // export const updateProduct = async (productId: number, product: ProductDto) => {

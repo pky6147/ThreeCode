@@ -54,7 +54,7 @@ public class FileStorageServiceImpl implements FileStorageService {
             Path targetPath = folderPath.resolve(newFileName);
             file.transferTo(targetPath.toFile());
 
-            return targetPath.toString();
+            return newFileName;
         } catch (IOException e) {
             throw new RuntimeException("파일 저장 실패: " + file.getOriginalFilename(), e);
         }
