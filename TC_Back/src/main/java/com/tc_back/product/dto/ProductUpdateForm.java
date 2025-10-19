@@ -30,7 +30,8 @@ public class ProductUpdateForm {
     // 라우팅스텝 JSON 문자열
     // 예: [{"routingMasterId":2},{"routingMasterId":1},{"routingMasterId":3}]
     private String routingStepsJson;
-
+    private List<Long> productImgIds;  // 기존 이미지 ID
+    private List<String> topFlags;      // Y/N
     // List<RoutingStepDto>로 변환하여 ProductUpdateDto 생성
     public ProductUpdateDto toUpdateDto(List<RoutingStepDto> routingSteps) {
         ProductUpdateDto dto = new ProductUpdateDto();

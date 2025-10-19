@@ -164,7 +164,10 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponseDto updateProduct(Long productId, ProductUpdateDto dto, List<MultipartFile> images) {
+    public ProductResponseDto updateProduct(Long productId, ProductUpdateDto dto,
+                                            List<MultipartFile> images,
+                                            List<Long> productImgIds,
+                                            List<String> topFlags) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("해당 품목을 찾을 수 없습니다."));
 
@@ -178,48 +181,80 @@ public class ProductService {
         product.setRemark(dto.getRemark());
         product.setIsActive(dto.getIsActive());
 
-        // 2. 이미지 수정
-        if (images != null && !images.isEmpty()) {
-            // 기존 이미지 삭제
-            product.getImages().forEach(img -> fileStorageService.deleteFile(img.getImgPath()));
-            product.getImages().clear(); // orphanRemoval = true
+        // 2. 이미지 수정/삭제/추가
+        if (images != null) {
+            // 1️⃣ 기존 이미지 매핑 (imgId 기준)
+            for (int i = 0; i < images.size(); i++) {
+                MultipartFile file = images.get(i);
+                Long imgId = (productImgIds != null && productImgIds.size() > i) ? productImgIds.get(i) : null;
+                String top = (topFlags != null && topFlags.size() > i) ? topFlags.get(i) : "N";
 
-            // 새 이미지 저장
-            int idx = 0;
-            for (MultipartFile file : images) {
-                String path = fileStorageService.storeFile(file);
-                ProductImg img = ProductImg.builder()
-                        .product(product)
-                        .imgPath(path)
-                        .top(idx == 0 ? "Y" : "N")
-                        .build();
-                product.getImages().add(img); // 양방향 연관관계 유지
-                idx++;
+                ProductImg img;
+
+                if (imgId != null) {
+                    // 기존 이미지 수정
+                    img = productImgRepository.findById(imgId)
+                            .orElseThrow(() -> new RuntimeException("이미지 없음: " + imgId));
+
+                    if (file != null && !file.isEmpty()) {
+                        // 파일 교체
+                        fileStorageService.deleteFile(img.getImgPath());
+                        img.setImgPath(fileStorageService.storeFile(file));
+                    }
+
+                    img.setTop(top);
+
+                } else if (file != null && !file.isEmpty()) {
+                    // 새 이미지 추가
+                    img = ProductImg.builder()
+                            .product(product)
+                            .imgPath(fileStorageService.storeFile(file))
+                            .top(top)
+                            .build();
+                    product.getImages().add(img);
+                }
+            }
+
+            // 2️⃣ 삭제 처리: productImgIds에 없는 기존 이미지는 제거
+            List<Long> safeProductImgIds = (productImgIds != null) ? productImgIds : List.of();
+
+            product.getImages().removeIf(img -> {
+                if (img.getProductImgId() != null && !safeProductImgIds.contains(img.getProductImgId())) {
+                    fileStorageService.deleteFile(img.getImgPath());
+                    productImgRepository.delete(img);
+                    return true;
+                }
+                return false;
+            });
+
+            // 3️⃣ top 중복 방지: Y가 2개 이상이면 첫 번째만 유지, 나머지 N으로 변경
+            boolean topFound = false;
+            for (ProductImg img : product.getImages()) {
+                if ("Y".equals(img.getTop())) {
+                    if (!topFound) topFound = true;
+                    else img.setTop("N");
+                }
             }
         }
 
-        // 3. 라우팅스텝 수정
-
-        // 기존 스텝 강제 로딩
-        product.getRoutingSteps().clear(); // orphanRemoval = true → 삭제 반영
-
-// 새 스텝 추가
+        // 3. 라우팅 스텝 수정
+        product.getRoutingSteps().clear(); // 기존 삭제
         if (dto.getRoutingSteps() != null) {
             int seq = 1;
             for (RoutingStepDto stepDto : dto.getRoutingSteps()) {
+                if (stepDto.getRoutingMasterId() == null)
+                    throw new RuntimeException("라우팅 마스터 ID가 없습니다.");
+
                 RoutingMaster master = routingMasterRepository.findById(stepDto.getRoutingMasterId())
                         .orElseThrow(() -> new RuntimeException("라우팅 마스터 없음: " + stepDto.getRoutingMasterId()));
 
                 RoutingStep step = RoutingStep.builder()
                         .routingMaster(master)
                         .processSeq(seq++)
+                        .product(product)
                         .build();
 
-                // 양방향 연관관계 유지
-                step.setProduct(product);
                 product.getRoutingSteps().add(step);
-
-                // repository.save는 선택적, cascade = ALL이면 없어도 됨
                 routingStepRepository.save(step);
             }
         }
@@ -231,13 +266,12 @@ public class ProductService {
 
         List<RoutingStepInfo> routingSteps = product.getRoutingSteps().stream()
                 .sorted(Comparator.comparingInt(RoutingStep::getProcessSeq))
-//                .map(rs -> new RoutingStepInfo(rs.getRoutingMaster().getProcessName(), rs.getProcessSeq()))
                 .map(rs -> new RoutingStepInfo(
                         rs.getProcessSeq(),
-                        rs.getRoutingMaster().getProcessCode(),   // RoutingMaster에서 가져오기
-                        rs.getRoutingMaster().getProcessName(),   // RoutingMaster에서 가져오기
-                        rs.getRoutingMaster().getProcessTime(),   // RoutingMaster에서 가져오기
-                        rs.getRoutingMaster().getRemark()         // RoutingMaster에서 가져오기
+                        rs.getRoutingMaster().getProcessCode(),
+                        rs.getRoutingMaster().getProcessName(),
+                        rs.getRoutingMaster().getProcessTime(),
+                        rs.getRoutingMaster().getRemark()
                 ))
                 .collect(Collectors.toList());
 
@@ -255,7 +289,8 @@ public class ProductService {
                 imagePaths,
                 routingSteps
         );
-}
+    }
+
     //삭제
     @Transactional
     public void deleteProduct(Long productId) {

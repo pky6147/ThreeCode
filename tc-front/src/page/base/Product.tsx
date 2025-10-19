@@ -12,6 +12,8 @@ function Company() {
   const [rows, setRows] = useState<any[]>([]); // ✅ 서버에서 받아올 데이터
   const [detailOpen, setDetailOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editData, setEditData] = useState(null);
 
   const handleDetail = async (productId: number) => {
     try {
@@ -21,6 +23,16 @@ function Company() {
       setDetailOpen(true);
     } catch (err) {
       console.error("상세조회 실패:", err);
+    }
+  };
+
+  const handleEdit = async (productId: number) => {
+    try {
+      const res = await getProductDetail(productId); // ✅ 상세조회 API 재활용
+      setEditData(res);
+      setEditOpen(true);
+    } catch (err) {
+      console.error("수정 데이터 불러오기 실패:", err);
     }
   };
 
@@ -80,7 +92,7 @@ function Company() {
         <CustomBtn
           width="50px"
           text="수정"
-          onClick={() => alert(`수정할 ID: ${params.row.id}`)}
+          onClick={() => handleEdit(params.row.id)}
         />
       ),
     },
@@ -154,6 +166,32 @@ function Company() {
       onClose={() => setDetailOpen(false)}
       data={selectedProduct}
     />
+
+<Dialog open={editOpen} onClose={() => setEditOpen(false)} maxWidth={false}>
+  <ProductReg
+    doClose={() => {
+      setEditOpen(false);
+      // 수정 후 목록 갱신
+      getProducts().then((data) => {
+        const mapped = data.map((item: any, idx: number) => ({
+          id: item.productId,
+          idx: idx + 1,
+          company_name: item.companyName,
+          product_no: item.productNo,
+          product_name: item.productName,
+          category: item.category,
+          paint_type: item.paintType,
+          price: item.price,
+          remark: item.remark,
+          is_active: item.isActive,
+        }));
+        setRows(mapped);
+      });
+    }}
+    initialData={editData}
+    isEdit={true}
+  />
+</Dialog>
     </Card>
   );
 }

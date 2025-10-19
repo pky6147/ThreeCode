@@ -1,20 +1,21 @@
 import { Box, Button, TextField, MenuItem, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-
 import { getCompanies, type CompanyDto } from "../../api/CompanyApi";
 import RoutingMasterView from "../../component/routingMasterView";
 import ImgUpdate, { type ProductImage } from "../../component/ImgUpload";
-import { createProduct, type ProductDto } from "../../api/productApi";
-
+import { createProduct, updateProduct, type ProductDto } from "../../api/productApi"; // ✅ updateProduct 추가
 
 interface ProductRegProps {
   doClose: () => void;
+  initialData?: any; // 수정 시 전달되는 데이터
+  isEdit?: boolean;  // 수정 모드 여부
 }
 
-export default function ProductReg({ doClose }: ProductRegProps) {
+export default function ProductReg({ doClose, initialData, isEdit = false }: ProductRegProps) {
   const [companies, setCompanies] = useState<CompanyDto[]>([]);
   const [selectedRoutingIds, setSelectedRoutingIds] = useState<number[]>([]);
   const [images, setImages] = useState<ProductImage[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]); // ✅ 기존 이미지 표시용
 
   const [data, setData] = useState({
     companyId: 0,
@@ -28,17 +29,41 @@ export default function ProductReg({ doClose }: ProductRegProps) {
     remark: "",
   });
 
-  // 거래처 목록 호출
-  const fetchCompanies = async () => {
-    try {
-      const res: CompanyDto[] = await getCompanies();
-      setCompanies(res);
-    } catch (err) {
-      console.error("거래처 조회 실패", err);
-    }
-  };
-
+  // ✅ 수정모드: 기존 데이터 세팅
   useEffect(() => {
+    if (isEdit && initialData) {
+      setData({
+        companyId: initialData.companyId ?? 0,
+        productName: initialData.productName ?? "",
+        productCode: initialData.productNo ?? "", // ✅ 백엔드에선 productNo
+        paintType: initialData.paintType ?? "",
+        category: initialData.category ?? "",
+        color: initialData.color ?? "",
+        price: initialData.price ?? 0,
+        isActive: initialData.isActive ?? "Y",
+        remark: initialData.remark ?? "",
+      });
+
+      // 라우팅 스텝 ID 세팅
+      if (initialData.routingSteps) {
+        setSelectedRoutingIds(initialData.routingSteps.map((s: any) => s.routingMasterId));
+      }
+
+      // 이미지 미리보기용 세팅
+      setExistingImages(initialData.imagePaths || []);
+    }
+  }, [isEdit, initialData]);
+
+  // 거래처 목록 호출
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      try {
+        const res: CompanyDto[] = await getCompanies();
+        setCompanies(res);
+      } catch (err) {
+        console.error("거래처 조회 실패", err);
+      }
+    };
     fetchCompanies();
   }, []);
 
@@ -50,24 +75,29 @@ export default function ProductReg({ doClose }: ProductRegProps) {
     });
   };
 
-  // 저장
+  // ✅ 저장 (등록 / 수정 구분)
   const handleSave = async () => {
-  try {
-    const payload: ProductDto = {
-      ...data,
-      routingIds: selectedRoutingIds,
-      images,
-    };
+    try {
+      const payload: ProductDto = {
+        ...data,
+        routingIds: selectedRoutingIds,
+        images,
+      };
 
-    await createProduct(payload);
+      if (isEdit && initialData?.productId) {
+        await updateProduct(initialData.productId, payload);
+        alert("제품이 수정되었습니다.");
+      } else {
+        await createProduct(payload);
+        alert("제품이 등록되었습니다.");
+      }
 
-    alert("등록되었습니다.");
-    doClose();
-  } catch (err) {
-    console.error("등록 실패", err);
-    alert("등록 실패했습니다.");
-  }
-};
+      doClose();
+    } catch (err) {
+      console.error("저장 실패", err);
+      alert("저장 실패했습니다.");
+    }
+  };
 
   return (
     <Box
@@ -102,7 +132,7 @@ export default function ProductReg({ doClose }: ProductRegProps) {
             mt: "5px",
           }}
         >
-          수주대상품목등록
+          {isEdit ? "수주대상품목 수정" : "수주대상품목 등록"} {/* ✅ 제목 변경 */}
         </Typography>
 
         {/* 거래처 + 품목명 + 품목번호 */}
@@ -115,6 +145,7 @@ export default function ProductReg({ doClose }: ProductRegProps) {
             onChange={handleChange}
             size="small"
             sx={{ flex: 1 }}
+            disabled={isEdit} // ✅ 수정 시 거래처 변경 방지
           >
             <MenuItem value={0}>선택</MenuItem>
             {companies.map((c) => (
@@ -223,7 +254,11 @@ export default function ProductReg({ doClose }: ProductRegProps) {
         />
 
         {/* 이미지 첨부 */}
-        <ImgUpdate images={images} setImages={setImages} />
+        <ImgUpdate
+          images={images}
+          setImages={setImages}
+          existingImages={existingImages} // ✅ 기존 이미지 표시
+        />
 
         {/* 버튼 */}
         <Box sx={{ display: "flex", gap: 2, justifyContent: "center", mt: 2 }}>
@@ -233,7 +268,7 @@ export default function ProductReg({ doClose }: ProductRegProps) {
             size="small"
             onClick={handleSave}
           >
-            등록
+            {isEdit ? "수정" : "등록"} {/* ✅ 버튼 텍스트 변경 */}
           </Button>
           <Button variant="outlined" color="secondary" size="small" onClick={doClose}>
             취소

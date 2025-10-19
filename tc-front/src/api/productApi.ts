@@ -69,34 +69,37 @@ export const getProductDetail = async (productId: number) => {
   return res.data;
 };
 
+export const updateProduct = async (productId: number, product: ProductDto) => {
+  const formData = new FormData();
 
-// 제품 수정 (ID 기반)
-// export const updateProduct = async (productId: number, product: ProductDto) => {
-//   const formData = new FormData();
+  formData.append("companyId", String(product.companyId));
+  formData.append("productName", product.productName);
+  formData.append("productNo", product.productCode);
+  formData.append("paintType", product.paintType);
+  formData.append("category", product.category);
+  formData.append("color", product.color);
+  formData.append("price", String(product.price));
+  formData.append("isActive", product.isActive);
+  formData.append("remark", product.remark);
 
-//   formData.append("companyId", String(product.companyId));
-//   formData.append("productName", product.productName);
-//   formData.append("productCode", product.productCode);
-//   formData.append("paintType", product.paintType);
-//   formData.append("category", product.category);
-//   formData.append("color", product.color);
-//   formData.append("price", String(product.price));
-//   formData.append("isActive", product.isActive);
-//   formData.append("remark", product.remark);
+  // 라우팅 정보
+  formData.append("routingStepsJson", JSON.stringify(product.routingIds.map(id => ({ routingMasterId: id }))));
 
-//   product.routingIds.forEach((id) => formData.append("routingIds", String(id)));
+  // 이미지 정보
+  if (product.images && product.images.length > 0) {
+    product.images.forEach((img, idx) => {
+      formData.append("images", img.file);
+      formData.append(`top[${idx}]`, img.top); // 대표 이미지 여부 (Y/N)
+      if (img.productImgId) {
+        formData.append(`productImgId[${idx}]`, String(img.productImgId)); // 기존 이미지 식별자
+      }
+    });
+  }
 
-//   if (product.images) {
-//     product.images.forEach((img, idx) => {
-//       formData.append("images", img.file);
-//       formData.append(`top[${idx}]`, img.top);
-//       if (img.productImgId) formData.append(`productImgId[${idx}]`, String(img.productImgId));
-//     });
-//   }
+  // PUT 요청
+  const res = await axios.put(`${BASE_URL}/product/${productId}`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
 
-//   const res = await axios.put(`${BASE_URL}/products/${productId}`, formData, {
-//     headers: { "Content-Type": "multipart/form-data" },
-//   });
-
-//   return res.data;
-// };
+  return res.data;
+};

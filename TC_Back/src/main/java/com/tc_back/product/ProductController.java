@@ -43,14 +43,17 @@ public class ProductController {
             ObjectMapper mapper = new ObjectMapper();
             routingSteps = mapper.readValue(
                     form.getRoutingStepsJson(),
-                    new TypeReference<List<RoutingStepDto>>() {}
+                    new TypeReference<List<RoutingStepDto>>() {
+                    }
             );
         }
 
         return productService.updateProduct(
                 id,
                 form.toUpdateDto(routingSteps),
-                form.getImages()
+                form.getImages(),
+                form.getProductImgIds(),
+                form.getTopFlags()
         );
     }
     //삭제
