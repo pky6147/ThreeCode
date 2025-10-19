@@ -87,12 +87,10 @@ export const updateProduct = async (productId: number, product: ProductDto) => {
 
   // 이미지 정보
   if (product.images && product.images.length > 0) {
-    product.images.forEach((img, idx) => {
-      formData.append("images", img.file);
-      formData.append(`top[${idx}]`, img.top); // 대표 이미지 여부 (Y/N)
-      if (img.productImgId) {
-        formData.append(`productImgId[${idx}]`, String(img.productImgId)); // 기존 이미지 식별자
-      }
+    product.images.forEach((img) => {
+      if (img.file) formData.append("images", img.file);       // 새 파일이면 첨부
+      formData.append("topFlags", img.top);                    // 대표 이미지 여부
+      if (img.productImgId) formData.append("productImgIds", String(img.productImgId)); // 기존 이미지 ID
     });
   }
 
