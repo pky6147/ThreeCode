@@ -239,24 +239,21 @@ public class ProductService {
 
         // 3. 라우팅 스텝 수정
         product.getRoutingSteps().clear(); // 기존 삭제
-        if (dto.getRoutingSteps() != null) {
-            int seq = 1;
-            for (RoutingStepDto stepDto : dto.getRoutingSteps()) {
-                if (stepDto.getRoutingMasterId() == null)
-                    throw new RuntimeException("라우팅 마스터 ID가 없습니다.");
+        List<RoutingMaster> masters = dto.getRoutingSteps().stream()
+                .map(stepDto -> routingMasterRepository.findById(stepDto.getRoutingMasterId())
+                        .orElseThrow(() -> new RuntimeException("라우팅 마스터 없음: " + stepDto.getRoutingMasterId())))
+                .sorted(Comparator.comparingInt(RoutingMaster::getProcessOrder))
+                .collect(Collectors.toList());
 
-                RoutingMaster master = routingMasterRepository.findById(stepDto.getRoutingMasterId())
-                        .orElseThrow(() -> new RuntimeException("라우팅 마스터 없음: " + stepDto.getRoutingMasterId()));
-
-                RoutingStep step = RoutingStep.builder()
-                        .routingMaster(master)
-                        .processSeq(seq++)
-                        .product(product)
-                        .build();
-
-                product.getRoutingSteps().add(step);
-                routingStepRepository.save(step);
-            }
+        int seq = 1;
+        for (RoutingMaster master : masters) {
+            RoutingStep step = RoutingStep.builder()
+                    .routingMaster(master)
+                    .processSeq(seq++)
+                    .product(product)
+                    .build();
+            product.getRoutingSteps().add(step);
+            routingStepRepository.save(step);
         }
 
         // 4. DTO 변환 후 반환
