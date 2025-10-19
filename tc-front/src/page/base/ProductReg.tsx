@@ -80,7 +80,7 @@ export default function ProductReg({ doClose, initialData, isEdit = false }: Pro
     try {
       const payload: ProductDto = {
         ...data,
-        routingIds: selectedRoutingIds,
+        routingIds: selectedRoutingIds.filter(id => id != null),
         images,
       };
 
