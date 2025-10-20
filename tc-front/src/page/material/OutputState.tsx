@@ -13,6 +13,7 @@ import ExcelBtn from '../../component/ExcelBtn';
 import LabelInput from '../../component/LabelInput';
 import LabelDatepicker from '../../component/LabelDatepicker';
 import SearchBar from '../../component/SearchBar';
+import { getMaterialOutput, updateMaterialOutput, deleteMaterialOutput } from '../../api/materialOutputApi'
 
 interface RowData {
     id?: number;
@@ -43,16 +44,9 @@ function OutputState() {
 
     const getMaterialOutputData = async () => {
         try {
-            const dummy = [
-                { materialOutputId: 1, materialOutputNo: 'MOUT-20251015-001', companyName: '업체A', materialNo: 'P001', materialName: '스프링', maker: '제조사A', materialOutputQty: 100, materialOutputDate: '20251015' },
-                { materialOutputId: 2, materialOutputNo: 'MOUT-20251015-002', companyName: '업체B', materialNo: 'P002', materialName: '팬', maker: '제조사B', materialOutputQty: 200, materialOutputDate: '20251016' },
-                { materialOutputId: 3, materialOutputNo: 'MOUT-20251015-003', companyName: '업체1', materialNo: 'P010', materialName: 'Test1', maker: '제조사C', materialOutputQty: 300, materialOutputDate: '20251017' },
-                { materialOutputId: 4, materialOutputNo: 'MOUT-20251015-004', companyName: '업체2', materialNo: 'P100', materialName: 'Test2', maker: '제조사D', materialOutputQty: 400, materialOutputDate: '20251018' },
-            ]
-            // const data = await getMaterialOutput();
+            const data = await getMaterialOutput();
             
-            // const result = data.map((row:RowData) => ({
-            const result = dummy.map((row:RowData) => ({
+            const result = data.map((row:RowData) => ({
                 ...row,
                 id: row.materialOutputId
             }))
@@ -68,9 +62,9 @@ function OutputState() {
             getMaterialOutputData();
         }, [])
     
-    // const BoardRefresh = () => {
-        // getMaterialOutputData();
-    // }
+    const BoardRefresh = () => {
+        getMaterialOutputData();
+    }
 
 
     const handleChange = <K extends keyof RowData> (
@@ -91,21 +85,19 @@ function OutputState() {
         setRows(prev => prev.map(r => r.id === row.id ? { ...r, isEditing: edit } : r));
     }
     // 저장 버튼 클릭
-    const handleSave = (row: RowData) => {
+    const handleSave = async (row: RowData) => {
         try {
             if (!row.id) {
               console.error("❌ 수정할 데이터에 id가 없습니다.");
               return;
             }
-            // await updateMaterialInput(row.id, {
-            //     materialId: row.materialId,
-            //     materialInputQty: row.materialInputQty,
-            //     materialInputDate: row.materialInputDate,
-            //     makeDate: row.makeDate,
-            // }).then(()=>{
-            //     // handleAlertSuccess()
-            //     BoardRefresh()
-            // })
+            await updateMaterialOutput(row.id, {
+                materialOutputQty: row.materialOutputQty,
+                materialOutputDate: row.materialOutputDate,
+            }).then(()=>{
+                // handleAlertSuccess()
+                BoardRefresh()
+            })
         } catch(err) {
             const axiosError = err as AxiosError;
             console.error(err)
@@ -131,15 +123,14 @@ function OutputState() {
       );
     }
     // 삭제 버튼 클릭
-    const handleDelete = (id: number) => {
-        console.log('id',id)
+    const handleDelete = async (id: number) => {
         if (!confirm("정말 삭제하시겠습니까?")) return;
                         
         try {
-            // await deleteMaterialOutput(id).then(()=>{
-            //     // handleAlertSuccess()
-            //     BoardRefresh()
-            // })
+            await deleteMaterialOutput(id).then(()=>{
+                // handleAlertSuccess()
+                BoardRefresh()
+            })
         } catch(err) {
             console.error(err);
             // handleAlertFail()
@@ -299,7 +290,7 @@ function OutputState() {
                     text="삭제"
                     icon="delete"
                     backgroundColor='red'
-                    onClick={() => handleDelete(params.row)}
+                    onClick={() => handleDelete(params.row.materialOutputId)}
                 />
 
             )

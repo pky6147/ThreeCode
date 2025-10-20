@@ -13,16 +13,19 @@ import SearchBar from '../../component/SearchBar';
 import ExcelBtn from '../../component/ExcelBtn';
 import type { AxiosError } from 'axios';
 import AlertPopup, { type AlertProps } from '../../component/AlertPopup';
+import { getMaterialOutputReg, createMaterialOutput } from '../../api/materialOutputApi'
 
 interface RowData {
     id: number;
     materialInputId?: number;
     materialInputNo: string;
+    companyId: string;
     companyName: string;
+    materialId: number;
     materialNo: string;
     materialName: string;
     maker: string;
-    stockQty?: number;
+    remainQty?: number;
     materialOutputQty?: number;
     materialOutputDate?: string;
 }
@@ -44,19 +47,18 @@ function OutputReg() {
 
     const getMaterialInputData = async () => {
         try {
-            // const inputData = await getMaterialInput();
+            const inputData = await getMaterialOutputReg();
             
-            // const result = inputData
-            // .map((row:RowData, index:number) => ({
-            //     ...row,
-            //     id: row.materialInputId,
-            //     idx: index+1,
-            //     materialInputQty: 0,
-            //     materialInputDate: '',
-            //     makeDate: ''
-            // }))
+            const result = inputData
+            .map((row:RowData, index:number) => ({
+                ...row,
+                id: row.materialInputId,
+                idx: index+1,
+                materialOutputQty: 0,
+                materialOutputDate: '',
+            }))
 
-            // setRows(result)
+            setRows(result)
         }
         catch(err) {
             console.error(err)
@@ -69,20 +71,6 @@ function OutputReg() {
 
     useEffect(()=> {
         getMaterialInputData()
-        const baseRow = [
-            { materialInputId: 1, materialInputNo: 'MINC-20251015-001', companyName: '업체A', materialNo: 'P001', materialName: '원자재1', maker: '제조사A', stockQty: 5000 },
-            { materialInputId: 2, materialInputNo: 'MINC-20251015-002', companyName: '업체B', materialNo: 'P002', materialName: '원자재2', maker: '제조사B', stockQty: 5000 },
-            { materialInputId: 3, materialInputNo: 'MINC-20251015-003', companyName: '업체1', materialNo: 'P010', materialName: '원자재3', maker: '제조사C', stockQty: 5000 },
-            { materialInputId: 4, materialInputNo: 'MINC-20251015-004', companyName: '업체2', materialNo: 'P100', materialName: '원자재4', maker: '제조사D', stockQty: 5000 },
-        ]
-
-        const result = baseRow.map(r => ({
-            ...r,
-            id: r.materialInputId, 
-            materialOutputQty: 0,
-            materialOutputDate: ''
-        }))
-        setRows(result)
     }, [])
 
     const handleChange = <K extends keyof RowData> (
@@ -99,13 +87,13 @@ function OutputReg() {
 
     // 출고
     const handleOutput = async (row: RowData) => {
-        console.log('row값', row)
-        
         try {
-            // await createMaterialInput({
-            //     materialOutputQty: row.materialOutputQty,
-            //     materialOutputDate: row.materialOutputDate,
-            // })
+            await createMaterialOutput({
+                materialInputId: row.materialInputId,
+                materialId: row.materialId,
+                materialOutputQty: row.materialOutputQty,
+                materialOutputDate: row.materialOutputDate,
+            })
             handleAlertSuccess()
             BoardRefresh()
         } catch(err) {
@@ -176,7 +164,7 @@ function OutputReg() {
         materialNo: string;
         materialName: string;
         maker: string;
-        stockQty: number;
+        remainQty: number;
     }
     // 엑셀 컬럼 헤더 매핑 정의
     const headerMap: Record<keyof ExcelData, string> = {
@@ -185,7 +173,7 @@ function OutputReg() {
         materialNo: '품목번호',
         materialName: '품목명',
         maker: '제조사',
-        stockQty: '재고량'
+        remainQty: '재고량'
     }
     const excelData = rows.map(row =>
         (Object.keys(headerMap) as (keyof ExcelData)[]).reduce<Record<string, string>> (
@@ -204,7 +192,7 @@ function OutputReg() {
         { field: 'materialNo', headerName: '품목번호', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
         { field: 'materialName', headerName: '품목명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
         { field: 'maker', headerName: '제조사', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
-        { field: 'stockQty', headerName: '재고량', flex: 1, minWidth: 100, headerAlign: 'center', align: 'right',
+        { field: 'remainQty', headerName: '재고량', flex: 1, minWidth: 100, headerAlign: 'center', align: 'right',
             renderCell: (params) => {
                 const value = params.value;
                 return value?.toLocaleString();  // 천단위 콤마
