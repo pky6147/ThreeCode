@@ -11,7 +11,7 @@ import MaterialReg from './MaterialReg';
 import MaterialDetailView from './MaterialDetailView';
 import MaterialEdit from './MaterialEdit';
 import { getMaterial, deleteMaterial } from '../../../api/materialApi';
-import AlertPopup from '../../../component/AlertPopup';
+import AlertPopup, { type AlertProps}  from '../../../component/AlertPopup';
 import ExcelBtn from '../../../component/ExcelBtn';
 
 interface RowData {
@@ -29,11 +29,6 @@ interface RowData {
     maker?: string;
     remark?: string;
     isActive?: string;
-}
-interface AlertInfo {
-  type?: 'error' | 'warning' | 'info' | 'success';
-  title?: string;
-  text?: string;
 }
 
 function Material() {
@@ -58,7 +53,7 @@ function Material() {
     const [openEdit, setOpenEdit] = useState(false) // Edit on/off
     /* Alert */
     const [alertOpen, setAlertOpen] = useState(false)
-    const [alertInfo, setAlertInfo] = useState<AlertInfo>({})
+    const [alertInfo, setAlertInfo] = useState<AlertProps>({})
     
 
     const getTableData = async () => {
