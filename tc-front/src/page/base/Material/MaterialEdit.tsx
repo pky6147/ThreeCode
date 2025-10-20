@@ -179,13 +179,13 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
 
     return (
         <Box sx={{
-            width: '750px',
+            width: '800px',
             height: '550px',
             backgroundColor: 'white',
             
         }}>
             {/* 데이터 입력 폼 */}
-            <Box sx={{ width: '700px'}}>
+            <Box sx={{ width: '750px'}}>
                 <Box sx={{display:'flex', justifyContent: 'space-between'}}>
                     <Typography sx={{fontSize: '45px', padding: 2, fontWeight: 'bold'}}>원자재 수정</Typography>
                     {/* 버튼 영역 */}
@@ -197,13 +197,13 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
                             gap: 2
                         }}
                     >
-                        <CustomBtn text='수정' backgroundColor='green' onClick={handleEdit} />
-                        <CustomBtn text='취소' backgroundColor='gray' onClick={handleCancle} />
+                        <CustomBtn text='수정' icon="check" backgroundColor='green' onClick={handleEdit} />
+                        <CustomBtn text='취소' icon="close" backgroundColor='gray' onClick={handleCancle} />
                     </Box>
                 </Box>
                 <Box sx={{ border: '3px solid green', marginLeft: 2, paddingRight: 2, paddingBottom: 2}}>
-                    <Box sx={{display: 'flex'}}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2, width: '350px', height: '230px', marginTop: '20px'}}>
+                    <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                        <Box sx={{ display: 'flex',  alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
                             {listCompany.length > 0 && (
                                 <LabelSelect 
                                     color='black'
@@ -214,27 +214,6 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
                                     disabled={true}
                                 />
                             )}
-                            <LabelInput 
-                                color='black'
-                                labelText='품목번호'
-                                value={editData.materialNo}
-                                onChange={(e) => handleInputChange('materialNo', e.target.value)}
-                            />
-                            <LabelSelect 
-                                    color='black'
-                                    labelText='분류'
-                                    value={editData.category?.toString() || ''}
-                                    onChange={handleSelectChange_Category}
-                                    options={listCategory}
-                                />
-                            <LabelInput 
-                                color='black'
-                                labelText='규격'
-                                value={editData.spec}
-                                onChange={(e) => handleInputChange('spec', e.target.value)}
-                            />
-                        </Box>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2, width: '350px', height: '230px', marginTop: '20px'}}>
                             <LabelSelect 
                                 color='black'
                                 labelText='사용여부'
@@ -242,11 +221,28 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
                                 onChange={handleSelectChange_Active}
                                 options={listActiveYN}
                             />
+                        </Box>
+                        <Box sx={{ display: 'flex',  alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
+                            <LabelInput 
+                                color='black'
+                                labelText='품목번호'
+                                value={editData.materialNo}
+                                onChange={(e) => handleInputChange('materialNo', e.target.value)}
+                            />
                             <LabelInput 
                                 color='black'
                                 labelText='품목명'
                                 value={editData.materialName}
                                 onChange={(e) => handleInputChange('materialName', e.target.value)}
+                            />
+                        </Box>
+                        <Box sx={{ display: 'flex',  alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
+                            <LabelSelect 
+                                color='black'
+                                labelText='분류'
+                                value={editData.category?.toString() || ''}
+                                onChange={handleSelectChange_Category}
+                                options={listCategory}
                             />
                             <LabelInput 
                                 color='black'
@@ -254,7 +250,14 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
                                 value={editData.color}
                                 onChange={(e) => handleInputChange('color', e.target.value)}
                             />
-                            
+                        </Box>
+                        <Box sx={{ display: 'flex',  alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
+                            <LabelInput 
+                                color='black'
+                                labelText='규격'
+                                value={editData.spec}
+                                onChange={(e) => handleInputChange('spec', e.target.value)}
+                            />
                             <LabelInput 
                                 color='black'
                                 labelText='제원'
@@ -262,22 +265,24 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
                                 onChange={(e) => handleInputChange('specValue', e.target.value)}
                             />
                         </Box>
-                    </Box>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2, marginTop: 1}}>
-                        <LabelInput 
+                        <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
+                            <LabelInput 
                                 color='black'
                                 labelText='제조사'
                                 value={editData.maker}
-                                inputWidth='562px'
+                                inputWidth='590px'
                                 onChange={(e) => handleInputChange('maker', e.target.value)}
                             />
-                        <LabelInput 
-                            color='black'
-                            labelText='비고'
-                            value={editData.remark}
-                            inputWidth='562px'
-                            onChange={(e) => handleInputChange('remark', e.target.value)}
-                        />
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
+                            <LabelInput 
+                                color='black'
+                                labelText='비고'
+                                value={editData.remark}
+                                inputWidth='590px'
+                                onChange={(e) => handleInputChange('remark', e.target.value)}
+                            />
+                        </Box>
                     </Box>
                 </Box>
             </Box>

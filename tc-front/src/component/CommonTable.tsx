@@ -11,25 +11,6 @@ interface CommonTableProps {
   check?: boolean;
 }
 
-// 헤더 양식
-// const columns: GridColDef[] = [
-//   { field: 'id', headerName: 'ID', width: 70 },
-//   { field: 'firstName', headerName: 'First name', width: 130 },
-//   { field: 'lastName', headerName: 'Last name', width: 130 },
-// ];
-// 데이터 양식
-// const rows = [
-//   { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-//   { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-//   { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-//   { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-//   { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-//   { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-//   { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-//   { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-//   { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-// ];
-
 function CommonTable(props: CommonTableProps) {
     const paginationModel = { page: 0, pageSize: props.pageSize || 5 };
 
@@ -41,6 +22,9 @@ function CommonTable(props: CommonTableProps) {
           initialState={{ pagination: { paginationModel } }}
           pageSizeOptions={[5, 10]}
           checkboxSelection={props.check || false}
+          getRowClassName={(params) =>
+            params.row.isActive === 'N' ? 'row-inactive' : ''
+          }
           sx={{
               '&': {
                   '--DataGrid-t-header-background-base': '#1e88e5 !important' // 헤더색 변경
@@ -50,6 +34,11 @@ function CommonTable(props: CommonTableProps) {
                   fontSize: 16, // 글자 크기 
                   fontWeight: 'bold', // 굵기 
               }, 
+              '& .row-inactive': {
+                backgroundColor: '#f5f5f5',  // 회색 배경
+                color: '#999',               // 글자색
+                fontStyle: 'italic',
+              },
           }}
         />
       </Paper>
@@ -57,3 +46,4 @@ function CommonTable(props: CommonTableProps) {
 }
 
 export default CommonTable;
+

@@ -177,13 +177,13 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
 
     return (
         <Box sx={{
-            width: '750px',
+            width: '800px',
             height: '550px',
             backgroundColor: 'white',
             
         }}>
             {/* 데이터 입력 폼 */}
-            <Box sx={{ width: '700px'}}>
+            <Box sx={{ width: '750px'}}>
                 <Box sx={{display:'flex', justifyContent: 'space-between'}}>
                     <Typography sx={{fontSize: '45px', padding: 2, fontWeight: 'bold'}}>원자재 등록</Typography>
                     {/* 버튼 영역 */}
@@ -195,13 +195,13 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
                             gap: 2
                         }}
                     >
-                        <CustomBtn text='등록' backgroundColor='green' onClick={handleRegist} />
-                        <CustomBtn text='취소' backgroundColor='gray' onClick={handleCancle} />
+                        <CustomBtn text='등록' icon="check" backgroundColor='green' onClick={handleRegist} />
+                        <CustomBtn text='취소' icon="close" backgroundColor='gray' onClick={handleCancle} />
                     </Box>
                 </Box>
                 <Box sx={{ border: '3px solid green', marginLeft: 2, paddingRight: 2, paddingBottom: 2}}>
-                    <Box sx={{display: 'flex'}}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2, width: '350px', height: '230px', marginTop: '20px'}}>
+                    <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
                             <LabelSelect 
                                 color='black'
                                 labelText='매입처명'
@@ -209,12 +209,29 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
                                 onChange={handleSelectChange_Company}
                                 options={listCompany}
                             />
+                            <LabelSelect 
+                                color='black'
+                                labelText='사용여부'
+                                value={newData.isActive?.toString() || ''}
+                                onChange={handleSelectChange_Active}
+                                options={listActiveYN}
+                            />
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
                             <LabelInput 
                                 color='black'
                                 labelText='품목번호'
                                 value={newData.materialNo}
                                 onChange={(e) => handleInputChange('materialNo', e.target.value)}
                             />
+                            <LabelInput 
+                                color='black'
+                                labelText='품목명'
+                                value={newData.materialName}
+                                onChange={(e) => handleInputChange('materialName', e.target.value)}
+                            />
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
                             <LabelSelect 
                                 color='black'
                                 labelText='분류'
@@ -224,32 +241,18 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
                             />
                             <LabelInput 
                                 color='black'
-                                labelText='규격'
-                                value={newData.spec}
-                                onChange={(e) => handleInputChange('spec', e.target.value)}
-                            />
-                        </Box>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2, width: '350px', height: '230px', marginTop: '20px'}}>
-                            <LabelSelect 
-                                color='black'
-                                labelText='사용여부'
-                                value={newData.isActive?.toString() || ''}
-                                onChange={handleSelectChange_Active}
-                                options={listActiveYN}
-                            />
-                            <LabelInput 
-                                color='black'
-                                labelText='품목명'
-                                value={newData.materialName}
-                                onChange={(e) => handleInputChange('materialName', e.target.value)}
-                            />
-                            <LabelInput 
-                                color='black'
                                 labelText='색상'
                                 value={newData.color}
                                 onChange={(e) => handleInputChange('color', e.target.value)}
                             />
-                            
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
+                            <LabelInput 
+                                color='black'
+                                labelText='규격'
+                                value={newData.spec}
+                                onChange={(e) => handleInputChange('spec', e.target.value)}
+                            />
                             <LabelInput 
                                 color='black'
                                 labelText='제원'
@@ -257,22 +260,24 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
                                 onChange={(e) => handleInputChange('specValue', e.target.value)}
                             />
                         </Box>
-                    </Box>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2, marginTop: 1}}>
-                        <LabelInput 
+                        <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
+                            <LabelInput 
                                 color='black'
                                 labelText='제조사'
                                 value={newData.maker}
-                                inputWidth='562px'
+                                inputWidth='590px'
                                 onChange={(e) => handleInputChange('maker', e.target.value)}
                             />
-                        <LabelInput 
-                            color='black'
-                            labelText='비고'
-                            value={newData.remark}
-                            inputWidth='562px'
-                            onChange={(e) => handleInputChange('remark', e.target.value)}
-                        />
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
+                            <LabelInput 
+                                color='black'
+                                labelText='비고'
+                                value={newData.remark}
+                                inputWidth='590px'
+                                onChange={(e) => handleInputChange('remark', e.target.value)}
+                            />
+                        </Box>
                     </Box>
                 </Box>
             </Box>
