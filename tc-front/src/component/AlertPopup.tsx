@@ -1,6 +1,6 @@
 import { Alert, AlertTitle, Stack } from '@mui/material'
 
-interface AlertProps {
+export interface AlertProps {
     type?: 'error' | 'warning' | 'info' | 'success';
     title?: string;
     text?: string;

@@ -113,6 +113,7 @@ public class ProductService {
                 .stream()
                 .map(p -> new ProductListDto(
                         p.getProductId(),
+                        p.getCompany().getCompanyId(),
                         p.getCompany().getCompanyName(),
                         p.getProductNo(),
                         p.getProductName(),
