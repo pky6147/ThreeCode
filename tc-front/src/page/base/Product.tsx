@@ -4,7 +4,7 @@ import CommonTable from '../../component/CommonTable';
 import type { GridColDef } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
 import ProductReg from './ProductReg';
-import { getProductDetail, getProducts } from '../../api/productApi'; // ✅ 추가
+import { deleteProduct, getProductDetail, getProducts } from '../../api/productApi'; // ✅ 추가
 import ProductDetail from './ProductDetail';
 
 function Company() {
@@ -97,16 +97,41 @@ function Company() {
       ),
     },
     {
-      field: 'del', headerName: '삭제', width: 100, headerAlign: 'center', align: 'center',
-      renderCell: (params) => (
-        <CustomBtn
-          width="50px"
-          text="삭제"
-          backgroundColor='#fb1e1eff'
-          onClick={() => alert(`삭제할 ID: ${params.row.id}`)}
-        />
-      ),
-    },
+  field: 'del', headerName: '삭제', width: 100, headerAlign: 'center', align: 'center',
+  renderCell: (params) => (
+    <CustomBtn
+      width="50px"
+      text="삭제"
+      backgroundColor='#fb1e1eff'
+      onClick={async () => {
+        if (window.confirm("정말 삭제하시겠습니까?")) {
+          try {
+            await deleteProduct(params.row.id);
+            alert("삭제되었습니다.");
+            // 삭제 후 목록 갱신
+            const data = await getProducts();
+            const mapped = data.map((item: any, idx: number) => ({
+              id: item.productId,
+              idx: idx + 1,
+              company_name: item.companyName,
+              product_no: item.productNo,
+              product_name: item.productName,
+              category: item.category,
+              paint_type: item.paintType,
+              price: item.price,
+              remark: item.remark,
+              is_active: item.isActive,
+            }));
+            setRows(mapped);
+          } catch (err) {
+            console.error(err);
+            alert("삭제 실패했습니다.");
+          }
+        }
+      }}
+    />
+  ),
+}
   ];
 
   const handleRegist = () => setOpen(true);
