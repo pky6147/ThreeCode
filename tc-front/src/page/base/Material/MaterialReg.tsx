@@ -6,7 +6,7 @@ import LabelSelect from '../../../component/LabelSelect';
 import { getCompanies } from '../../../api/CompanyApi'
 import { createMaterial } from '../../../api/materialApi'
 import type { AxiosError } from 'axios';
-import AlertPopup from '../../../component/AlertPopup';
+import AlertPopup, {type AlertProps } from '../../../component/AlertPopup';
 
 interface RegProps {
     doFinish: ()=> void;
@@ -21,19 +21,23 @@ interface MaterialDataType {
     category?: string;
     color?: string;
     spec?: string;
-    specValue?: string;
+    specValue: string;
     maker?: string;
     remark?: string;
     isActive?: string;
 }
-interface AlertInfo {
-  type?: 'error' | 'warning' | 'info' | 'success';
-  title?: string;
-  text?: string;
-}
 
 export default function MaterialReg({doFinish, doCancle}:RegProps) {
     const [newData, setNewData] = useState<MaterialDataType>({
+        companyName: '',
+        materialNo: '',
+        materialName: '',
+        category: '',
+        color: '',
+        spec: '',
+        specValue: '0',
+        maker: '',
+        remark: '',
         isActive: 'Y'
     })
 
@@ -51,7 +55,7 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
 
     /* Alert */
     const [alertOpen, setAlertOpen] = useState(false)
-    const [alertInfo, setAlertInfo] = useState<AlertInfo>({})
+    const [alertInfo, setAlertInfo] = useState<AlertProps>({})
 
     const getCompanyData = async () => {
         try {
@@ -116,6 +120,39 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
 
 
     const handleRegist = async () => {
+        if( (newData.companyName === '' || null) ||
+            (newData.materialNo === '' || null) ||
+            (newData.materialName === '' || null) ||
+            (newData.category === '' || null) ||
+            (newData.color === '' || null) ||
+            (newData.spec === '' || null) ||
+            (newData.specValue === '' || null) ||
+            (newData.maker === '' || null)) {
+
+            setAlertInfo({
+                type: 'error',
+                title: '필수기입 정보 누락',
+                text: '필수기입 정보를 입력해주세요.'
+            })
+            setAlertOpen(true)
+
+            setTimeout(()=> setAlertOpen(false), 3000)
+
+            return;
+        } 
+        else if ( (isNaN(Number(newData.specValue.trim())))) {
+            setAlertInfo({
+                type: 'error',
+                title: '제원 데이터 타입 오류',
+                text: '제원은 숫자만 입력해주세요.'
+            })
+            setAlertOpen(true)
+
+            setTimeout(()=> setAlertOpen(false), 3000)
+
+            return;
+        }
+
         try {
             await createMaterial({
                 companyId: newData.companyId,
@@ -145,6 +182,15 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
 
     const handleCancle = () => {
         setNewData({
+            companyName: '',
+            materialNo: '',
+            materialName: '',
+            category: '',
+            color: '',
+            spec: '',
+            specValue: '0',
+            maker: '',
+            remark: '',
             isActive: 'Y'
         })
         doCancle()
@@ -208,6 +254,7 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
                                 value={newData.companyId?.toString() || ''}
                                 onChange={handleSelectChange_Company}
                                 options={listCompany}
+                                required={true}
                             />
                             <LabelSelect 
                                 color='black'
@@ -215,6 +262,7 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
                                 value={newData.isActive?.toString() || ''}
                                 onChange={handleSelectChange_Active}
                                 options={listActiveYN}
+                                required={true}
                             />
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
@@ -223,12 +271,15 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
                                 labelText='품목번호'
                                 value={newData.materialNo}
                                 onChange={(e) => handleInputChange('materialNo', e.target.value)}
+                                required={true}
+                                placeholder="중복불가"
                             />
                             <LabelInput 
                                 color='black'
                                 labelText='품목명'
                                 value={newData.materialName}
                                 onChange={(e) => handleInputChange('materialName', e.target.value)}
+                                required={true}
                             />
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
@@ -238,12 +289,14 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
                                 value={newData.category?.toString() || ''}
                                 onChange={handleSelectChange_Category}
                                 options={listCategory}
+                                required={true}
                             />
                             <LabelInput 
                                 color='black'
                                 labelText='색상'
                                 value={newData.color}
                                 onChange={(e) => handleInputChange('color', e.target.value)}
+                                required={true}
                             />
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
@@ -252,12 +305,15 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
                                 labelText='규격'
                                 value={newData.spec}
                                 onChange={(e) => handleInputChange('spec', e.target.value)}
+                                required={true}
                             />
                             <LabelInput 
                                 color='black'
                                 labelText='제원'
                                 value={newData.specValue}
                                 onChange={(e) => handleInputChange('specValue', e.target.value)}
+                                required={true}
+                                placeholder="숫자 입력"
                             />
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
@@ -267,6 +323,7 @@ export default function MaterialReg({doFinish, doCancle}:RegProps) {
                                 value={newData.maker}
                                 inputWidth='590px'
                                 onChange={(e) => handleInputChange('maker', e.target.value)}
+                                required={true}
                             />
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>

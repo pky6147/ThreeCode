@@ -3,7 +3,7 @@ import { Box, Typography, Dialog, type SelectChangeEvent } from '@mui/material'
 import CustomBtn from '../../../component/CustomBtn';
 import LabelInput from '../../../component/LabelInput';
 import LabelSelect from '../../../component/LabelSelect';
-import AlertPopup from '../../../component/AlertPopup';
+import AlertPopup, {type AlertProps} from '../../../component/AlertPopup';
 import { getCompanies } from '../../../api/CompanyApi'
 import { updateMaterial } from '../../../api/materialApi'
 import type { AxiosError } from 'axios';
@@ -18,7 +18,7 @@ interface MaterialDataType {
     category?: string;
     color?: string;
     spec?: string;
-    specValue?: string;
+    specValue: string;
     maker?: string;
     remark?: string;
     isActive?: string;
@@ -28,11 +28,6 @@ interface EditProps {
     row: MaterialDataType;
     doFinish: ()=> void;
     doCancle: ()=> void;
-}
-interface AlertInfo {
-  type?: 'error' | 'warning' | 'info' | 'success';
-  title?: string;
-  text?: string;
 }
 
 export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
@@ -51,7 +46,7 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
     ])
 
     const [alertOpen, setAlertOpen] = useState(false)
-    const [alertInfo, setAlertInfo] = useState<AlertInfo>({})
+    const [alertInfo, setAlertInfo] = useState<AlertProps>({})
     
     const getCompanyData = async () => {
         try {
@@ -115,6 +110,39 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
 
 
     const handleEdit = async () => {
+        if( (editData.companyName === '' || null) ||
+            (editData.materialNo === '' || null) ||
+            (editData.materialName === '' || null) ||
+            (editData.category === '' || null) ||
+            (editData.color === '' || null) ||
+            (editData.spec === '' || null) ||
+            (editData.specValue === '' || null) ||
+            (editData.maker === '' || null)) {
+
+            setAlertInfo({
+                type: 'error',
+                title: '필수기입 정보 누락',
+                text: '필수기입 정보를 입력해주세요.'
+            })
+            setAlertOpen(true)
+
+            setTimeout(()=> setAlertOpen(false), 3000)
+
+            return;
+        } 
+        else if ( (isNaN(Number(editData.specValue.trim())))) {
+            setAlertInfo({
+                type: 'error',
+                title: '제원 데이터 타입 오류',
+                text: '제원은 숫자만 입력해주세요.'
+            })
+            setAlertOpen(true)
+
+            setTimeout(()=> setAlertOpen(false), 3000)
+
+            return;
+        }
+
         try {
             if (!editData.id) {
               console.error("❌ 수정할 데이터에 id가 없습니다.");
@@ -212,6 +240,7 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
                                     onChange={handleSelectChange_Company}
                                     options={listCompany}
                                     disabled={true}
+                                    required={true}
                                 />
                             )}
                             <LabelSelect 
@@ -220,6 +249,7 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
                                 value={editData.isActive?.toString() || ''}
                                 onChange={handleSelectChange_Active}
                                 options={listActiveYN}
+                                required={true}
                             />
                         </Box>
                         <Box sx={{ display: 'flex',  alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
@@ -228,12 +258,14 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
                                 labelText='품목번호'
                                 value={editData.materialNo}
                                 onChange={(e) => handleInputChange('materialNo', e.target.value)}
+                                required={true}
                             />
                             <LabelInput 
                                 color='black'
                                 labelText='품목명'
                                 value={editData.materialName}
                                 onChange={(e) => handleInputChange('materialName', e.target.value)}
+                                required={true}
                             />
                         </Box>
                         <Box sx={{ display: 'flex',  alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
@@ -243,12 +275,14 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
                                 value={editData.category?.toString() || ''}
                                 onChange={handleSelectChange_Category}
                                 options={listCategory}
+                                required={true}
                             />
                             <LabelInput 
                                 color='black'
                                 labelText='색상'
                                 value={editData.color}
                                 onChange={(e) => handleInputChange('color', e.target.value)}
+                                required={true}
                             />
                         </Box>
                         <Box sx={{ display: 'flex',  alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
@@ -257,12 +291,14 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
                                 labelText='규격'
                                 value={editData.spec}
                                 onChange={(e) => handleInputChange('spec', e.target.value)}
+                                required={true}
                             />
                             <LabelInput 
                                 color='black'
                                 labelText='제원'
                                 value={editData.specValue}
                                 onChange={(e) => handleInputChange('specValue', e.target.value)}
+                                required={true}
                             />
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
@@ -272,6 +308,7 @@ export default function MaterialEdit({row, doFinish, doCancle}:EditProps) {
                                 value={editData.maker}
                                 inputWidth='590px'
                                 onChange={(e) => handleInputChange('maker', e.target.value)}
+                                required={true}
                             />
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>

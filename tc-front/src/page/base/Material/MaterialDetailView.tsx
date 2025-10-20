@@ -31,13 +31,13 @@ export default function MaterialDetailView({row, doCancle}:DetailProps) {
 
     return (
         <Box sx={{
-            width: '750px',
+            width: '800px',
             height: '550px',
             backgroundColor: 'white',
             
         }}>
             {/* 데이터 입력 폼 */}
-            <Box sx={{ width: '700px'}}>
+            <Box sx={{ width: '750px'}}>
                 <Box sx={{display:'flex', justifyContent: 'space-between'}}>
                     <Typography sx={{fontSize: '45px', padding: 2, fontWeight: 'bold'}}>원자재 상세 조회</Typography>
                     {/* 버튼 영역 */}
@@ -49,18 +49,26 @@ export default function MaterialDetailView({row, doCancle}:DetailProps) {
                             gap: 2
                         }}
                     >
-                        <CustomBtn text='닫기' backgroundColor='gray' onClick={handleCancle} />
+                        <CustomBtn text='닫기' icon="close" backgroundColor='gray' onClick={handleCancle} />
                     </Box>
                 </Box>
                 <Box sx={{ border: '3px solid green', marginLeft: 2, paddingRight: 2, paddingBottom: 2}}>
-                    <Box sx={{display: 'flex'}}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2, width: '350px', height: '230px', marginTop: '20px'}}>
+                    <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
                             <LabelInput 
                                 color='black'
                                 labelText='매입처명'
                                 value={rowData.companyName}
                                 disabled={true}
                             />
+                            <LabelInput
+                                color='black' 
+                                labelText='사용여부'
+                                value={rowData.isActive}
+                                disabled={true}
+                            />
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
                             <LabelInput 
                                 color='black'
                                 labelText='품목번호'
@@ -69,34 +77,30 @@ export default function MaterialDetailView({row, doCancle}:DetailProps) {
                             />
                             <LabelInput 
                                 color='black'
+                                labelText='품목명'
+                                value={rowData.materialName}
+                                disabled={true}
+                            />
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
+                            <LabelInput 
+                                color='black'
                                 labelText='분류'
                                 value={rowData.category}
                                 disabled={true}
                             />
                             <LabelInput 
                                 color='black'
-                                labelText='규격'
-                                value={rowData.spec}
+                                labelText='색상'
+                                value={rowData.color}
                                 disabled={true}
                             />
                         </Box>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2, width: '350px', height: '230px', marginTop: '20px'}}>
-                            <LabelInput
-                                color='black' 
-                                labelText='사용여부'
-                                value={rowData.isActive}
-                                disabled={true}
-                            />
+                        <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
                             <LabelInput 
                                 color='black'
-                                labelText='품목명'
-                                value={rowData.materialName}
-                                disabled={true}
-                            />
-                            <LabelInput 
-                                color='black'
-                                labelText='색상'
-                                value={rowData.color}
+                                labelText='규격'
+                                value={rowData.spec}
                                 disabled={true}
                             />
                             <LabelInput 
@@ -106,22 +110,24 @@ export default function MaterialDetailView({row, doCancle}:DetailProps) {
                                 disabled={true}
                             />
                         </Box>
-                    </Box>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2, marginTop: 1}}>
-                        <LabelInput 
+                        <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
+                            <LabelInput 
                                 color='black'
                                 labelText='제조사'
                                 value={rowData.maker}
                                 disabled={true}
-                                inputWidth='562px'
+                                inputWidth='590px'
+                            />                                                            
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
+                            <LabelInput 
+                                color='black'
+                                labelText='비고'
+                                value={rowData.remark}
+                                disabled={true}
+                                inputWidth='590px'
                             />
-                        <LabelInput 
-                            color='black'
-                            labelText='비고'
-                            value={rowData.remark}
-                            disabled={true}
-                            inputWidth='562px'
-                        />
+                        </Box>
                     </Box>
                 </Box>
             </Box>
