@@ -86,6 +86,7 @@ public class ProductOutputService {
     private ProductOutputDto convertToDto(ProductOutput output) {
         return ProductOutputDto.builder()
                 .productInputId(output.getProductInputId())
+                .productOutputId(output.getProductOutputId())
                 .productOutputNo(output.getProductOutputNo())
                 .productOutputQty(output.getProductOutputQty())
                 .productOutputDate(output.getProductOutputDate())

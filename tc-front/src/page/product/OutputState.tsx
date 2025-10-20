@@ -1,54 +1,80 @@
 import { useState, useEffect } from 'react'
-import { Box, Breadcrumbs, Typography, Card } from '@mui/material'
-// import CustomBC from '../../component/CustomBC';
+import { Box, Typography, Card, TextField } from '@mui/material'
+import CustomBC from '../../component/CustomBC';
 import CustomBtn from '../../component/CustomBtn';
 import CommonTable from '../../component/CommonTable';
 import type { GridColDef } from '@mui/x-data-grid'
+import ExcelBtn from '../../component/ExcelBtn';
+import LabelInput from '../../component/LabelInput';
+import LabelDatepicker from '../../component/LabelDatepicker';
+import SearchBar from '../../component/SearchBar';
+import dayjs from 'dayjs'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import type { AxiosError } from 'axios';
 import { productOutputApi } from '../../api/ProductOutputApi';
-import '../../css/DeliveryNote.css';
+import OutputMemo from './OutputMemo';
 
-interface OutputData {
+export interface OutputData {
   id: number;
   productOutputId: number;
-  product_output_no: string;
-  company_name: string;
-  product_no: string;
-  product_name: string;
+  productOutputNo: string;
+  companyName: string;
+  productNo: string;
+  productName: string;
   category: string;
-  paint_type: string;
-  product_output_qty: number | string;
-  product_output_date: string;
-  product_input_date?: string; // 입고일자
+  paintType: string;
+  productOutputQty: number;
+  productOutputDate: string;
+  productInputDate?: string; // 입고일자
   isEditing?: boolean;
 }
 
 
 function OutputState() {
   const [rows, setRows] = useState<OutputData[]>([]);
-//   const [temp, setTemp] = useState<OutputData | null>(null);
+  const [temp, setTemp] = useState<OutputData>(rows[0])
+  /* Search */
+  const [searchInfo, setSearchInfo] = useState({
+          companyName: '',
+          productNo: '',
+          productName: '',
+          productOutputNo: '',
+          productOutputDate: '',
+      })
+  const [searchRows, setSearchRows] = useState<OutputData[]>([])
+  const [isSearch, setIsSearch] = useState(false)
+  /* 출하증 모달 */
   const [modalRow, setModalRow] = useState<OutputData | null>(null);
-  // 모달 닫기
-const handleCloseModal = () => setModalRow(null);
+  
+  
 
   // 출고 데이터 가져오기 
-  const fetchData = async () => {
+  const getProductOutputData = async () => {
     try {
       const res = await productOutputApi.getAll();
-      const mapped = res.data.map((item: any, i: number) => ({
-        id: item.productOutputId ?? i + 1,
-        productOutputId: item.productOutputId,
-        product_output_no: item.productOutputNo || '-',
-        company_name: item.companyName || '-',
-        product_no: item.productNo || '-',
-        product_name: item.productName || '-',
-        category: item.category || '-',
-        paint_type: item.paintType || '-',
-        product_output_qty: item.productOutputQty ?? 0,
-        product_output_date: item.productOutputDate || '-',
-        product_input_date: item.productInputDate || '-', // 입고일자는 임시로 '-' 처리
-        isEditing: false,
-      }));
-      setRows(mapped);
+      
+      const mapped = res.data.map((item: OutputData) => ({
+        ...item,
+        id: item.productOutputId
+      }))
+      setRows(mapped)
+      // const mapped = res.data.map((item: any, i: number) => ({
+      //   id: item.productOutputId ?? i + 1,
+      //   productOutputId: item.productOutputId,
+      //   product_output_no: item.productOutputNo || '-',
+      //   company_name: item.companyName || '-',
+      //   product_no: item.productNo || '-',
+      //   product_name: item.productName || '-',
+      //   category: item.category || '-',
+      //   paint_type: item.paintType || '-',
+      //   product_output_qty: item.productOutputQty ?? 0,
+      //   product_output_date: item.productOutputDate || '-',
+      //   product_input_date: item.productInputDate || '-', // 입고일자는 임시로 '-' 처리
+      //   isEditing: false,
+      // }));
+      // setRows(mapped);
     } catch (err) {
       console.error(err);
       alert('출고 목록을 불러오는 중 오류가 발생했습니다.');
@@ -56,44 +82,253 @@ const handleCloseModal = () => setModalRow(null);
   };
 
   useEffect(() => {
-    fetchData();
+    getProductOutputData();
   }, []);
 
-//   const handleEdit = <K extends keyof OutputData>(id: number, field: K, value: OutputData[K]) => {
-//     setRows(prev => prev.map(r => (r.id === id ? { ...r, [field]: value } : r)));
-//   };
-
-//   const handleSave = (row: OutputData) => {
-//     alert('수정 기능은 아직 구현되지 않았습니다.');
-//     setRows(prev => prev.map(r => (r.id === row.id ? { ...r, isEditing: false } : r)));
-//   };
-
-//   const handleCancel = (row: OutputData) => {
-//     if (!temp) return;
-//     setRows(prev =>
-//       prev.map(r =>
-//         r.id === row.id
-//           ? { ...r, isEditing: false, product_output_qty: temp.product_output_qty, product_output_date: temp.product_output_date }
-//           : r
-//       )
-//     );
-//   };
-
-//   const handleDelete = (row: OutputData) => {
-//     alert('삭제 기능은 아직 구현되지 않았습니다.');
-//   };
+  // const BoardRefresh = () => {
+  //     getProductOutputData();
+  // }
+  
 
   // 출하증 모달
   const handleOpenDeliveryNote = (row: OutputData) => {setModalRow(row);};
+  // 모달 닫기
+  const handleCloseModal = () => setModalRow(null);
+
+  /* 검색/초기화 관련함수 */
+  const handleSearch = () => {
+      setIsSearch(true)
+      const filtered = rows.filter(row =>
+          (row.companyName?.toLowerCase() || '').includes(searchInfo.companyName.toLowerCase()) &&
+          (row.productNo?.toLowerCase() || '').includes(searchInfo.productNo.toLowerCase()) &&
+          (row.productName?.toLowerCase() || '').includes(searchInfo.productName.toLowerCase()) &&
+          (row.productOutputNo?.toLowerCase() || '').includes(searchInfo.productOutputNo.toLowerCase()) &&
+          (row.productOutputDate?.toLowerCase() || '').includes(searchInfo.productOutputDate.toLowerCase()) 
+      )
+      setSearchRows(filtered)
+  }
+  const handleReset = () => {
+      setIsSearch(false)
+      setSearchInfo({
+          companyName: '',
+          productNo: '',
+          productName: '',
+          productOutputNo: '',
+          productOutputDate: ''
+      })
+      setSearchRows(rows)
+  }
+  const handleSearchChange = (key: keyof typeof searchInfo, value: string) => {
+      setSearchInfo((prev) => ({ ...prev, [key]: value }));
+  };
+
+  /* ExcelBtn Props */
+  interface ExcelData {
+      productOutputNo: string;
+      companyName: string;
+      productNo: string;
+      productName: string;
+      category: string;
+      paintType: string;
+      productOutputQty: number;
+      productOutputDate: string;
+  }
+  // 엑셀 컬럼 헤더 매핑 정의
+  const headerMap: Record<keyof ExcelData, string> = {
+      productOutputNo: '출고번호',
+      companyName: '거래처명',
+      productNo: '품목번호',
+      productName: '품목명',
+      category: '분류',
+      paintType: '도장방식',
+      productOutputQty: '출고수량',
+      productOutputDate: '출고일자',
+  }
+  const excelData = rows.map(row =>
+    (Object.keys(headerMap) as (keyof ExcelData)[]).reduce<Record<string, string>> (
+      (acc, key) => {
+          const value = row[key];
+          acc[headerMap[key]] = value != null ? String(value) : '';
+          return acc;
+      },
+      {}
+    )
+  );
+
+  // 테이블 내 값 변경
+  const handleChange = <K extends keyof OutputData> (
+      id: number,
+      field: K,
+      value: OutputData[K]
+  ) => {
+      setRows((prev) => 
+          prev.map((row) =>
+              row.id === id ? { ...row, [field]: value } : row
+          )
+      )
+  }
+  // 수정버튼 클릭
+  const handleEdit = (row: OutputData, edit: boolean) => {
+      setTemp(row)
+      setRows(prev => prev.map(r => r.id === row.id ? { ...r, isEditing: edit } : r));
+  }
+  // 저장 버튼 클릭
+  const handleSave = async (row: OutputData) => {
+      try {
+          if (!row.id) {
+            console.error("❌ 수정할 데이터에 id가 없습니다.");
+            return;
+          }
+          // await updateMaterialInput(row.id, {
+          //     materialId: row.materialId,
+          //     materialInputQty: row.materialInputQty,
+          //     materialInputDate: row.materialInputDate,
+          //     makeDate: row.makeDate,
+          // }).then(()=>{
+          //     // handleAlertSuccess()
+          //     BoardRefresh()
+          // })
+      } catch(err) {
+          const axiosError = err as AxiosError;
+          console.error(err)
+          if (axiosError.response && axiosError.response.data) {
+              // handleAlertFail()
+          } else {
+              // handleAlertFail()
+          }
+      }
+  };
+  // 취소 버튼 클릭
+  const handleCancel = (row: OutputData) => {
+    setRows(prev =>
+      prev.map(r =>
+        r.id === row.id
+          ? { ...r, 
+              isEditing: false, 
+              ['productOutputQty']: temp.productOutputQty,
+              ['productOutputDate']: temp.productOutputDate,
+          }
+          : r
+      )
+    );
+  }
+  // 삭제 버튼 클릭
+  const handleDelete = async (id: number) => {
+    console.log('delete id', id)
+    if (!confirm("정말 삭제하시겠습니까?")) return;
+                    
+    try {
+        // await deleteMaterialInput(id).then(()=>{
+        //     // handleAlertSuccess()
+        //     // BoardRefresh()
+        // })
+    } catch(err) {
+        console.error(err);
+        // handleAlertFail()
+    }
+  }
 
   const columns: GridColDef[] = [
-    { field: 'company_name', headerName: '거래처명', flex: 1 },
-    { field: 'product_no', headerName: '품목번호', flex: 1 },
-    { field: 'product_name', headerName: '품목명', flex: 1 },
-    { field: 'product_output_qty', headerName: '출고수량', flex: 1 },
-    { field: 'product_output_date', headerName: '출고일자', flex: 1 },
-    { field: 'product_input_date', headerName: '입고일자', flex: 1 },
-    { field: 'category', headerName: '분류', flex: 1 },
+    { field: 'productOutputNo', headerName: '출고번호', width: 180, headerAlign: 'center', align: 'center' },
+    { field: 'companyName', headerName: '거래처명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
+    { field: 'productNo', headerName: '품목번호', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
+    { field: 'productName', headerName: '품목명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
+    { field: 'category', headerName: '분류', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
+    { field: 'paintType', headerName: '도장방식', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
+    { field: 'productOutputQty', headerName: '출고수량', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'right',
+      renderCell: (params) => {
+        if(params.row.isEditing) {
+            return (
+                <TextField
+                    type="text"
+                    size="small"
+                    value={params.row.productOutputQty?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") || ''}
+                    onChange={(e) => {
+                        // 입력값에서 콤마 제거 후 숫자로 변환
+                        const rawValue = e.target.value.replace(/,/g, '');
+                        handleChange(params.row.id, 'productOutputQty', Number(rawValue))
+                    }}
+                    sx={{ width: '100%', paddingTop: 0.7, display: 'flex' }}
+                    InputProps={{ sx: { '& input': { textAlign: 'right' } } }}
+                />
+            )
+        } else {
+            return params.value?.toLocaleString();
+        }
+      }
+    },
+    { field: 'productOutputDate', headerName: '출고일자', flex: 2, minWidth: 200, headerAlign: 'center', align: 'center',
+      renderCell: (params) => {
+        if(params.row.isEditing) {
+            return (
+                <DatePicker
+                  format="YYYY-MM-DD"
+                  value={params.row.productOutputDate ? dayjs(params.row.productOutputDate) : null}
+                  onChange={(newValue) =>
+                    handleChange(
+                      params.row.id,
+                      'productOutputDate',
+                      newValue?.format('YYYY-MM-DD') || ''
+                    )
+                  }
+                  slotProps={{
+                    textField: {
+                      size: 'small',
+                      sx: { width: '100%', paddingTop: 0.7 },
+                    },
+                  }}
+                />
+            )
+        } else {
+            if (!params.value) return ''; // 값 없으면 빈 문자열
+            return dayjs(params.value).format('YY.MM.DD'); 
+        }
+      }
+    },
+    { field: 'edit', headerName: '수정', width: 150, headerAlign: 'center', align: 'center',
+      renderCell: (params) => {
+        if(params.row.isEditing) {
+          return (
+            <Box sx={{display: 'flex', gap: 0.5, justifyContent: 'center', paddingTop: 1.3}}>
+              <CustomBtn
+                  backgroundColor='green'
+                  text="저장"
+                  icon="check"
+                  onClick={() => handleSave(params.row)}
+              />
+              <CustomBtn
+                  backgroundColor='red'
+                  text="취소"
+                  icon="close"
+                  onClick={() => handleCancel(params.row)}
+              />
+            </Box>
+          );
+        } else {
+          return (
+            <CustomBtn
+                width="50px"
+                text="수정"
+                icon="edit"
+                onClick={() => handleEdit(params.row, true)}
+            />
+          )
+        }
+      }
+    },
+    { field: 'del', headerName: '삭제', width: 90, headerAlign: 'center', align: 'center',
+        renderCell: (params) => {
+            return (
+                <CustomBtn
+                    width="50px"
+                    text="삭제"
+                    icon="delete"
+                    backgroundColor='red'
+                    onClick={() => handleDelete(params.row.productInputId)}
+                />
+            )
+        }
+    },
     {
       field: 'delivery_note',
       headerName: '출하증',
@@ -105,69 +340,74 @@ const handleCloseModal = () => setModalRow(null);
   ];
 
 return (
-    <>
-      <Card style={{ padding: 16 }}>
-        <Breadcrumbs>
-          <Typography>수주대상 입출고 관리</Typography>
-          <Typography fontWeight="bold">출고 현황</Typography>
-        </Breadcrumbs>
-
-        <Box style={{ marginTop: 16, marginBottom: 16 }}>
-          <CustomBtn text="엑셀" backgroundColor="green" onClick={() => alert('엑셀 다운로드 기능은 아직 구현되지 않았습니다.')} />
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Card sx={{ height: '98%', margin: '0.5%'}}>
+        <Box>
+          {/* BreadCrumbs */}
+          <CustomBC text="출고 현황" subText='수주대상 입출고 관리' />
+          {/* Search */}
+          <Box sx={{padding: 2}}>
+            <SearchBar onSearch={handleSearch} onReset={handleReset}>
+              <LabelInput 
+                  labelText='거래처명'
+                  value={searchInfo.companyName}
+                  onChange={(e) => handleSearchChange('companyName', e.target.value)}
+              />
+              <LabelInput 
+                  labelText='품목번호'
+                  value={searchInfo.productNo}
+                  onChange={(e) => handleSearchChange('productNo', e.target.value)}
+              />
+              <LabelInput 
+                  labelText='품목명'
+                  value={searchInfo.productName}
+                  onChange={(e) => handleSearchChange('productName', e.target.value)}
+              />
+              <LabelInput 
+                  labelText='출고번호'
+                  value={searchInfo.productOutputNo}
+                  onChange={(e) => handleSearchChange('productOutputNo', e.target.value)}
+              />
+              <LabelDatepicker 
+                  labelText='출고일자'
+                  value={searchInfo.productOutputDate}
+                  onChange={(date) => handleSearchChange('productOutputDate', date ? date.format('YYYY-MM-DD') : '')}
+              />
+            </SearchBar>
+          </Box>
+          {/* Content */}
+          <Box>
+            {/* title & button */}
+            <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+              <Typography sx={{ fontSize: '24px', fontWeight: 'bold', paddingLeft: 2 }}>수주대상품목 입고 현황</Typography>
+              <Box sx={{paddingRight: 2}}>
+                <ExcelBtn mappingdata={excelData} sheetName="수주대상품목 입고 현황" fileName="수주대상품목 입고 현황" />
+              </Box>
+            </Box>
+            {/* table */}
+            <Box sx={{padding: 2}}>
+              { isSearch ? (
+                <CommonTable 
+                  columns={columns}
+                  rows={searchRows}
+                />
+              ) : (
+                <CommonTable 
+                  columns={columns}
+                  rows={rows}
+                />
+              )}
+            </Box>
+          </Box>
         </Box>
-
-        <CommonTable columns={columns} rows={rows} />
       </Card>
 
       {/* 출하증 모달 */}
-{modalRow && (
-  <>
-    <div className="delivery-note-overlay" onClick={handleCloseModal}></div>
-    <div className="delivery-note-modal">
-      <div className="delivery-note-header">
-        <span className="delivery-note-title">출하증</span>
-        <button className="delivery-note-close-btn" onClick={handleCloseModal}>X</button>
-      </div>
-      <div className="delivery-note-content">
-        <div className="delivery-note-row">
-          <span className="delivery-note-label">출고번호</span>
-          <span className="delivery-note-value">{modalRow.product_output_no}</span>
-        </div>
-        <div className="delivery-note-row">
-          <span className="delivery-note-label">거래처명</span>
-          <span className="delivery-note-value">{modalRow.company_name}</span>
-        </div>
-        <div className="delivery-note-row">
-          <span className="delivery-note-label">품목번호</span>
-          <span className="delivery-note-value">{modalRow.product_no}</span>
-        </div>
-        <div className="delivery-note-row">
-          <span className="delivery-note-label">품목명</span>
-          <span className="delivery-note-value">{modalRow.product_name}</span>
-        </div>
-        <div className="delivery-note-row">
-          <span className="delivery-note-label">출고수량</span>
-          <span className="delivery-note-value">{modalRow.product_output_qty}</span>
-        </div>
-        <div className="delivery-note-row">
-          <span className="delivery-note-label">입고일자</span>
-          <span className="delivery-note-value">{modalRow.product_input_date || '-'}</span>
-        </div>
-        <div className="delivery-note-row">
-          <span className="delivery-note-label">출고일자</span>
-          <span className="delivery-note-value">{modalRow.product_output_date}</span>
-        </div>
-      </div>
-      <div className="delivery-note-actions">
-        <button className="print-btn" onClick={() => window.print()}>인쇄</button>
-        <button className="close-btn" onClick={handleCloseModal}>닫기</button>
-      </div>
-    </div>
-  </>
-)}
-</>
-)
+    {modalRow && (
+      <OutputMemo rowData={modalRow} handleClose={handleCloseModal} />
+    )}
+    </LocalizationProvider>
+  )
 }
-
 
 export default OutputState;

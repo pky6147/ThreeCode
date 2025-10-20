@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Builder
 public class ProductOutputDto {
     private Long productInputId;
+    private Long productOutputId;
     private String productOutputNo;
     private Integer productOutputQty;
 
