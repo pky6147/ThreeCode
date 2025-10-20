@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Box, Typography, Card, TextField } from '@mui/material'
+import { Box, Typography, Card, TextField, Dialog } from '@mui/material'
 import CustomBC from '../../component/CustomBC';
 import CustomBtn from '../../component/CustomBtn';
 import CommonTable from '../../component/CommonTable';
@@ -14,6 +14,7 @@ import LabelInput from '../../component/LabelInput';
 import LabelDatepicker from '../../component/LabelDatepicker';
 import SearchBar from '../../component/SearchBar';
 import { getMaterialOutput, updateMaterialOutput, deleteMaterialOutput } from '../../api/materialOutputApi'
+import AlertPopup, {type AlertProps } from '../../component/AlertPopup';
 
 interface RowData {
     id?: number;
@@ -41,6 +42,9 @@ function OutputState() {
         })
     const [searchRows, setSearchRows] = useState<RowData[]>([])
     const [isSearch, setIsSearch] = useState(false)
+    /* Alert */
+    const [alertOpen, setAlertOpen] = useState(false)
+    const [alertInfo, setAlertInfo] = useState<AlertProps>({})
 
     const getMaterialOutputData = async () => {
         try {
@@ -86,6 +90,28 @@ function OutputState() {
     }
     // 저장 버튼 클릭
     const handleSave = async (row: RowData) => {
+        if( (row.materialOutputQty === 0 || isNaN(row.materialOutputQty)) ||
+            (row.materialOutputDate === '' || null)) {
+            setAlertInfo({
+                type: 'error',
+                title: '출고 이력 수정 실패',
+                text: '출고수량과 출고일자를 입력해주세요.'
+            })
+            setAlertOpen(true)
+
+            setTimeout(()=> setAlertOpen(false), 3000)
+            return;
+        } else if (row.materialOutputQty < 0) {
+            setAlertInfo({
+                type: 'error',
+                title: '출고 이력 수정 실패',
+                text: '출고수량은 1개 이상 입력해주세요.'
+            })
+            setAlertOpen(true)
+
+            setTimeout(()=> setAlertOpen(false), 3000)
+        }
+
         try {
             if (!row.id) {
               console.error("❌ 수정할 데이터에 id가 없습니다.");
@@ -95,7 +121,14 @@ function OutputState() {
                 materialOutputQty: row.materialOutputQty,
                 materialOutputDate: row.materialOutputDate,
             }).then(()=>{
-                // handleAlertSuccess()
+                setAlertInfo({
+                    type: 'success',
+                    title: '수정 성공',
+                    text: '성공적으로 데이터를 수정하였습니다.'
+                })
+                setAlertOpen(true)
+
+                setTimeout(()=> setAlertOpen(false), 3000)
                 BoardRefresh()
             })
         } catch(err) {
@@ -128,7 +161,14 @@ function OutputState() {
                         
         try {
             await deleteMaterialOutput(id).then(()=>{
-                // handleAlertSuccess()
+                setAlertInfo({
+                    type: 'success',
+                    title: '삭제 성공',
+                    text: '성공적으로 데이터를 삭제하였습니다.'
+                })
+                setAlertOpen(true)
+
+                setTimeout(()=> setAlertOpen(false), 3000)
                 BoardRefresh()
             })
         } catch(err) {
@@ -163,6 +203,11 @@ function OutputState() {
     const handleSearchChange = (key: keyof typeof searchInfo, value: string) => {
         setSearchInfo((prev) => ({ ...prev, [key]: value }));
     };
+
+    /* Alert 팝업 */
+    const handleCloseAlert = () => {
+        setAlertOpen(false)
+    }
 
     /* ExcelBtn Props */
     interface ExcelData {
@@ -361,6 +406,14 @@ function OutputState() {
                         </Box>
                     </Box>
                 </Box>
+                {/* 팝업창 */}
+                <Dialog open={alertOpen} onClose={handleCloseAlert}>
+                    <AlertPopup 
+                        type={alertInfo.type || 'success'} 
+                        title={alertInfo.title} 
+                        text={alertInfo.text} 
+                    />
+                </Dialog>
             </Card>
         </LocalizationProvider>
     )

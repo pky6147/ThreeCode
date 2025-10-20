@@ -25,9 +25,9 @@ interface RowData {
     materialNo: string;
     materialName: string;
     maker: string;
-    remainQty?: number;
-    materialOutputQty?: number;
-    materialOutputDate?: string;
+    remainQty: number;
+    materialOutputQty: number;
+    materialOutputDate: string;
 }
 
 function OutputReg() {
@@ -87,6 +87,27 @@ function OutputReg() {
 
     // 출고
     const handleOutput = async (row: RowData) => {
+        if ((row.materialOutputQty === 0 || isNaN(row.materialOutputQty)) ||
+            (row.materialOutputDate === '' || null)) {
+            setAlertInfo({
+                type: 'error',
+                title: '출고 등록 실패',
+                text: '출고수량, 출고일자를 입력해주세요.'
+            })
+            setAlertOpen(true)
+            setTimeout(()=> setAlertOpen(false), 3000)
+            return;
+        } else if (row.materialOutputQty > row.remainQty) {
+            setAlertInfo({
+                type: 'error',
+                title: '출고 등록 실패',
+                text: '재고량보다 출고수량을 많게 입력할 수 없습니다.'
+            })
+            setAlertOpen(true)
+            setTimeout(()=> setAlertOpen(false), 3000)
+            return;
+        }
+
         try {
             await createMaterialOutput({
                 materialInputId: row.materialInputId,

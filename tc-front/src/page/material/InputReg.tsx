@@ -14,7 +14,7 @@ import LabelInput from '../../component/LabelInput';
 import SearchBar from '../../component/SearchBar';
 import ExcelBtn from '../../component/ExcelBtn';
 import type { AxiosError } from 'axios';
-import AlertPopup from '../../component/AlertPopup';
+import AlertPopup, { type AlertProps} from '../../component/AlertPopup';
 import { createMaterialInput } from '../../api/materialInputApi';
 import type { CompanyRow } from '../base/Company/Company'
 
@@ -29,16 +29,10 @@ interface RowData {
     spec?: string;
     specValue?: string;
     maker?: string;
-    materialInputQty?: number;
-    materialInputDate?: string;
-    makeDate?: string;
+    materialInputQty: number;
+    materialInputDate: string;
+    makeDate: string;
     isActive?: string;
-}
-
-interface AlertInfo {
-  type?: 'error' | 'warning' | 'info' | 'success';
-  title?: string;
-  text?: string;
 }
 
 function InputReg() {
@@ -53,7 +47,7 @@ function InputReg() {
     const [isSearch, setIsSearch] = useState(false)
     /* Alert */
     const [alertOpen, setAlertOpen] = useState(false)
-    const [alertInfo, setAlertInfo] = useState<AlertInfo>({})
+    const [alertInfo, setAlertInfo] = useState<AlertProps>({})
 
     const getMaterialData = async () => {
         try {
@@ -156,7 +150,29 @@ function InputReg() {
 
     // 입고
     const handleInput = async (row: RowData) => {
-        console.log('row값', row)
+        if ( ( row.materialInputQty === 0 || isNaN(row.materialInputQty)) ||
+            ( row.materialInputDate === '' || null) ||
+            ( row.makeDate === '' || null)) {
+            setAlertInfo({
+                type: 'error',
+                title: '필수기입 정보 누락',
+                text: '입고수량, 입고일자, 제조일자를 입력해주세요.'
+            })
+            setAlertOpen(true)
+
+            setTimeout(()=> setAlertOpen(false), 3000)
+            return;
+        } else if( row.materialInputQty < 0) {
+            setAlertInfo({
+                type: 'error',
+                title: '입고수량 데이터 오류',
+                text: '입고수량은 1개 이상 입력해주세요.'
+            })
+            setAlertOpen(true)
+
+            setTimeout(()=> setAlertOpen(false), 3000)
+            return;
+        }
 
         try {
             await createMaterialInput({
