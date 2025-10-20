@@ -31,7 +31,6 @@ export const getMaterialOutputReg = async () => {
 
 // 원자재 출고 이력 수정
 export const updateMaterialOutput = async (id:number, data: Partial<{
-  materialId: number;
   materialOutputQty: number;
   materialOutputDate: string;
 }>) => {

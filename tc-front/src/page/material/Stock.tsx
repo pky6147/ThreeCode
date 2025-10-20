@@ -7,6 +7,7 @@ import SearchBar from '../../component/SearchBar';
 import LabelInput from '../../component/LabelInput';
 import ExcelBtn from '../../component/ExcelBtn';
 import type { GridColDef } from '@mui/x-data-grid'
+import { getMaterialStock } from '../../api/materialStock'
 
 interface RowData {
     id?: number;
@@ -33,18 +34,12 @@ function Stock() {
 
     const getStockData = async () => {
         try {
-                const dummy = [
-                    { idx: 1, companyName: '업체A', materialNo: 'M001', materialName: 'A페인트', spec: 'Kg', maker: 'ㅁ제조사' },
-                    { idx: 2, companyName: '업체B', materialNo: 'M002', materialName: 'B신나', spec: 'L', maker: 'ㅁ제조사' },
-                    { idx: 3, companyName: '업체1', materialNo: 'M010', materialName: 'C세척제', spec: '통', maker: 'ㅇ제조사' },
-                    { idx: 4, companyName: '업체2', materialNo: 'M100', materialName: 'D경화제', spec: '통', maker: 'ㅇ제조사' },
-                ]
+                const data = await getMaterialStock();
 
-                const result = dummy.map((row: RowData, index: number) => ({
+                const result = data.map((row: RowData, index: number) => ({
                     ...row,
                     id: index,
                     idx: index+1,
-                    count: 500 // 재고량 계산해서 db에서 갖고올것
                 }))
                 setRows(result)
         } catch(err) {
