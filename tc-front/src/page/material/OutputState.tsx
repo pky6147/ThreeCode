@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Box, Typography, Card, TextField } from '@mui/material'
 import CustomBC from '../../component/CustomBC';
 import CustomBtn from '../../component/CustomBtn';
@@ -8,28 +8,70 @@ import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import type { AxiosError } from 'axios';
+import ExcelBtn from '../../component/ExcelBtn';
+import LabelInput from '../../component/LabelInput';
+import LabelDatepicker from '../../component/LabelDatepicker';
+import SearchBar from '../../component/SearchBar';
 
 interface RowData {
-    id: number;
-    material_output_no: string;
-    company_name: string;
-    material_no: string;
-    material_name: string;
+    id?: number;
+    materialOutputId: number;
+    materialOutputNo: string;
+    companyName: string;
+    materialNo: string;
+    materialName: string;
     maker: string;
-    material_output_qty: number | string;
-    material_output_date: number | string;
+    materialOutputQty: number;
+    materialOutputDate: string;
     isEditing? : boolean;
 }
 
 function OutputState() {
-    const [rows, setRows ] = useState<RowData[]>([
-        { id: 1, material_output_no: 'MOUT-20251015-001', company_name: '업체A', material_no: 'P001', material_name: '스프링', maker: '제조사A', material_output_qty: 100, material_output_date: '20251015' },
-        { id: 2, material_output_no: 'MOUT-20251015-002', company_name: '업체B', material_no: 'P002', material_name: '팬', maker: '제조사B', material_output_qty: 200, material_output_date: '20251016' },
-        { id: 3, material_output_no: 'MOUT-20251015-003', company_name: '업체1', material_no: 'P010', material_name: 'Test1', maker: '제조사C', material_output_qty: 300, material_output_date: '20251017' },
-        { id: 4, material_output_no: 'MOUT-20251015-004', company_name: '업체2', material_no: 'P100', material_name: 'Test2', maker: '제조사D', material_output_qty: 400, material_output_date: '20251018' },
-    ])
-
+    const [rows, setRows ] = useState<RowData[]>([])
     const [temp, setTemp] = useState<RowData>(rows[0])
+    /* Search */
+    const [searchInfo, setSearchInfo] = useState({
+            companyName: '',
+            materialNo: '',
+            materialName: '',
+            materialOutputNo: '',
+            materialOutputDate: '',
+        })
+    const [searchRows, setSearchRows] = useState<RowData[]>([])
+    const [isSearch, setIsSearch] = useState(false)
+
+    const getMaterialOutputData = async () => {
+        try {
+            const dummy = [
+                { materialOutputId: 1, materialOutputNo: 'MOUT-20251015-001', companyName: '업체A', materialNo: 'P001', materialName: '스프링', maker: '제조사A', materialOutputQty: 100, materialOutputDate: '20251015' },
+                { materialOutputId: 2, materialOutputNo: 'MOUT-20251015-002', companyName: '업체B', materialNo: 'P002', materialName: '팬', maker: '제조사B', materialOutputQty: 200, materialOutputDate: '20251016' },
+                { materialOutputId: 3, materialOutputNo: 'MOUT-20251015-003', companyName: '업체1', materialNo: 'P010', materialName: 'Test1', maker: '제조사C', materialOutputQty: 300, materialOutputDate: '20251017' },
+                { materialOutputId: 4, materialOutputNo: 'MOUT-20251015-004', companyName: '업체2', materialNo: 'P100', materialName: 'Test2', maker: '제조사D', materialOutputQty: 400, materialOutputDate: '20251018' },
+            ]
+            // const data = await getMaterialOutput();
+            
+            // const result = data.map((row:RowData) => ({
+            const result = dummy.map((row:RowData) => ({
+                ...row,
+                id: row.materialOutputId
+            }))
+
+            setRows(result)
+        }
+        catch(err) {
+            console.error(err)
+            alert("조회 실패!")
+        }
+    }
+    useEffect(()=> {
+            getMaterialOutputData();
+        }, [])
+    
+    // const BoardRefresh = () => {
+        // getMaterialOutputData();
+    // }
+
 
     const handleChange = <K extends keyof RowData> (
         id: number,
@@ -50,7 +92,29 @@ function OutputState() {
     }
     // 저장 버튼 클릭
     const handleSave = (row: RowData) => {
-        console.log('저장할 row값', row)
+        try {
+            if (!row.id) {
+              console.error("❌ 수정할 데이터에 id가 없습니다.");
+              return;
+            }
+            // await updateMaterialInput(row.id, {
+            //     materialId: row.materialId,
+            //     materialInputQty: row.materialInputQty,
+            //     materialInputDate: row.materialInputDate,
+            //     makeDate: row.makeDate,
+            // }).then(()=>{
+            //     // handleAlertSuccess()
+            //     BoardRefresh()
+            // })
+        } catch(err) {
+            const axiosError = err as AxiosError;
+            console.error(err)
+            if (axiosError.response && axiosError.response.data) {
+                // handleAlertFail()
+            } else {
+                // handleAlertFail()
+            }
+        }
     };
     // 취소 버튼 클릭
     const handleCancel = (row: RowData) => {
@@ -59,36 +123,105 @@ function OutputState() {
           r.id === row.id
             ? { ...r, 
                 isEditing: false, 
-                ['material_output_qty']: temp.material_output_qty,
-                ['material_output_date']: temp.material_output_date,
+                ['materialOutputQty']: temp.materialOutputQty,
+                ['materialOutputDate']: temp.materialOutputDate,
             }
             : r
         )
       );
     }
     // 삭제 버튼 클릭
-    const handleDelete = (row: RowData) => {
-        console.log('삭제할 rowr값', row)
+    const handleDelete = (id: number) => {
+        console.log('id',id)
+        if (!confirm("정말 삭제하시겠습니까?")) return;
+                        
+        try {
+            // await deleteMaterialOutput(id).then(()=>{
+            //     // handleAlertSuccess()
+            //     BoardRefresh()
+            // })
+        } catch(err) {
+            console.error(err);
+            // handleAlertFail()
+        }
     }
 
+    /* 검색/초기화 관련함수 */
+    const handleSearch = () => {
+        setIsSearch(true)
+        const filtered = rows.filter(row =>
+            (row.companyName?.toLowerCase() || '').includes(searchInfo.companyName.toLowerCase()) &&
+            (row.materialNo?.toLowerCase() || '').includes(searchInfo.materialNo.toLowerCase()) &&
+            (row.materialName?.toLowerCase() || '').includes(searchInfo.materialName.toLowerCase()) &&
+            (row.materialOutputNo?.toLowerCase() || '').includes(searchInfo.materialOutputNo.toLowerCase()) &&
+            (row.materialOutputDate?.toLowerCase() || '').includes(searchInfo.materialOutputDate.toLowerCase()) 
+        )
+        setSearchRows(filtered)
+    }
+    const handleReset = () => {
+        setIsSearch(false)
+        setSearchInfo({
+            companyName: '',
+            materialNo: '',
+            materialName: '',
+            materialOutputNo: '',
+            materialOutputDate: ''
+        })
+        setSearchRows(rows)
+    }
+    const handleSearchChange = (key: keyof typeof searchInfo, value: string) => {
+        setSearchInfo((prev) => ({ ...prev, [key]: value }));
+    };
+
+    /* ExcelBtn Props */
+    interface ExcelData {
+        materialOutputNo: string;
+        companyName: string;
+        materialNo: string;
+        materialName: string;
+        maker: string;
+        materialOutputQty: number;
+        materialOutputDate: string;
+    }
+    // 엑셀 컬럼 헤더 매핑 정의
+    const headerMap: Record<keyof ExcelData, string> = {
+        materialOutputNo: '출고번호',
+        companyName: '매입처명',
+        materialNo: '품목번호',
+        materialName: '품목명',
+        maker: '제조사',
+        materialOutputQty: '출고수량',
+        materialOutputDate: '출고일자',
+    }
+    const excelData = rows.map(row =>
+        (Object.keys(headerMap) as (keyof ExcelData)[]).reduce<Record<string, string>> (
+            (acc, key) => {
+                const value = row[key];
+                acc[headerMap[key]] = value != null ? String(value) : '';
+                return acc;
+            },
+            {}
+        )
+    );
+
     const columns: GridColDef[] = [
-        { field: 'material_output_no', headerName: '출고번호', width: 150, headerAlign: 'center', align: 'center' },
-        { field: 'company_name', headerName: '매입처명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
-        { field: 'material_no', headerName: '품목번호', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
-        { field: 'material_name', headerName: '품목명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
+        { field: 'materialOutputNo', headerName: '출고번호', width: 180, headerAlign: 'center', align: 'center' },
+        { field: 'companyName', headerName: '매입처명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
+        { field: 'materialNo', headerName: '품목번호', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
+        { field: 'materialName', headerName: '품목명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
         { field: 'maker', headerName: '제조사', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
-        { field: 'material_output_qty', headerName: '출고수량', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'right',
+        { field: 'materialOutputQty', headerName: '출고수량', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'right',
             renderCell: (params) => {
                 if(params.row.isEditing) {
                     return (
                         <TextField
                             type="text"
                             size="small"
-                            value={params.row.material_output_qty?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") || ''}
+                            value={params.row.materialOutputQty?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") || ''}
                             onChange={(e) => {
                                 // 입력값에서 콤마 제거 후 숫자로 변환
                                 const rawValue = e.target.value.replace(/,/g, '');
-                                handleChange(params.row.id, 'material_output_qty', rawValue)
+                                handleChange(params.row.id, 'materialOutputQty', Number(rawValue))
                             }}
                             sx={{ width: '100%', paddingTop: 0.7, display: 'flex' }}
                             InputProps={{ sx: { '& input': { textAlign: 'right' } } }}
@@ -99,17 +232,17 @@ function OutputState() {
                 }
             }
          },
-        { field: 'material_output_date', headerName: '출고일자', flex: 2, minWidth: 200, headerAlign: 'center', align: 'center',
+        { field: 'materialOutputDate', headerName: '출고일자', flex: 2, minWidth: 200, headerAlign: 'center', align: 'center',
             renderCell: (params) => {
                 if(params.row.isEditing) {
                     return (
                         <DatePicker
                           format="YYYY-MM-DD"
-                          value={params.row.material_output_date ? dayjs(params.row.material_output_date) : null}
+                          value={params.row.materialOutputDate ? dayjs(params.row.materialOutputDate) : null}
                           onChange={(newValue) =>
                             handleChange(
                               params.row.id,
-                              'material_output_date',
+                              'materialOutputDate',
                               newValue?.format('YYYY-MM-DD') || ''
                             )
                           }
@@ -135,11 +268,13 @@ function OutputState() {
                             <CustomBtn
                                 backgroundColor='green'
                                 text="저장"
+                                icon="check"
                                 onClick={() => handleSave(params.row)}
                             />
                             <CustomBtn
                                 backgroundColor='red'
                                 text="취소"
+                                icon="close"
                                 onClick={() => handleCancel(params.row)}
                             />
                         </Box>
@@ -150,6 +285,7 @@ function OutputState() {
                         <CustomBtn
                             width="50px"
                             text="수정"
+                            icon="edit"
                             onClick={() => handleEdit(params.row, true)}
                         />
                     )
@@ -161,6 +297,7 @@ function OutputState() {
                 <CustomBtn
                     width="50px"
                     text="삭제"
+                    icon="delete"
                     backgroundColor='red'
                     onClick={() => handleDelete(params.row)}
                 />
@@ -179,27 +316,57 @@ function OutputState() {
                     {/* Breadcrumbs 영역 */}
                     <CustomBC text="출고 현황" subText='원자재 입출고 관리' />
                     {/* Content 영역 */}
+                    <Box sx={{padding: 2}}>
+                        <SearchBar onSearch={handleSearch} onReset={handleReset}>
+                            <LabelInput 
+                                labelText='매입처명'
+                                value={searchInfo.companyName}
+                                onChange={(e) => handleSearchChange('companyName', e.target.value)}
+                            />
+                            <LabelInput 
+                                labelText='품목번호'
+                                value={searchInfo.materialNo}
+                                onChange={(e) => handleSearchChange('materialNo', e.target.value)}
+                            />
+                            <LabelInput 
+                                labelText='품목명'
+                                value={searchInfo.materialName}
+                                onChange={(e) => handleSearchChange('materialName', e.target.value)}
+                            />
+                            <LabelInput 
+                                labelText='출고번호'
+                                value={searchInfo.materialOutputNo}
+                                onChange={(e) => handleSearchChange('materialOutputNo', e.target.value)}
+                            />
+                            <LabelDatepicker 
+                                labelText='출고일자'
+                                value={searchInfo.materialOutputDate}
+                                onChange={(date) => handleSearchChange('materialOutputDate', date ? date.format('YYYY-MM-DD') : '')}
+                            />
+                        </SearchBar>
+                    </Box>
                     <Box>
                         <Box
                             sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}
                         >
                             <Typography sx={{ fontSize: '24px', fontWeight: 'bold', paddingLeft: 2 }}>원자재 품목 출고 현황</Typography>
                             <Box sx={{paddingRight: 2}}>
-                                <CustomBtn 
-                                    text="엑셀"
-                                    backgroundColor='green'
-                                />
+                                <ExcelBtn mappingdata={excelData} sheetName="원자재 출고 현황" fileName="원자재 출고 현황" />
                             </Box>
                         </Box>
 
                         <Box sx={{padding: 2}}>
+                            { isSearch ? (
+                            <CommonTable 
+                            columns={columns}
+                            rows={searchRows}
+                            />
+                        ) : (
                             <CommonTable 
                                 columns={columns}
                                 rows={rows}
-                                // pageSize={10}
-                                // check={true}
-                                // height={630}
                             />
+                        )}
                         </Box>
                     </Box>
                 </Box>

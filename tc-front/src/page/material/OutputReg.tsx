@@ -79,7 +79,6 @@ function OutputReg() {
         const result = baseRow.map(r => ({
             ...r,
             id: r.materialInputId, 
-            stock_qty: 500, // DB에서 계산해서 갖고올것
             materialOutputQty: 0,
             materialOutputDate: ''
         }))
