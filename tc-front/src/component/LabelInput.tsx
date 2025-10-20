@@ -9,10 +9,11 @@ interface LabelInputProps {
     disabled?: boolean;
     required?: boolean;
     placeholder?: string;
+    readOnly?: boolean;
     onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-export default function LabelInput({labelText, value, color, inputWidth, disabled, required, placeholder, onChange}: LabelInputProps) {
+export default function LabelInput({labelText, value, color, inputWidth, disabled, required, placeholder, readOnly, onChange}: LabelInputProps) {
     return (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: '320px'}}>
             <Box sx={{ display: 'flex', minWidth: '70px'}}>
@@ -35,6 +36,11 @@ export default function LabelInput({labelText, value, color, inputWidth, disable
                 disabled={disabled || false}
                 placeholder={placeholder || ''}
                 inputProps={{ autoFocus: true }}
+                slotProps={{
+                    input: {
+                      readOnly: readOnly || false
+                    },
+                }}
             />
         </Box>
     )

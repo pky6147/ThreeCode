@@ -59,13 +59,13 @@ export default function MaterialDetailView({row, doCancle}:DetailProps) {
                                 color='black'
                                 labelText='매입처명'
                                 value={rowData.companyName}
-                                disabled={true}
+                                readOnly={true}
                             />
                             <LabelInput
                                 color='black' 
                                 labelText='사용여부'
                                 value={rowData.isActive}
-                                disabled={true}
+                                readOnly={true}
                             />
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
@@ -73,13 +73,13 @@ export default function MaterialDetailView({row, doCancle}:DetailProps) {
                                 color='black'
                                 labelText='품목번호'
                                 value={rowData.materialNo}
-                                disabled={true}
+                                readOnly={true}
                             />
                             <LabelInput 
                                 color='black'
                                 labelText='품목명'
                                 value={rowData.materialName}
-                                disabled={true}
+                                readOnly={true}
                             />
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
@@ -87,13 +87,13 @@ export default function MaterialDetailView({row, doCancle}:DetailProps) {
                                 color='black'
                                 labelText='분류'
                                 value={rowData.category}
-                                disabled={true}
+                                readOnly={true}
                             />
                             <LabelInput 
                                 color='black'
                                 labelText='색상'
                                 value={rowData.color}
-                                disabled={true}
+                                readOnly={true}
                             />
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
@@ -101,13 +101,13 @@ export default function MaterialDetailView({row, doCancle}:DetailProps) {
                                 color='black'
                                 labelText='규격'
                                 value={rowData.spec}
-                                disabled={true}
+                                readOnly={true}
                             />
                             <LabelInput 
                                 color='black'
                                 labelText='제원'
                                 value={rowData.specValue}
-                                disabled={true}
+                                readOnly={true}
                             />
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, marginTop: '20px'}}>
@@ -115,7 +115,7 @@ export default function MaterialDetailView({row, doCancle}:DetailProps) {
                                 color='black'
                                 labelText='제조사'
                                 value={rowData.maker}
-                                disabled={true}
+                                readOnly={true}
                                 inputWidth='590px'
                             />                                                            
                         </Box>
@@ -124,7 +124,7 @@ export default function MaterialDetailView({row, doCancle}:DetailProps) {
                                 color='black'
                                 labelText='비고'
                                 value={rowData.remark}
-                                disabled={true}
+                                readOnly={true}
                                 inputWidth='590px'
                             />
                         </Box>

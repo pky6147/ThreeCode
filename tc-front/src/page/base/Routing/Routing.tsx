@@ -54,10 +54,10 @@ function Routing() {
     const columns: GridColDef[] = [
         { field: 'idx', headerName: 'No', width: 70, headerAlign: 'center', align: 'center' },
         { field: 'processCode', headerName: '공정코드', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
-        { field: 'processName', headerName: '공정명', flex: 1.5, minWidth: 200, headerAlign: 'center', align: 'center' },
-        { field: 'processOrder', headerName: '공정순서', flex: 1.5, minWidth: 200, headerAlign: 'center', align: 'center' },
+        { field: 'processName', headerName: '공정명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
+        { field: 'processOrder', headerName: '공정순서', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
         { field: 'processTime', headerName: '공정시간(h)', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
-        { field: 'remark', headerName: '비고', flex: 3, minWidth: 500, headerAlign: 'center', align: 'center' },
+        { field: 'remark', headerName: '비고', flex: 3, minWidth: 300, headerAlign: 'center', align: 'left' },
         { field: 'edit', headerName: '수정', width: 100, headerAlign: 'center', align: 'center',
             renderCell: (params) => (
               <CustomBtn
