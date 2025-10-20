@@ -14,7 +14,7 @@ import SearchBar from '../../component/SearchBar';
 import { getProducts, getProductDetail } from '../../api/productApi';
 import { getCompanies } from '../../api/CompanyApi';
 import type { CompanyRow } from '../base/Company/Company'
-import ProductDetail from '../base/ProductDetail'
+import ProductDetail from '../base/Product/ProductDetail'
 import type { AxiosError } from 'axios';
 import AlertPopup, {type AlertProps} from '../../component/AlertPopup';
 

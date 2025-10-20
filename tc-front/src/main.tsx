@@ -11,7 +11,7 @@ import { Box } from '@mui/material'
 import BaseRouting from './page/base/Routing/Routing'
 import BaseCompany from './page/base/Company/Company'
 import BaseMaterial from './page/base/Material/Material'
-import BaseProduct from './page/base/Product'
+import BaseProduct from './page/base/Product/Product'
 // 수주대상 입출고 관리
 import ProductInputReg from './page/product/InputReg'
 import ProductInputState from './page/product/InputState'

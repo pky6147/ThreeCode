@@ -1,5 +1,5 @@
 import { Dialog, Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, Divider } from "@mui/material";
-import ProductDetailImages from "../../component/ProductDetailImages";
+import ProductDetailImages from "../../../component/ProductDetailImages";
 
 interface RoutingStepInfo {
   processName: string;

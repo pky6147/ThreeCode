@@ -1,9 +1,9 @@
 import { Box, Button, TextField, MenuItem, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getCompanies, type CompanyDto } from "../../api/CompanyApi";
-import RoutingMasterView from "../../component/routingMasterView";
-import ImgUpdate, { type ProductImage } from "../../component/ImgUpload";
-import { createProduct, updateProduct, type ProductDto } from "../../api/productApi"; // ✅ updateProduct 추가
+import { getCompanies, type CompanyDto } from "../../../api/CompanyApi";
+import RoutingMasterView from "../../../component/routingMasterView";
+import ImgUpdate, { type ProductImage } from "../../../component/ImgUpload";
+import { createProduct, updateProduct, type ProductDto } from "../../../api/productApi"; // ✅ updateProduct 추가
 
 interface ProductRegProps {
   doClose: () => void;
