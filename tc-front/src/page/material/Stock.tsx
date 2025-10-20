@@ -1,65 +1,67 @@
 import { useState, useEffect } from 'react'
-import { Box, Typography, Card, Dialog } from '@mui/material'
+import { Box, Typography, Card } from '@mui/material'
 import CustomBC from '../../component/CustomBC';
-import CustomBtn from '../../component/CustomBtn';
+// import CustomBtn from '../../component/CustomBtn';
 import CommonTable from '../../component/CommonTable';
-import AlertPopup from '../../component/AlertPopup';
 import SearchBar from '../../component/SearchBar';
 import LabelInput from '../../component/LabelInput';
+import ExcelBtn from '../../component/ExcelBtn';
 import type { GridColDef } from '@mui/x-data-grid'
 
 interface RowData {
-    id: number;
+    id?: number;
     idx: number;
-    company_name: string;
-    material_no: string;
-    material_name: string;
+    companyName: string;
+    materialNo: string;
+    materialName: string;
     spec: string;
+    count?: number // 재고량   
     maker: string;
-    count?: number | string; // 재고량   
 }
 
-interface AlertInfo {
-  type?: 'error' | 'warning' | 'info' | 'success';
-  title?: string;
-  text?: string;
-}
 
 function Stock() {
     const [rows, setRows ] = useState<RowData[]>([])
-    const [alertOpen, setAlertOpen] = useState(false)
-    const [alertInfo, setAlertInfo] = useState<AlertInfo>({})
+    // Search
     const [searchInfo, setSearchInfo] = useState({
-        company_name: '',
-        material_no: '',
-        material_name: ''
+        companyName: '',
+        materialNo: '',
+        materialName: ''
     })
     const [searchRows, setSearchRows] = useState<RowData[]>([])
     const [isSearch, setIsSearch] = useState(false)
 
+    const getStockData = async () => {
+        try {
+                const dummy = [
+                    { idx: 1, companyName: '업체A', materialNo: 'M001', materialName: 'A페인트', spec: 'Kg', maker: 'ㅁ제조사' },
+                    { idx: 2, companyName: '업체B', materialNo: 'M002', materialName: 'B신나', spec: 'L', maker: 'ㅁ제조사' },
+                    { idx: 3, companyName: '업체1', materialNo: 'M010', materialName: 'C세척제', spec: '통', maker: 'ㅇ제조사' },
+                    { idx: 4, companyName: '업체2', materialNo: 'M100', materialName: 'D경화제', spec: '통', maker: 'ㅇ제조사' },
+                ]
+
+                const result = dummy.map((row: RowData, index: number) => ({
+                    ...row,
+                    id: index,
+                    idx: index+1,
+                    count: 500 // 재고량 계산해서 db에서 갖고올것
+                }))
+                setRows(result)
+        } catch(err) {
+            console.error(err)
+            alert("조회 실패!")
+        }
+    }
+
     useEffect(()=> {
-        // Get 구문이 들어와야함
-
-        const baseRow = [
-            { id: 1, idx: 1, company_name: '업체A', material_no: 'M001', material_name: 'A페인트', spec: 'Kg', maker: 'ㅁ제조사', count: 500 },
-            { id: 2, idx: 2, company_name: '업체B', material_no: 'M002', material_name: 'B신나', spec: 'L', maker: 'ㅁ제조사', count: 500 },
-            { id: 3, idx: 3, company_name: '업체1', material_no: 'M010', material_name: 'C세척제', spec: '통', maker: 'ㅇ제조사', count: 500 },
-            { id: 4, idx: 4, company_name: '업체2', material_no: 'M100', material_name: 'D경화제', spec: '통', maker: 'ㅇ제조사', count: 500 },
-        ]
-
-        const result = baseRow.map(r => ({
-            ...r, 
-            count: r.count // 재고량 계산해서 db에서 갖고올것
-        }))
-        setRows(result)
-
+        getStockData()
     }, [])
 
     const columns: GridColDef[] = [
         { field: 'idx', headerName: 'No', width: 70, headerAlign: 'center', align: 'center' },
-        { field: 'company_name', headerName: '매입처명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
-        { field: 'material_no', headerName: '품목번호', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
-        { field: 'material_name', headerName: '품목명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
+        { field: 'companyName', headerName: '매입처명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
+        { field: 'materialNo', headerName: '품목번호', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
+        { field: 'materialName', headerName: '품목명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
         { field: 'spec', headerName: '규격', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
         { field: 'maker', headerName: '제조사', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
         { field: 'count', headerName: '재고량', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'right',
@@ -68,54 +70,60 @@ function Stock() {
             }
         },
     ]
-    
-    /* 팝업 관련함수 */
-    const handleClose = () => {
-        setAlertOpen(false)
-    }
-    const handleAlertSuccess = () => {
-        setAlertInfo({
-            type: 'success',
-            title: '엑셀 다운로드',
-            text: '엑셀 다운로드가 완료되었습니다.'
-        })
-        setAlertOpen(true)
-
-        setTimeout(()=> setAlertOpen(false), 2000)
-    }
-    // const handleAlertFail = () => {
-    //     setAlertInfo({
-    //         type: 'error',
-    //         title: '엑셀 다운로드',
-    //         text: '실패'
-    //     })
-    //     setAlertOpen(true)
-
-    //     setTimeout(()=> setAlertOpen(false), 3000)
-    // }
 
     /* 검색/초기화 관련함수 */
     const handleSearch = () => {
         setIsSearch(true)
         const filtered = rows.filter(row =>
-            row.company_name.toLowerCase().includes(searchInfo.company_name.toLowerCase()) &&
-            row.material_no.toLowerCase().includes(searchInfo.material_no.toLowerCase()) &&
-            row.material_name.toLowerCase().includes(searchInfo.material_name.toLowerCase()) 
+            row.companyName.toLowerCase().includes(searchInfo.companyName.toLowerCase()) &&
+            row.materialNo.toLowerCase().includes(searchInfo.materialNo.toLowerCase()) &&
+            row.materialName.toLowerCase().includes(searchInfo.materialName.toLowerCase()) 
         )
         setSearchRows(filtered)
     }
     const handleReset = () => {
         setIsSearch(false)
         setSearchInfo({
-            company_name: '',
-            material_no: '',
-            material_name: ''
+            companyName: '',
+            materialNo: '',
+            materialName: ''
         })
         setSearchRows(rows)
     }
     const handleSearchChange = (key: keyof typeof searchInfo, value: string) => {
         setSearchInfo((prev) => ({ ...prev, [key]: value }));
     };
+
+    /* ExcelBtn Props */
+    interface ExcelData {
+        idx: number;
+        companyName: string;
+        materialNo: string;
+        materialName: string;
+        spec: string;
+        count: number;
+        maker: string;
+    }
+    // 엑셀 컬럼 헤더 매핑 정의
+    const headerMap: Record<keyof ExcelData, string> = {
+        idx: 'Seq',
+        companyName: '매입처명',
+        materialNo: '품목번호',
+        materialName: '품목명',
+        spec: '규격',
+        count: '재고량',        
+        maker: '제조사',
+    }
+    const excelData = rows.map(row =>
+        (Object.keys(headerMap) as (keyof ExcelData)[]).reduce<Record<string, string>> (
+            (acc, key) => {
+                const value = row[key];
+                acc[headerMap[key]] = value != null ? String(value) : '';
+                return acc;
+            },
+            {}
+        )
+    );
 
     return (
             <Card
@@ -125,68 +133,50 @@ function Stock() {
                     {/* Breadcrumbs 영역 */}
                     <CustomBC text="재고 현황" subText='원자재 입출고 관리' />
                     {/* Content 영역 */}
-                    <SearchBar onSearch={handleSearch} onReset={handleReset}>
-                        <LabelInput 
-                            labelText='매입처명'
-                            value={searchInfo.company_name}
-                            onChange={(e) => handleSearchChange('company_name', e.target.value)}
-                        />
-                        <LabelInput 
-                            labelText='품목번호'
-                            value={searchInfo.material_no}
-                            onChange={(e) => handleSearchChange('material_no', e.target.value)}
-                        />
-                        <LabelInput 
-                            labelText='품목명'
-                            value={searchInfo.material_name}
-                            onChange={(e) => handleSearchChange('material_name', e.target.value)}
-                        />
-                    </SearchBar>
-
+                    <Box sx={{padding: 2}}>
+                        <SearchBar onSearch={handleSearch} onReset={handleReset}>
+                            <LabelInput 
+                                labelText='매입처명'
+                                value={searchInfo.companyName}
+                                onChange={(e) => handleSearchChange('companyName', e.target.value)}
+                            />
+                            <LabelInput 
+                                labelText='품목번호'
+                                value={searchInfo.materialNo}
+                                onChange={(e) => handleSearchChange('materialNo', e.target.value)}
+                            />
+                            <LabelInput 
+                                labelText='품목명'
+                                value={searchInfo.materialName}
+                                onChange={(e) => handleSearchChange('materialName', e.target.value)}
+                            />
+                        </SearchBar>
+                    </Box>
                     <Box>
                         <Box
                             sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}
                         >
                             <Typography sx={{ fontSize: '24px', fontWeight: 'bold', paddingLeft: 2 }}>재고 현황</Typography>
                             <Box sx={{paddingRight: 2}}>
-                                <CustomBtn 
-                                    text="엑셀"
-                                    backgroundColor='green'
-                                    onClick={()=>handleAlertSuccess()}
-                                />
+                                <ExcelBtn mappingdata={excelData} sheetName="원자재 재고 현황" fileName="원자재 재고 현황" />
                             </Box>
                         </Box>
 
                         <Box sx={{padding: 2}}>
                             { isSearch ? (
-                                <CommonTable 
+                            <CommonTable 
+                            columns={columns}
+                            rows={searchRows}
+                            />
+                        ) : (
+                            <CommonTable 
                                 columns={columns}
-                                rows={searchRows}
-                                // pageSize={10}
-                                // check={true}
-                                // height={630}
-                                />
-                            ) : (
-                                <CommonTable 
-                                    columns={columns}
-                                    rows={rows}
-                                    // pageSize={10}
-                                    // check={true}
-                                    // height={630}
-                                />
-                            )}
+                                rows={rows}
+                            />
+                        )}
                         </Box>
                     </Box>
                 </Box>
-
-                {/* 팝업창 */}
-                <Dialog open={alertOpen} onClose={handleClose}>
-                    <AlertPopup 
-                        type={alertInfo.type} 
-                        title={alertInfo.title} 
-                        text={alertInfo.text} 
-                    />
-                </Dialog>
             </Card>
     )
 }
