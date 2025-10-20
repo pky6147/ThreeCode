@@ -101,3 +101,8 @@ export const updateProduct = async (productId: number, product: ProductDto) => {
 
   return res.data;
 };
+
+
+export const deleteProduct = async (id: number) => {
+  await axios.delete(`${BASE_URL}/product/${id}`);
+};

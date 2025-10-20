@@ -148,7 +148,9 @@ export default function ProductReg({ doClose, initialData, isEdit = false }: Pro
             disabled={isEdit} // ✅ 수정 시 거래처 변경 방지
           >
             <MenuItem value={0}>선택</MenuItem>
-            {companies.map((c) => (
+            {companies
+            .filter((c) => c.companyType === "거래처")
+            .map((c) => (
               <MenuItem key={c.companyId} value={c.companyId}>
                 {c.companyName}
               </MenuItem>
@@ -227,13 +229,18 @@ export default function ProductReg({ doClose, initialData, isEdit = false }: Pro
             sx={{ flex: 1 }}
           />
           <TextField
-            label="사용여부"
+            select
+            label="활성 여부"
             name="isActive"
             value={data.isActive}
+            onChange={handleChange}
+            disabled={!isEdit}
             size="small"
-            disabled
             sx={{ flex: 1 }}
-          />
+          >
+            <MenuItem value="Y">사용</MenuItem>
+            <MenuItem value="N">미사용</MenuItem>
+          </TextField>
         </Box>
 
         {/* 비고 */}
