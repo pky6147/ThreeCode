@@ -2,6 +2,7 @@ package com.tc_back.lotProcessHistory;
 
 import com.tc_back.ProductOutput.ProductOutput;
 import com.tc_back.ProductOutput.ProductOutputRepository;
+import com.tc_back.lotProcessHistory.dto.CompletedProductInputDto;
 import com.tc_back.lotProcessHistory.dto.LotProcessHistoryDto;
 import com.tc_back.lotProcessHistory.dto.LotProcessUpdateDto;
 import com.tc_back.lotProcessHistory.entity.LotProcessHistory;
@@ -93,10 +94,10 @@ public class LotProcessHistoryService {
         if (lotProcessHistoryDto.getProcessEnd() != null) {
             boolean nextCreated = createNextProcess(history);
 
-            // 다음 공정이 없었다면 = 마지막 공정 완료 → 출고 자동 생성
-            if (!nextCreated) {
-                createProductOutput(history.getProductInput());
-            }
+//            // 다음 공정이 없었다면 = 마지막 공정 완료 → 출고 자동 생성
+//            if (!nextCreated) {
+//                createProductOutput(history.getProductInput());
+//            }
         }
 
         var rm = history.getRoutingStep().getRoutingMaster();
@@ -136,28 +137,50 @@ public class LotProcessHistoryService {
                 .orElse(false); // 다음 공정이 없음 → 마지막 공정
     }
 
-    /**
-     * 모든 공정 완료 시 ProductOutput 자동 생성
-     */
-    private void createProductOutput(ProductInput input) {
-        String outputNo = generateOutputNo();
-
-        ProductOutput output = ProductOutput.builder()
-                .productInputId(input.getProductInputId())
-                .productOutputNo(outputNo)
-                .productOutputQty(input.getProductInputQty()) // 입고수량 그대로
-                .productOutputDate(LocalDate.now())
-                .createdAt(LocalDateTime.now())
-                .isDelete("N")
-                .build();
-
-        productOutputRepository.save(output);
+    @Transactional(readOnly = true)
+    public List<CompletedProductInputDto> getCompletedProductInputs() {
+        return productInputRepository.findAll().stream()
+                .filter(input -> {
+                    List<LotProcessHistory> histories = lotProcessHistoryRepository
+                            .findByProductInput_ProductInputId(input.getProductInputId());
+                    return !histories.isEmpty() && histories.stream().allMatch(h -> h.getProcessEnd() != null);
+                })
+                .map(input -> CompletedProductInputDto.builder()
+                        .productInputId(input.getProductInputId())
+                        .lotNo(input.getLotNo())
+                        .productName(input.getProduct().getProductName())
+                        .companyName(input.getProduct().getCompany().getCompanyName())
+                        .productNo(input.getProduct().getProductNo())
+                        .category(input.getProduct().getCategory())
+                        .paintType(input.getProduct().getPaintType())
+                        .productInputQty(input.getProductInputQty())
+                        .productInputDate(input.getProductInputDate().toString())
+                        .build())
+                .collect(Collectors.toList());
     }
 
-    private String generateOutputNo() {
-        LocalDate today = LocalDate.now();
-        String datePart = today.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        long count = productOutputRepository.countByProductOutputDate(today);
-        return "OUT-" + datePart + "-" + String.format("%03d", count + 1);
-    }
+//    /**
+//     * 모든 공정 완료 시 ProductOutput 자동 생성
+//     */
+//    private void createProductOutput(ProductInput input) {
+//        String outputNo = generateOutputNo();
+//
+//        ProductOutput output = ProductOutput.builder()
+//                .productInputId(input.getProductInputId())
+//                .productOutputNo(outputNo)
+//                .productOutputQty(input.getProductInputQty()) // 입고수량 그대로
+//                .productOutputDate(LocalDate.now())
+//                .createdAt(LocalDateTime.now())
+//                .isDelete("N")
+//                .build();
+//
+//        productOutputRepository.save(output);
+//    }
+//
+//    private String generateOutputNo() {
+//        LocalDate today = LocalDate.now();
+//        String datePart = today.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+//        long count = productOutputRepository.countByProductOutputDate(today);
+//        return "OUT-" + datePart + "-" + String.format("%03d", count + 1);
+//    }
 }

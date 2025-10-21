@@ -17,6 +17,6 @@ public interface LotProcessHistoryRepository extends JpaRepository<LotProcessHis
             "ORDER BY B.processSeq")
     List<LotProcessHistory> findByProductInputIdWithRoutingSteps(@Param("productInputId") Long productInputId);
     boolean existsByProductInputAndRoutingStep(ProductInput productInput, RoutingStep routingStep);
-
+    List<LotProcessHistory> findByProductInput_ProductInputId(Long productInputId);
 
 }

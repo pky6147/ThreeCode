@@ -48,3 +48,9 @@ export const getLotProcessHistory = async (productInputId: number) => {
   const res = await axios.put(`${BASE_URL}/update/${lotProcessHistoryId}`, payload, getAxiosConfig());
   return res.data;
 };
+
+ //출고등록조회
+ export const getOutPut = async () => {
+    const res = await axios.get(`${BASE_URL}/completed`, getAxiosConfig()); 
+    return res.data;
+};

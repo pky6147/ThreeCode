@@ -15,6 +15,7 @@ import LabelInput from '../../component/LabelInput';
 import LabelDatepicker from '../../component/LabelDatepicker';
 import AlertPopup, { type AlertProps}  from '../../component/AlertPopup';
 import type { AxiosError } from 'axios';
+import { getOutPut } from '../../api/productInputApi';
 
 interface RowData {
     id?: number;
@@ -50,15 +51,8 @@ function OutputReg() {
 
     const getTableData = async () => {
         try {
-            // productInput 에서 모든 라우팅의 진행이 완료되고 출고기록이 없는 데이터만 가져오기
-            const dummy = [
-                { productInputId: 1, lotNo: 'LOT-20251015-001', companyName: '업체A', productNo: 'P001', productName: '스프링', category: '방산', paintType: '액체', productInputQty: 100, productInputDate: '20251015' },
-                { productInputId: 2, lotNo: 'LOT-20251015-002', companyName: '업체B', productNo: 'P002', productName: '팬', category: '방산', paintType: '액체', productInputQty: 200, productInputDate: '20251015' },
-                { productInputId: 3, lotNo: 'LOT-20251015-003', companyName: '업체1', productNo: 'P010', productName: 'Test1', category: '일반', paintType: '분체', productInputQty: 300, productInputDate: '20251015' },
-                { productInputId: 4, lotNo: 'LOT-20251015-004', companyName: '업체2', productNo: 'P100', productName: 'Test2', category: '일반', paintType: '분체', productInputQty: 400, productInputDate: '20251015' },
-            ]
-
-            const result = dummy
+            const data = await getOutPut();
+            const result = data
             .map((row:RowData) => ({
                 ...row,
                 id: row.productInputId,
