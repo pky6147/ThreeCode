@@ -10,10 +10,11 @@ interface LabelInputProps {
     required?: boolean;
     placeholder?: string;
     readOnly?: boolean;
+    type?: 'text' | 'number';
     onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-export default function LabelInput({labelText, value, color, inputWidth, disabled, required, placeholder, readOnly, onChange}: LabelInputProps) {
+export default function LabelInput({labelText, value, color, inputWidth, disabled, required, placeholder, readOnly, type, onChange}: LabelInputProps) {
     return (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: '320px'}}>
             <Box sx={{ display: 'flex', minWidth: '70px'}}>
@@ -41,6 +42,7 @@ export default function LabelInput({labelText, value, color, inputWidth, disable
                       readOnly: readOnly || false
                     },
                 }}
+                type={type || 'text'}
             />
         </Box>
     )
