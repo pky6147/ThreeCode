@@ -1,5 +1,8 @@
 package com.tc_back.ProductOutput;
 
+import com.tc_back.ProductOutput.dto.ProductOutputRequestDto;
+import com.tc_back.ProductOutput.dto.ProductOutputResponseDto;
+import com.tc_back.ProductOutput.dto.ProductOutputUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,47 +18,47 @@ public class ProductOutputController {
 
     // 출고 등록
     @PostMapping
-    public ResponseEntity<ProductOutputDto> createOutput(@RequestBody ProductOutputDto dto) {
-        ProductOutputDto created = productOutputService.createOutputDto(dto);
+    public ResponseEntity<ProductOutputResponseDto> createOutput(
+            @RequestBody ProductOutputRequestDto requestDto) {
+        ProductOutputResponseDto created = productOutputService.createOutput(requestDto);
         return ResponseEntity.ok(created);
     }
 
     //전체 출고 목록 조회 (삭제되지 않은 것만)
     @GetMapping
-    public ResponseEntity<List<ProductOutputDto>> getAllOutputs() {
-        List<ProductOutputDto> outputs = productOutputService.getAllOutputDtos();
+    public ResponseEntity<List<ProductOutputResponseDto>> getAllOutputs() {
+        List<ProductOutputResponseDto> outputs = productOutputService.getAllOutputs();
         return ResponseEntity.ok(outputs);
     }
 
     //출고 단건 조회
     @GetMapping("/{id}")
-    // 반환 타입을 ProductOutputDto로 변경하고 Service의 DTO 메서드를 호출
-    public ResponseEntity<ProductOutputDto> getOutputById(@PathVariable Long id) {
-        ProductOutputDto output = productOutputService.getOutputDtoById(id);
+    public ResponseEntity<ProductOutputResponseDto> getOutputById(@PathVariable Long id) {
+        ProductOutputResponseDto output = productOutputService.getOutputById(id);
         return ResponseEntity.ok(output);
     }
 
     //출고 수정 (출고수량, 출고일자)
     @PutMapping("/{id}")
-    public ResponseEntity<ProductOutputDto> updateOutput(
+    public ResponseEntity<ProductOutputResponseDto> updateOutput(
             @PathVariable Long id,
-            @RequestBody ProductOutputDto dto) {
-        ProductOutputDto updated = productOutputService.updateOutput(id, dto);
+            @RequestBody ProductOutputUpdateDto updateDto) {
+
+        ProductOutputResponseDto updated = productOutputService.updateOutput(id, updateDto);
         return ResponseEntity.ok(updated);
     }
 
-    //출고 삭제 (Soft Delete)
+    //출고 삭제 (Soft Delete, DELETE)
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteOutput(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteOutput(@PathVariable Long id) {
         productOutputService.softDeleteOutput(id);
-        return ResponseEntity.ok("출고 정보가 삭제되었습니다.");
+        return ResponseEntity.noContent().build();
     }
 
-    // 출하증 단건 조회 (ProductOutput 기반)
+    // 출하증 단건 조회 (GET, Response DTO 사용)
     @GetMapping("/{id}/delivery-note")
-    public ResponseEntity<ProductOutputDto> getDeliveryNoteByOutputId(@PathVariable Long id) {
-        ProductOutputDto note = productOutputService.getDeliveryNoteByOutputId(id);
+    public ResponseEntity<ProductOutputResponseDto> getDeliveryNoteByOutputId(@PathVariable Long id) {
+        ProductOutputResponseDto note = productOutputService.getDeliveryNoteById(id);
         return ResponseEntity.ok(note);
     }
-
 }

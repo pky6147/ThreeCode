@@ -1,5 +1,10 @@
 package com.tc_back.ProductOutput;
 
+import com.tc_back.ProductOutput.dto.ProductOutputRequestDto;
+import com.tc_back.ProductOutput.dto.ProductOutputResponseDto;
+import com.tc_back.ProductOutput.dto.ProductOutputUpdateDto;
+import com.tc_back.productInput.ProductInputService;
+import com.tc_back.productInput.dto.ProductInputResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,61 +18,60 @@ import java.util.stream.Collectors;
 public class ProductOutputService {
 
     private final ProductOutputRepository repository;
-//    private final ProductInputRepository productInputRepository;
-// private final ProductRepository productRepository;
+    private final ProductInputService productInputService;      // 입고 정보 조회용
+    // 출고 등록
+    public ProductOutputResponseDto createOutput(ProductOutputRequestDto requestDto) {
 
-    /* 출고 등록 (DTO로 반환) */
-    public ProductOutputDto createOutputDto(ProductOutputDto dto) {
-        ProductOutput entity = createOutput(dto); // 내부 메서드 재사용
-        return convertToDto(entity);
-    }
-
-    /* 출고 등록 (엔티티 생성) */
-    private ProductOutput createOutput(ProductOutputDto dto) {
+        // 1. 출고번호 자동 생성
         String outputNo = generateOutputNo();
 
         ProductOutput entity = ProductOutput.builder()
-                .productInputId(dto.getProductInputId())
+                .productInputId(requestDto.getProductInputId())
                 .productOutputNo(outputNo)
-                .productOutputQty(dto.getProductOutputQty())
-                .productOutputDate(dto.getProductOutputDate() != null ? dto.getProductOutputDate() : LocalDate.now())
-                .remark(dto.getRemark())
+                .productOutputQty(requestDto.getProductOutputQty())
+                .productOutputDate(requestDto.getProductOutputDate() != null ? requestDto.getProductOutputDate() : LocalDate.now())
+                .remark(requestDto.getRemark())
                 .isDelete("N")
                 .build();
-
-        return repository.save(entity);
+        ProductOutput saved = repository.save(entity);
+        return convertToResponseDto(saved);
     }
 
-    /* 전체 출고 목록 조회 (삭제되지 않은 데이터만) */
-    public List<ProductOutputDto> getAllOutputDtos() {
-        List<ProductOutput> outputs = repository.findByIsDelete("N");
 
+    // 전체 출고 조회 (삭제되지 않은 데이터)
+    public List<ProductOutputResponseDto> getAllOutputs() {
+        List<ProductOutput> outputs = repository.findByIsDelete("N");
         return outputs.stream()
-                .map(this::convertToDto)
+                .map(this::convertToResponseDto)
                 .collect(Collectors.toList());
     }
 
     /* 출고 단건 조회 */
-    public ProductOutputDto getOutputDtoById(Long id) {
+    public ProductOutputResponseDto getOutputById(Long id) {
         ProductOutput output = getOutputEntityById(id);
-        return convertToDto(output);
+        return convertToResponseDto(output);
     }
 
-    /* 출고 수정 (출고수량, 출고일자, remark) */
-    public ProductOutputDto updateOutput(Long id, ProductOutputDto dto) {
+    // 출고 수정
+    public ProductOutputResponseDto updateOutput(Long id, ProductOutputUpdateDto updateDto) {
         ProductOutput existing = getOutputEntityById(id);
 
-        if (dto.getProductOutputQty() != null) existing.setProductOutputQty(dto.getProductOutputQty());
-        if (dto.getProductOutputDate() != null) existing.setProductOutputDate(dto.getProductOutputDate());
-        if (dto.getRemark() != null) existing.setRemark(dto.getRemark());
+        if (updateDto.getProductOutputQty() != null)
+            existing.setProductOutputQty(updateDto.getProductOutputQty());
+
+        if (updateDto.getProductOutputDate() != null)
+            existing.setProductOutputDate(updateDto.getProductOutputDate());
+
+        if (updateDto.getRemark() != null)
+            existing.setRemark(updateDto.getRemark());
 
         existing.setUpdatedAt(LocalDateTime.now());
         ProductOutput updated = repository.save(existing);
 
-        return convertToDto(updated);
+        return convertToResponseDto(updated);
     }
 
-    /* Soft Delete */
+    // Soft Delete
     public void softDeleteOutput(Long id) {
         ProductOutput output = getOutputEntityById(id);
         output.setIsDelete("Y");
@@ -75,42 +79,50 @@ public class ProductOutputService {
         repository.save(output);
     }
 
-    /* 엔티티 단건 조회 */
+    // 출하증 조회
+    public ProductOutputResponseDto getDeliveryNoteById(Long id) {
+        ProductOutputResponseDto output = getOutputById(id);
+        output.setRemark(""); // 필요 시 초기화
+        return output;
+    }
+
+    /* ---------------- 내부 헬퍼 메서드 ---------------- */
+
+    // 엔티티 조회
     private ProductOutput getOutputEntityById(Long id) {
         return repository.findById(id)
-                .filter(o -> o.getIsDelete().equals("N"))
+                .filter(o -> "N".equals(o.getIsDelete()))
                 .orElseThrow(() -> new IllegalArgumentException("출고 정보를 찾을 수 없습니다. ID=" + id));
     }
 
-    /* DTO 변환 (연관 정보 포함) */
-    private ProductOutputDto convertToDto(ProductOutput output) {
-        return ProductOutputDto.builder()
-                .productInputId(output.getProductInputId())
+    // 엔티티 → Response DTO 변환
+    private ProductOutputResponseDto convertToResponseDto(ProductOutput output) {
+
+        // 입고 정보 조회
+        ProductInputResponseDto inputDto = productInputService.getInputById(output.getProductInputId());
+
+        return ProductOutputResponseDto.builder()
                 .productOutputId(output.getProductOutputId())
                 .productOutputNo(output.getProductOutputNo())
                 .productOutputQty(output.getProductOutputQty())
                 .productOutputDate(output.getProductOutputDate())
                 .remark(output.getRemark())
+                .productInputId(output.getProductInputId())
+                .lotNo(inputDto.getLotNo())
+                .productInputQty(inputDto.getProductInputQty())
+                .productInputDate(inputDto.getProductInputDate())
+                .companyName(inputDto.getCompanyName())
+                .productNo(inputDto.getProductNo())
+                .productName(inputDto.getProductName())
+                .category(inputDto.getCategory())
+                .paintType(inputDto.getPaintType())
                 .build();
     }
 
-    /* 출고번호 자동 생성 (오늘 기준 카운트) */
+    // 출고번호 생성 (오늘 기준 카운트)
     private String generateOutputNo() {
         LocalDate today = LocalDate.now();
-        long countToday = repository.countByProductOutputDate(today); // Repository에 구현 필요
+        long countToday = repository.countByProductOutputDate(today);
         return String.format("OUT-%s-%04d", today.toString().replace("-", ""), countToday + 1);
-    }
-
-    public ProductOutputDto getDeliveryNoteByOutputId(Long id) {
-        // 기존 단건 조회 로직 재사용
-        ProductOutputDto output = getOutputDtoById(id);
-
-        // 수신인, 주소, 연락처 등은 프론트에서 입력 가능하게 빈값으로 세팅
-        if (output != null) {
-            output.setRemark("");          // 필요시 출하증 용도로 초기화
-            // 나머지 필드들은 DTO에 이미 있음
-        }
-
-        return output;
     }
 }
