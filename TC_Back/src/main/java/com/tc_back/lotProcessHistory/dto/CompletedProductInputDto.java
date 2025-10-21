@@ -15,6 +15,7 @@ public class CompletedProductInputDto {
     private String productNo;
     private String category;
     private String paintType;
+    private int remainingQty;
     private Integer productInputQty;
     private String productInputDate;
 }

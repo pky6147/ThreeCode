@@ -137,27 +137,48 @@ public class LotProcessHistoryService {
                 .orElse(false); // 다음 공정이 없음 → 마지막 공정
     }
 
-    // --- 모든 공정 완료된, 출고되지 않은 수주품목 조회 ---
     @Transactional(readOnly = true)
     public List<CompletedProductInputDto> getCompletedProductInputs() {
         return productInputRepository.findAll().stream()
                 .filter(input -> {
-                    var histories = lotProcessHistoryRepository.findByProductInput_ProductInputId(input.getProductInputId());
-                    boolean allProcessesCompleted = !histories.isEmpty() && histories.stream().allMatch(h -> h.getProcessEnd() != null);
-                    boolean notShipped = productOutputRepository.findByProductInputId(input.getProductInputId()).isEmpty();
-                    return allProcessesCompleted && notShipped;
+                    List<LotProcessHistory> histories =
+                            lotProcessHistoryRepository.findByProductInput_ProductInputId(input.getProductInputId());
+
+                    // 모든 공정 완료 여부
+                    boolean allProcessesCompleted = !histories.isEmpty() &&
+                            histories.stream().allMatch(h -> h.getProcessEnd() != null);
+
+                    // 이미 출고된 수량 합계
+                    int shippedQty = productOutputRepository
+                            .findByProductInputId(input.getProductInputId())
+                            .stream()
+                            .mapToInt(o -> o.getProductOutputQty())
+                            .sum();
+
+                    int remainingQty = input.getProductInputQty() - shippedQty;
+
+                    return allProcessesCompleted && remainingQty > 0;
                 })
-                .map(input -> CompletedProductInputDto.builder()
-                        .productInputId(input.getProductInputId())
-                        .lotNo(input.getLotNo())
-                        .productName(input.getProduct().getProductName())
-                        .companyName(input.getProduct().getCompany().getCompanyName())
-                        .productNo(input.getProduct().getProductNo())
-                        .category(input.getProduct().getCategory())
-                        .paintType(input.getProduct().getPaintType())
-                        .productInputQty(input.getProductInputQty())
-                        .productInputDate(input.getProductInputDate().toString())
-                        .build())
+                .map(input -> {
+                    int shippedQty = productOutputRepository
+                            .findByProductInputId(input.getProductInputId())
+                            .stream()
+                            .mapToInt(o -> o.getProductOutputQty())
+                            .sum();
+                    int remainingQty = input.getProductInputQty() - shippedQty;
+
+                    return CompletedProductInputDto.builder()
+                            .productInputId(input.getProductInputId())
+                            .lotNo(input.getLotNo())
+                            .productName(input.getProduct().getProductName())
+                            .companyName(input.getProduct().getCompany().getCompanyName())
+                            .productNo(input.getProduct().getProductNo())
+                            .category(input.getProduct().getCategory())
+                            .paintType(input.getProduct().getPaintType())
+                            .productInputQty(input.getProductInputQty())
+                            .productInputDate(input.getProductInputDate().toString())
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 

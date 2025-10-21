@@ -34,6 +34,7 @@ public class LotProcessHistoryController {
         return ResponseEntity.ok(lotProcessHistoryService.updateLotProcess(id, dto));
     }
     // 공정 완료된 수주품목 조회
+    // 공정 완료 + 남은 수량 있는 수주품목 조회
     @GetMapping("/completed")
     public ResponseEntity<List<CompletedProductInputDto>> getCompletedProductInputs() {
         return ResponseEntity.ok(lotProcessHistoryService.getCompletedProductInputs());
