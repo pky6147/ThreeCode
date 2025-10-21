@@ -1,6 +1,8 @@
 package com.tc_back.lotProcessHistory;
 
 import com.tc_back.lotProcessHistory.entity.LotProcessHistory;
+import com.tc_back.productInput.entity.ProductInput;
+import com.tc_back.routingStep.entity.RoutingStep;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +16,7 @@ public interface LotProcessHistoryRepository extends JpaRepository<LotProcessHis
             "WHERE A.productInput.productInputId = :productInputId " +
             "ORDER BY B.processSeq")
     List<LotProcessHistory> findByProductInputIdWithRoutingSteps(@Param("productInputId") Long productInputId);
-
+    boolean existsByProductInputAndRoutingStep(ProductInput productInput, RoutingStep routingStep);
 
 
 }
