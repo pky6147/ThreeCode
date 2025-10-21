@@ -371,26 +371,31 @@ function OutputState() {
                             <LabelInput 
                                 labelText='매입처명'
                                 value={searchInfo.companyName}
+                                fontSize={22}
                                 onChange={(e) => handleSearchChange('companyName', e.target.value)}
                             />
                             <LabelInput 
                                 labelText='품목번호'
                                 value={searchInfo.materialNo}
+                                fontSize={22}
                                 onChange={(e) => handleSearchChange('materialNo', e.target.value)}
                             />
                             <LabelInput 
                                 labelText='품목명'
                                 value={searchInfo.materialName}
+                                fontSize={22}
                                 onChange={(e) => handleSearchChange('materialName', e.target.value)}
                             />
                             <LabelInput 
                                 labelText='출고번호'
                                 value={searchInfo.materialOutputNo}
+                                fontSize={22}
                                 onChange={(e) => handleSearchChange('materialOutputNo', e.target.value)}
                             />
                             <LabelDatepicker 
                                 labelText='출고일자'
                                 value={searchInfo.materialOutputDate}
+                                fontSize={22}
                                 onChange={(date) => handleSearchChange('materialOutputDate', date ? date.format('YYYY-MM-DD') : '')}
                             />
                         </SearchBar>

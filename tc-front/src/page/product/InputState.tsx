@@ -16,7 +16,7 @@ import { deleteProductInput, getProductInput, updateProductInput } from '../../a
 import LotProcessModal from '../../component/LotProcessModal';
 
 interface RowData {
-    id: number;
+    id?: number;
     productInputId?: number;
     lotNo: string;
     companyName: string;
@@ -58,7 +58,7 @@ function InputState() {
     try {
         const data = await getProductInput();
         
-        const result = data.map((row: any, index:number) => ({
+        const result = data.map((row: RowData, index:number) => ({
             ...row,
             idx: index + 1,
             id: row.productInputId,
@@ -354,26 +354,31 @@ function InputState() {
                             <LabelInput 
                                 labelText='거래처명'
                                 value={searchInfo.companyName}
+                                fontSize={22}
                                 onChange={(e) => handleSearchChange('companyName', e.target.value)}
                             />
                             <LabelInput 
                                 labelText='품목번호'
                                 value={searchInfo.productNo}
+                                fontSize={22}
                                 onChange={(e) => handleSearchChange('productNo', e.target.value)}
                             />
                             <LabelInput 
                                 labelText='품목명'
                                 value={searchInfo.productName}
+                                fontSize={22}
                                 onChange={(e) => handleSearchChange('productName', e.target.value)}
                             />
                             <LabelInput 
                                 labelText='입고번호'
                                 value={searchInfo.lotNo}
+                                fontSize={22}
                                 onChange={(e) => handleSearchChange('lotNo', e.target.value)}
                             />
                             <LabelDatepicker 
                                 labelText='입고일자'
                                 value={searchInfo.productInputDate}
+                                fontSize={22}
                                 onChange={(date) => handleSearchChange('productInputDate', date ? date.format('YYYY-MM-DD') : '')}
                             />
                         </SearchBar>

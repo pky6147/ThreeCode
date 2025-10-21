@@ -289,21 +289,25 @@ function Material() {
                         <LabelInput 
                             labelText='매입처명'
                             value={searchInfo.companyName}
+                            fontSize={22}
                             onChange={(e) => handleSearchChange('companyName', e.target.value)}
                         />
                         <LabelInput 
                             labelText='품목번호'
                             value={searchInfo.materialNo}
+                            fontSize={22}
                             onChange={(e) => handleSearchChange('materialNo', e.target.value)}
                         />
                         <LabelInput 
                             labelText='품목명'
                             value={searchInfo.materialName}
+                            fontSize={22}
                             onChange={(e) => handleSearchChange('materialName', e.target.value)}
                         />
                         <LabelSelect 
                             labelText='사용여부'
                             value={searchInfo.isActive?.toString() || ''}
+                            fontSize={22}
                             onChange={handleSelectChange}
                             options={listActiveYN}
                         />

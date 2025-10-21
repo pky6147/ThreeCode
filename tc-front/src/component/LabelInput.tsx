@@ -5,6 +5,7 @@ interface LabelInputProps {
     labelText?: string;
     value?: number | string;
     color?: string;
+    fontSize?: number;
     inputWidth?: string;
     disabled?: boolean;
     required?: boolean;
@@ -14,11 +15,11 @@ interface LabelInputProps {
     onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-export default function LabelInput({labelText, value, color, inputWidth, disabled, required, placeholder, readOnly, type, onChange}: LabelInputProps) {
+export default function LabelInput({labelText, value, color, fontSize, inputWidth, disabled, required, placeholder, readOnly, type, onChange}: LabelInputProps) {
     return (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: '320px'}}>
             <Box sx={{ display: 'flex', minWidth: '70px'}}>
-                <Typography sx={{ color: color || 'white', fontSize: 18, fontWeight: 'bold', }}>
+                <Typography sx={{ color: color || 'white', fontSize: fontSize || 18, fontWeight: 'bold', }}>
                     {labelText}                
                 </Typography>
                 {required && (
