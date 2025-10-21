@@ -12,7 +12,6 @@ import ExcelBtn from '../../component/ExcelBtn';
 import LabelInput from '../../component/LabelInput';
 import LabelDatepicker from '../../component/LabelDatepicker';
 import SearchBar from '../../component/SearchBar';
-import type { AxiosError } from 'axios';
 import { deleteProductInput, getProductInput, updateProductInput } from '../../api/productInputApi';
 import LotProcessModal from '../../component/LotProcessModal';
 
