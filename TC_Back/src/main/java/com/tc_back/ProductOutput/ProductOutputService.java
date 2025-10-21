@@ -55,19 +55,14 @@ public class ProductOutputService {
     // 출고 수정
     public ProductOutputResponseDto updateOutput(Long id, ProductOutputUpdateDto updateDto) {
         ProductOutput existing = getOutputEntityById(id);
-
         if (updateDto.getProductOutputQty() != null)
             existing.setProductOutputQty(updateDto.getProductOutputQty());
-
         if (updateDto.getProductOutputDate() != null)
             existing.setProductOutputDate(updateDto.getProductOutputDate());
-
         if (updateDto.getRemark() != null)
             existing.setRemark(updateDto.getRemark());
-
         existing.setUpdatedAt(LocalDateTime.now());
         ProductOutput updated = repository.save(existing);
-
         return convertToResponseDto(updated);
     }
 
