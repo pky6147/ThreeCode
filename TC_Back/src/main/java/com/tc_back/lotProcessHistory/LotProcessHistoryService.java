@@ -59,6 +59,7 @@ public class LotProcessHistoryService {
                 .map(h -> {
                     var rm = h.getRoutingStep().getRoutingMaster();
                     return LotProcessHistoryDto.builder()
+                            .lotProcessHistoryId(h.getLotProcessHistoryId()) // 추가
                             .processName(rm.getProcessName())
                             .processCode(rm.getProcessCode())
                             .processTime(rm.getProcessTime())

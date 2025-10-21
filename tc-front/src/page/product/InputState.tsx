@@ -12,7 +12,8 @@ import ExcelBtn from '../../component/ExcelBtn';
 import LabelInput from '../../component/LabelInput';
 import LabelDatepicker from '../../component/LabelDatepicker';
 import SearchBar from '../../component/SearchBar';
-import type { AxiosError } from 'axios';
+import { deleteProductInput, getProductInput, updateProductInput } from '../../api/productInputApi';
+import LotProcessModal from '../../component/LotProcessModal';
 
 interface RowData {
     id: number;
@@ -30,14 +31,18 @@ interface RowData {
 }
 
 function InputState() {
-    // const [rows, setRows ] = useState<RowData[]>([])
-    const [rows, setRows ] = useState<RowData[]>([
-        { id: 1, lotNo: 'LOT-20251015-001', companyName: '업체A', productNo: 'P001', productName: '스프링', category: '방산', paintType: '액체', productInputQty: 0, productInputDate: '' },
-        { id: 2, lotNo: 'LOT-20251015-002', companyName: '업체B', productNo: 'P002', productName: '팬', category: '방산', paintType: '액체', productInputQty: 0, productInputDate: '' },
-        { id: 3, lotNo: 'LOT-20251015-003', companyName: '업체1', productNo: 'P010', productName: 'Test1', category: '일반', paintType: '분체', productInputQty: 0, productInputDate: '' },
-        { id: 4, lotNo: 'LOT-20251015-004', companyName: '업체2', productNo: 'P100', productName: 'Test2', category: '일반', paintType: '분체', productInputQty: 0, productInputDate: '' },
-    ])
+    const [rows, setRows ] = useState<RowData[]>([])
     const [temp, setTemp] = useState<RowData>(rows[0])
+
+    const [lotModalOpen, setLotModalOpen] = useState(false);
+    const [selectedProductInputId, setSelectedProductInputId] = useState<number | null>(null);
+
+    // LotNo 클릭 이벤트
+    const handleRunningPage = (row: RowData) => {
+    setSelectedProductInputId(row.productInputId || null);
+    setLotModalOpen(true);
+};
+
     /* Search */
     const [searchInfo, setSearchInfo] = useState({
             companyName: '',
@@ -50,22 +55,22 @@ function InputState() {
     const [isSearch, setIsSearch] = useState(false)
 
     const getProductInputData = async () => {
-        try {
-            // const data = await getProductInput();
-            
-            // const result = data.map((row:RowData, index:number) => ({
-            //     ...row,
-            //     idx: index+1,
-            //     id: row.productInputId
-            // }))
+    try {
+        const data = await getProductInput();
+        
+        const result = data.map((row: any, index:number) => ({
+            ...row,
+            idx: index + 1,
+            id: row.productInputId,
+            isEditing: false,
+        }));
 
-            // setRows(result)
-        }
-        catch(err) {
-            console.error(err)
-            alert("조회 실패!")
-        }
-    };
+        setRows(result);
+    } catch(err) {
+        console.error(err);
+        alert("조회 실패!");
+    }
+};
     
     useEffect(()=> {
         getProductInputData();
@@ -95,30 +100,20 @@ function InputState() {
     }
     // 저장 버튼 클릭
     const handleSave = async (row: RowData) => {
-        try {
-            if (!row.id) {
-              console.error("❌ 수정할 데이터에 id가 없습니다.");
-              return;
-            }
-            // await updateMaterialInput(row.id, {
-            //     materialId: row.materialId,
-            //     materialInputQty: row.materialInputQty,
-            //     materialInputDate: row.materialInputDate,
-            //     makeDate: row.makeDate,
-            // }).then(()=>{
-            //     // handleAlertSuccess()
-            //     BoardRefresh()
-            // })
-        } catch(err) {
-            const axiosError = err as AxiosError;
-            console.error(err)
-            if (axiosError.response && axiosError.response.data) {
-                // handleAlertFail()
-            } else {
-                // handleAlertFail()
-            }
-        }
-    };
+    try {
+        if (!row.productInputId) return;
+        await updateProductInput(row.productInputId, {
+            productInputQty: row.productInputQty,
+            productInputDate: row.productInputDate,
+        });
+        // 저장 완료 후 편집 모드 종료 및 새로고침
+        setRows(prev => prev.map(r => r.id === row.id ? { ...r, isEditing: false } : r));
+        getProductInputData();
+    } catch(err) {
+        console.error(err);
+        alert("저장 실패!");
+    }
+};
     // 취소 버튼 클릭
     const handleCancel = (row: RowData) => {
       setRows(prev =>
@@ -134,28 +129,26 @@ function InputState() {
       );
     }
     // 삭제 버튼 클릭
-    const handleDelete = async (id: number) => {
-        console.log('delete id', id)
-        if (!confirm("정말 삭제하시겠습니까?")) return;
-                        
-                try {
-                    // await deleteMaterialInput(id).then(()=>{
-                    //     // handleAlertSuccess()
-                    //     // BoardRefresh()
-                    // })
-                } catch(err) {
-                    console.error(err);
-                    // handleAlertFail()
-                }
+    const handleDelete = async (productInputId?: number) => {
+    if (!productInputId) return;
+    if (!confirm("정말 삭제하시겠습니까?")) return;
+    
+    try {
+        await deleteProductInput(productInputId);
+        getProductInputData();
+    } catch(err) {
+        console.error(err);
+        alert("삭제 실패!");
     }
+};
     // 작업지시서 버튼 클릭
     const handleGuide = (row: RowData) => {
         console.log('작업지시서를 켤 행의 data', row)
     }
     // Lot번호 클릭, 공정진행화면을 팝업해야함
-    const handleRunningPage = (row: RowData) => {
-        console.log('공정진행화면을 켤 행의 data', row)
-    }
+    // const handleRunningPage = (row: RowData) => {
+    //     console.log('공정진행화면을 켤 행의 data', row)
+    // }
 
     /* 검색/초기화 관련함수 */
     const handleSearch = () => {
@@ -410,6 +403,11 @@ function InputState() {
                         </Box>
                     </Box>
                 </Box>
+                <LotProcessModal
+                    open={lotModalOpen}
+                    onClose={() => setLotModalOpen(false)}
+                    productInputId={selectedProductInputId}
+                />
             </Card>
         </LocalizationProvider>
     )

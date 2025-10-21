@@ -15,8 +15,8 @@ import { getProducts, getProductDetail } from '../../api/productApi';
 import { getCompanies } from '../../api/CompanyApi';
 import type { CompanyRow } from '../base/Company/Company'
 import ProductDetail from '../base/Product/ProductDetail'
-import type { AxiosError } from 'axios';
 import AlertPopup, {type AlertProps} from '../../component/AlertPopup';
+import { createProductInput } from '../../api/productInputApi';
 
 interface RowData {
     id: number;
@@ -118,26 +118,26 @@ function InputReg() {
 
     // 입고버튼 클릭
     const handleInput = async (row: RowData) => {
-        console.log('row값', row)
-        
-        try {
-            // await createProductInput({
-            //     productId: row.productId,
-            //     productInputQty: row.productInputQty,
-            //     productInputDate: row.productInputDate,
-            // })
-            handleAlertSuccess()
-            BoardRefresh()
-        } catch(err) {
-            const axiosError = err as AxiosError;
-            console.error(err)
-            if (axiosError.response && axiosError.response.data) {
-                handleAlertFail()
-            } else {
-                handleAlertFail()
-            }
-        }
+    console.log('row값', row)
+    
+    if (!row.productInputQty || !row.productInputDate) {
+        handleAlertFail(`입고수량과 입고일자를 입력해주세요.`);
+        return;
     }
+
+    try {
+        await createProductInput({
+            productId: row.productId,
+            productInputQty: row.productInputQty,
+            productInputDate: row.productInputDate,
+        });
+        handleAlertSuccess();
+        BoardRefresh();
+    } catch(err) {
+        console.error(err);
+        handleAlertFail("수주대상 입고 등록 실패");
+    }
+}
 
     /* Search */
     const handleSearch = () => {

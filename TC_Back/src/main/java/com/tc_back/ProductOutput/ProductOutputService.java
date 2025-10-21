@@ -92,25 +92,26 @@ public class ProductOutputService {
 
     // 엔티티 → Response DTO 변환
     private ProductOutputResponseDto convertToResponseDto(ProductOutput output) {
-
-        // 입고 정보 조회
+        // 1. 입고 정보 조회
         ProductInputResponseDto inputDto = productInputService.getInputById(output.getProductInputId());
 
+        // 2. DTO 변환
         return ProductOutputResponseDto.builder()
                 .productOutputId(output.getProductOutputId())
+                .productInputId(output.getProductInputId())
                 .productOutputNo(output.getProductOutputNo())
                 .productOutputQty(output.getProductOutputQty())
                 .productOutputDate(output.getProductOutputDate())
                 .remark(output.getRemark())
-                .productInputId(output.getProductInputId())
+                // 입고 정보 포함
                 .lotNo(inputDto.getLotNo())
-                .productInputQty(inputDto.getProductInputQty())
-                .productInputDate(inputDto.getProductInputDate())
                 .companyName(inputDto.getCompanyName())
                 .productNo(inputDto.getProductNo())
                 .productName(inputDto.getProductName())
                 .category(inputDto.getCategory())
                 .paintType(inputDto.getPaintType())
+                .productInputQty(inputDto.getProductInputQty())
+                .productInputDate(inputDto.getProductInputDate())
                 .build();
     }
 

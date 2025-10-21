@@ -17,17 +17,20 @@ import { productOutputApi } from '../../api/ProductOutputApi';
 import OutputMemo from './OutputMemo';
 
 export interface OutputData {
-  id: number;
   productOutputId: number;
+  productInputId: number;
   productOutputNo: string;
+  productOutputQty: number;
+  productOutputDate: string;
+  remark?: string;
+  lotNo: string;
   companyName: string;
   productNo: string;
   productName: string;
   category: string;
   paintType: string;
-  productOutputQty: number;
-  productOutputDate: string;
-  productInputDate?: string; // 입고일자
+  productInputQty: number;
+  productInputDate: string;
   isEditing?: boolean;
 }
 

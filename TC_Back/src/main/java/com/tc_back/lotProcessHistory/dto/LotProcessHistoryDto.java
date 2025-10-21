@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class LotProcessHistoryDto {
+    private Long lotProcessHistoryId;
     private String processName;    // 라우팅 마스터 공정명
     private String processCode;    // 라우팅 마스터 공정코드
     private int processTime;       // 라우팅 마스터 공정시간 (분)
