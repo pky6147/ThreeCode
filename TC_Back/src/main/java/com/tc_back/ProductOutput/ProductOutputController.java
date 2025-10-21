@@ -61,4 +61,5 @@ public class ProductOutputController {
         ProductOutputResponseDto note = productOutputService.getDeliveryNoteById(id);
         return ResponseEntity.ok(note);
     }
+
 }

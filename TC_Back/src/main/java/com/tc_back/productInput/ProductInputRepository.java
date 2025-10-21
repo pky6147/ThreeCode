@@ -13,5 +13,19 @@ public interface ProductInputRepository extends JpaRepository<ProductInput, Long
     @Query("SELECT COUNT(p) FROM ProductInput p WHERE p.createdAt BETWEEN :start AND :end")
     long countByToday(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
+    // 삭제 되지 않은 입고 전체 조회
     List<ProductInput> findByIsDelete(String isDelete);
+
+    // 출고되지 않은 입고 목록 조회
+    @Query("""
+        SELECT p 
+        FROM ProductInput p 
+        WHERE p.isDelete = :isDelete
+        AND p.productInputId NOT IN (
+            SELECT o.productInputId 
+            FROM ProductOutput o 
+            WHERE o.isDelete = 'N'
+        )
+        """)
+    List<ProductInput> findAvailableInputs(@Param("isDelete") String isDelete);
 }

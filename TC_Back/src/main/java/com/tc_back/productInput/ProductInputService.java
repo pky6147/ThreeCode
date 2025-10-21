@@ -109,4 +109,24 @@ public class ProductInputService {
                 .productInputDate(input.getProductInputDate())
                 .build();
     }
+
+    // 출고 가능한 입고 목록 조회 (출고되지 않고, 공정상태가 '최종'인 경우만)
+    public List<ProductInputResponseDto> getAvailableInputs() {
+        List<ProductInput> inputs = productInputRepository.findAvailableInputs("N");
+
+        return inputs.stream()
+                .map(pi -> new ProductInputResponseDto(
+                        pi.getProductInputId(),
+                        pi.getLotNo(),
+                        pi.getProduct().getCompany().getCompanyName(),
+                        pi.getProduct().getProductNo(),
+                        pi.getProduct().getProductName(),
+                        pi.getProduct().getCategory(),
+                        pi.getProduct().getPaintType(),
+                        pi.getProductInputQty(),
+                        pi.getProductInputDate()
+                ))
+                .collect(Collectors.toList());
+    }
+
 }
