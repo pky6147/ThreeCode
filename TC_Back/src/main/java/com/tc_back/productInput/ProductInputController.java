@@ -13,12 +13,13 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/product-input") // 공통 prefix 지정 (가독성 향상)
 public class ProductInputController {
 
     private final  ProductInputService productInputService;
 
-    //입고등록
-    @PostMapping("/product-input")
+    // 입고 등록
+    @PostMapping
     public ResponseEntity<ProductInputResponseDto> createInput(@RequestBody ProductInputRequestDto dto) {
         ProductInput saved = productInputService.createInput(dto);
 
@@ -36,17 +37,25 @@ public class ProductInputController {
         );
         return ResponseEntity.ok(response);
     }
-    //전체조회
-    @GetMapping("/product-input")
+
+    // 전체 조회
+    @GetMapping
     public ResponseEntity<List<ProductInputResponseDto>> getAll() {
         return ResponseEntity.ok(productInputService.getAllProductInputs());
     }
-    //수정
-    @PutMapping("/product-input/{id}")
+
+    // 출고 가능한 입고 목록 조회
+    @GetMapping("/available")
+    public ResponseEntity<List<ProductInputResponseDto>> getAvailableInputs() {
+        return ResponseEntity.ok(productInputService.getAvailableInputs());
+    }
+
+    // 수정
+    @PutMapping("/{id}")
     public ResponseEntity<ProductInputResponseDto> updateInput(
             @PathVariable Long id,
-            @RequestBody ProductInputUpdateDto dto) {
-
+            @RequestBody ProductInputUpdateDto dto
+    ) {
         ProductInput updated = productInputService.updateInput(id, dto);
 
         ProductInputResponseDto response = new ProductInputResponseDto(
@@ -55,16 +64,17 @@ public class ProductInputController {
                 updated.getProduct().getCompany().getCompanyName(),
                 updated.getProduct().getProductNo(),
                 updated.getProduct().getProductName(),
-                updated.getProduct().getPaintType(),
                 updated.getProduct().getCategory(),
+                updated.getProduct().getPaintType(),
                 updated.getProductInputQty(),
                 updated.getProductInputDate()
         );
 
         return ResponseEntity.ok(response);
     }
+
     // 입고 삭제
-    @DeleteMapping("/product-input/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteInput(@PathVariable Long id) {
         productInputService.deleteInput(id);
         return ResponseEntity.noContent().build();
