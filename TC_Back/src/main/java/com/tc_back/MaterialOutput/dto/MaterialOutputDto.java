@@ -92,6 +92,7 @@ public class MaterialOutputDto {
                                 ? entity.getMaterialInput().getMaterialInputNo()
                                 : null
                 )
+                .remainQty(null)
                 .build();
     }
 }

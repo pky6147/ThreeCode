@@ -26,6 +26,7 @@ interface RowData {
     maker: string;
     materialOutputQty: number;
     materialOutputDate: string;
+    remainQty: number;
     isEditing? : boolean;
 }
 
@@ -110,6 +111,17 @@ function OutputState() {
             setAlertOpen(true)
 
             setTimeout(()=> setAlertOpen(false), 3000)
+            return;
+        } else if (row.materialOutputQty > row.remainQty) {
+            setAlertInfo({
+                type: 'error',
+                title: '출고 이력 수정 실패',
+                text: `출고수량이 남은 재고량 (${row.remainQty}) 초과합니다.`
+            })
+            setAlertOpen(true)
+
+            setTimeout(()=> setAlertOpen(false), 3000)
+            return;
         }
 
         try {

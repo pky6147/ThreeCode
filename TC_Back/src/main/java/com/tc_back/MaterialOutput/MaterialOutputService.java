@@ -101,9 +101,27 @@ public class MaterialOutputService {
 
     /** 3️⃣ 출고현황 조회 */
     public List<MaterialOutputDto> findAllOutputs() {
-        return materialOutputRepository.findByIsDeleteOrderByMaterialOutputNoDesc("N").stream()
-                .map(MaterialOutputDto::fromEntity)
-                .collect(Collectors.toList());
+        List<MaterialOutput> outputs = materialOutputRepository.findByIsDeleteOrderByMaterialOutputNoDesc("N");
+
+        return outputs.stream().map(output -> {
+            MaterialInput input = output.getMaterialInput();
+
+            // 해당 입고건의 총 출고수량 계산
+            int totalOutputQty = materialOutputRepository.findAll().stream()
+                    .filter(o -> o.getMaterialInput().getMaterialInputId().equals(input.getMaterialInputId()))
+                    .filter(o -> "N".equals(o.getIsDelete()))
+                    .mapToInt(MaterialOutput::getMaterialOutputQty)
+                    .sum();
+
+            // 남은 재고량 계산
+            int remainQty = input.getMaterialInputQty() - totalOutputQty;
+
+            // 기존 출고정보 DTO로 변환
+            MaterialOutputDto dto = MaterialOutputDto.fromEntity(output);
+            dto.setRemainQty(remainQty); // 남은재고량 추가
+
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     /** 4️⃣ 출고 삭제 (soft delete) */
