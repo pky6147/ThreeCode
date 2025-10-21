@@ -269,7 +269,6 @@ function OutputReg() {
           width="60px"
           text="출고"
           icon="check"
-          disabled={params.row.processStatus !== '최종'}
           onClick={() => handleOutput(params.row)}
         />
       )
