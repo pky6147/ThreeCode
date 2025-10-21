@@ -16,7 +16,6 @@ import { createProductInput } from '../../api/productInputApi'
 import { getCompanies } from '../../api/CompanyApi';
 import type { CompanyRow } from '../base/Company/Company'
 import ProductDetail from '../base/Product/ProductDetail'
-import type { AxiosError } from 'axios';
 import AlertPopup, {type AlertProps} from '../../component/AlertPopup';
 
 interface RowData {
@@ -119,26 +118,40 @@ function InputReg() {
 
     // 입고버튼 클릭
     const handleInput = async (row: RowData) => {
-        console.log('row값', row)
-        
-        try {
-            await createProductInput({
-                productId: row.productId,
-                productInputQty: row.productInputQty,
-                productInputDate: row.productInputDate,
-            })
-            handleAlertSuccess()
-            BoardRefresh()
-        } catch(err) {
-            const axiosError = err as AxiosError;
-            console.error(err)
-            if (axiosError.response && axiosError.response.data) {
-                handleAlertFail()
-            } else {
-                handleAlertFail()
-            }
-        }
+    
+    if (!row.productInputQty || !row.productInputDate) {
+        setAlertInfo({
+            type: 'error',
+            title: '수주대상 입고 등록 실패',
+            text: '입고수량과 입고일자를 입력해주세요.'
+        })
+        handleAlert();
+        return;
     }
+
+    try {
+        await createProductInput({
+            productId: row.productId,
+            productInputQty: row.productInputQty,
+            productInputDate: row.productInputDate,
+        });
+        setAlertInfo({
+            type: 'success',
+            title: '수주대상 입고 등록',
+            text: '수주대상 입고 등록이 완료되었습니다.'
+        })
+        handleAlert();
+        BoardRefresh();
+    } catch(err) {
+        console.error(err);
+        setAlertInfo({
+            type: 'error',
+            title: '수주대상 입고 등록 실패',
+            text: '예기치 못한 오류로 입고 등록을 실패하였습니다.'
+        })
+        handleAlert();
+    }
+}
 
     /* Search */
     const handleSearch = () => {
@@ -198,25 +211,9 @@ function InputReg() {
     const handleCloseAlert = () => {
         setAlertOpen(false)
     }
-    const handleAlertSuccess = () => {
-        setAlertInfo({
-            type: 'success',
-            title: '수주대상 입고 등록',
-            text: '수주대상 입고 등록이 완료되었습니다.'
-        })
+    const handleAlert = () => {
         setAlertOpen(true)
-
-        setTimeout(() => setAlertOpen(false), 2000)
-    }
-    const handleAlertFail = () => {
-        setAlertInfo({
-            type: 'error',
-            title: '수주대상 입고 등록',
-            text: '수주대상 입고 등록 실패'
-        })
-        setAlertOpen(true)
-
-        setTimeout(()=> setAlertOpen(false), 3000)
+        setTimeout(() => setAlertOpen(false), 3000)
     }
 
     const columns: GridColDef[] = [
