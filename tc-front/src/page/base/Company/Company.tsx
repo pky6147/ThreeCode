@@ -161,9 +161,9 @@ function Company() {
       renderCell: (params) => (
         <Typography
           variant="body2"
-          sx={{ cursor: 'pointer', textDecoration: 'underline', color: 'blue',
+          sx={{ cursor: 'pointer', color: 'blue', // textDecoration: 'underline',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                height: '100%', width: '100%'
+                height: '100%', width: '100%', fontWeight: 'bold', fontSize: 16
            }}
           onClick={() => handleOpenDetail(params.row)}
         >

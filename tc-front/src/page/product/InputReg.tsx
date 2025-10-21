@@ -12,6 +12,7 @@ import ExcelBtn from '../../component/ExcelBtn';
 import LabelInput from '../../component/LabelInput';
 import SearchBar from '../../component/SearchBar';
 import { getProducts, getProductDetail } from '../../api/productApi';
+import { createProductInput } from '../../api/productInputApi'
 import { getCompanies } from '../../api/CompanyApi';
 import type { CompanyRow } from '../base/Company/Company'
 import ProductDetail from '../base/Product/ProductDetail'
@@ -57,14 +58,14 @@ function InputReg() {
             try {
                 const companyData = await getCompanies();
                 const productData = await getProducts();
-                console.log('productData', productData)
+                
                 const filteredCompany = companyData.filter((row) => row.isActive === 'Y' && row.companyType === '거래처') // 업체사용여부 Y, 거래처
                 const filteredProduct = productData
                 .filter((row: RowData) => row.isActive === 'Y') // 수주품목 사용여부 Y 인것
                 .filter((row: CompanyRow) =>
                   filteredCompany.some((company) => company.companyId === row.companyId)
                 );
-                console.log('filteredProduct', filteredProduct)
+                
                 // => 업체 매입처, 사용여부 Y, 원자재 사용여부 Y인 것만 노출
                 const result = filteredProduct
                 .map((row:RowData, index:number) => ({
@@ -74,7 +75,7 @@ function InputReg() {
                     productInputQty: 0,
                     productInputDate: '',
                 }))
-                console.log('result', result)
+                
                 setRows(result)
             }
             catch(err) {
@@ -121,11 +122,11 @@ function InputReg() {
         console.log('row값', row)
         
         try {
-            // await createProductInput({
-            //     productId: row.productId,
-            //     productInputQty: row.productInputQty,
-            //     productInputDate: row.productInputDate,
-            // })
+            await createProductInput({
+                productId: row.productId,
+                productInputQty: row.productInputQty,
+                productInputDate: row.productInputDate,
+            })
             handleAlertSuccess()
             BoardRefresh()
         } catch(err) {
@@ -227,9 +228,10 @@ function InputReg() {
             <Typography
                 variant="body2"
                 sx={{ 
-                    cursor: 'pointer', textDecoration: 'underline', color: 'blue', 
+                    cursor: 'pointer', color: 'blue', // textDecoration: 'underline', 
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    height: '100%', width: '100%'}}
+                    height: '100%', width: '100%', fontWeight: 'bold', fontSize: 16
+                }}
                 onClick={() => handleDetail(params.row.id)}
             >
               {params.value}

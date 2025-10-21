@@ -32,9 +32,11 @@ function CustomBtn(props: CustomButtonProps) {
                         color: props.color || 'white',
                         fontWeight: props.fontWeight || 'bold',
                         fontSize: props.fontSize || '16px',
-                        backgroundColor: props.backgroundColor || 'blue',
+                        // backgroundColor: props.backgroundColor || 'blue',
+                        backgroundColor: '#0dcc20ff',
                         border: props.border || '',
                         borderRadius: 3,
+                        boxShadow: '0px 3px 0px black'
                     }}
                     onClick={props.onClick? props.onClick : ()=>{}}
                     endIcon={<AddIcon />}
@@ -48,12 +50,15 @@ function CustomBtn(props: CustomButtonProps) {
                     sx={{
                         width: props.width || '80px',
                         height: props.height || '35px',
-                        color: props.color || 'white',
+                        // color: props.color || 'white',
+                        color: 'black',
                         fontWeight: props.fontWeight || 'bold',
                         fontSize: props.fontSize || '16px',
-                        backgroundColor: props.backgroundColor || 'blue',
+                        // backgroundColor: props.backgroundColor || 'blue',
+                        backgroundColor: '#fcc521ff',
                         border: props.border || '',
                         borderRadius: 3,
+                        boxShadow: '0px 3px 0px black'
                     }}
                     onClick={props.onClick? props.onClick : ()=>{}}
                 >
@@ -69,9 +74,11 @@ function CustomBtn(props: CustomButtonProps) {
                         color: props.color || 'white',
                         fontWeight: props.fontWeight || 'bold',
                         fontSize: props.fontSize || '16px',
-                        backgroundColor: props.backgroundColor || 'blue',
+                        // backgroundColor: props.backgroundColor || '',
+                        backgroundColor: '#fc2121ff',
                         border: props.border || '',
                         borderRadius: 3,
+                        boxShadow: '0px 3px 0px black'
                     }}
                     onClick={props.onClick? props.onClick : ()=>{}}
                 >
@@ -88,8 +95,9 @@ function CustomBtn(props: CustomButtonProps) {
                         fontWeight: props.fontWeight || 'bold',
                         fontSize: props.fontSize || '16px',
                         backgroundColor: props.backgroundColor || 'blue',
-                        border: props.border || '',
+                        border: '2px solid #06218dff',
                         borderRadius: 3,
+                        boxShadow: '0px 3px 0px black'
                     }}
                     onClick={props.onClick? props.onClick : ()=>{}}
                     endIcon={<SearchIcon />}
@@ -107,8 +115,9 @@ function CustomBtn(props: CustomButtonProps) {
                         fontWeight: props.fontWeight || 'bold',
                         fontSize: props.fontSize || '16px',
                         backgroundColor: props.backgroundColor || 'blue',
-                        border: props.border || '',
+                        border: '2px solid #06218dff',
                         borderRadius: 3,
+                        boxShadow: '0px 3px 0px black'
                     }}
                     onClick={props.onClick? props.onClick : ()=>{}}
                     endIcon={<RestartAltIcon />}
@@ -125,9 +134,11 @@ function CustomBtn(props: CustomButtonProps) {
                         color: props.color || 'white',
                         fontWeight: props.fontWeight || 'bold',
                         fontSize: props.fontSize || '16px',
-                        backgroundColor: props.backgroundColor || 'blue',
+                        // backgroundColor: props.backgroundColor || 'blue',
+                        backgroundColor: 'green',
                         border: props.border || '',
                         borderRadius: 3,
+                        boxShadow: '0px 3px 0px black'
                     }}
                     onClick={props.onClick? props.onClick : ()=>{}}
                     
@@ -147,6 +158,7 @@ function CustomBtn(props: CustomButtonProps) {
                         backgroundColor: props.backgroundColor || 'blue',
                         border: props.border || '',
                         borderRadius: 3,
+                        boxShadow: '0px 3px 0px black'
                     }}
                     onClick={props.onClick? props.onClick : ()=>{}}
                     
@@ -166,6 +178,7 @@ function CustomBtn(props: CustomButtonProps) {
                         backgroundColor: props.backgroundColor || 'blue',
                         border: props.border || '',
                         borderRadius: 3,
+                        boxShadow: '0px 3px 0px black'
                     }}
                     onClick={props.onClick? props.onClick : ()=>{}}
                     endIcon={props.endIcon}

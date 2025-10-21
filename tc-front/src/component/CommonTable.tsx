@@ -31,13 +31,17 @@ function CommonTable(props: CommonTableProps) {
               },
               '& .MuiDataGrid-columnHeaders': { 
                   color: '#fff', // 헤더 글자색 
-                  fontSize: 16, // 글자 크기 
+                  fontSize: 20, // 글자 크기 
                   fontWeight: 'bold', // 굵기 
               }, 
               '& .row-inactive': {
                 backgroundColor: '#f5f5f5',  // 회색 배경
                 color: '#999',               // 글자색
                 fontStyle: 'italic',
+              },
+              '& .MuiDataGrid-cell': {
+                fontSize: 16, // ✅ 데이터 셀 폰트 크기
+                fontWeight: 'Normal'
               },
           }}
         />

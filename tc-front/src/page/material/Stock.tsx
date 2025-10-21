@@ -9,7 +9,7 @@ import ExcelBtn from '../../component/ExcelBtn';
 import type { GridColDef } from '@mui/x-data-grid'
 import { getMaterialStock } from '../../api/materialStock'
 
-interface RowData {
+export interface MaterialStockType {
     id?: number;
     idx: number;
     companyName: string;
@@ -22,21 +22,21 @@ interface RowData {
 
 
 function Stock() {
-    const [rows, setRows ] = useState<RowData[]>([])
+    const [rows, setRows ] = useState<MaterialStockType[]>([])
     // Search
     const [searchInfo, setSearchInfo] = useState({
         companyName: '',
         materialNo: '',
         materialName: ''
     })
-    const [searchRows, setSearchRows] = useState<RowData[]>([])
+    const [searchRows, setSearchRows] = useState<MaterialStockType[]>([])
     const [isSearch, setIsSearch] = useState(false)
 
     const getStockData = async () => {
         try {
                 const data = await getMaterialStock();
 
-                const result = data.map((row: RowData, index: number) => ({
+                const result = data.map((row: MaterialStockType, index: number) => ({
                     ...row,
                     id: index,
                     idx: index+1,

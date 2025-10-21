@@ -25,7 +25,7 @@ interface RowData {
     category?: string;
     color?: string;
     spec?: string;
-    specValue?: string;
+    specValue: string;
     maker?: string;
     remark?: string;
     isActive?: string;
@@ -33,7 +33,7 @@ interface RowData {
 
 function Material() {
     const [rows, setRows ] = useState<RowData[]>([]) // tableData
-    const [clickedRow, setClickedRow] = useState<RowData>({})
+    const [clickedRow, setClickedRow] = useState<RowData>(rows[0])
     /* Search */
     const [searchInfo, setSearchInfo] = useState({
             companyName: '',
@@ -236,9 +236,10 @@ function Material() {
             <Typography
                 variant="body2"
                 sx={{ 
-                    cursor: 'pointer', textDecoration: 'underline', color: 'blue', 
+                    cursor: 'pointer', color: 'blue', //textDecoration: 'underline',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    height: '100%', width: '100%'}}
+                    height: '100%', width: '100%', fontWeight: 'bold', fontSize: 16
+                }}
                 onClick={()=> handleOpenDetail(params.row)}
             >
               {params.value}

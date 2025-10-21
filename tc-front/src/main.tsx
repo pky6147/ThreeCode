@@ -23,6 +23,8 @@ import MaterialInputState from './page/material/InputState'
 import MaterialOutputReg from './page/material/OutputReg'
 import MaterialOutputState from './page/material/OutputState'
 import MaterialStock from './page/material/Stock'
+// 대시보드
+import MaterialDashboard from './page/dashboard/materialDashboard';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -39,7 +41,6 @@ createRoot(document.getElementById('root')!).render(
         </MenuArea>
         <ContentArea>
           <Routes>
-            {/* <Route index element={<></>} /> */}
             {/* 수주대상 입출고 관리 */}
             <Route path="/product/inputReg" element={<ProductInputReg/>} />
             <Route path="/product/inputState" element={<ProductInputState/>} />
@@ -56,8 +57,8 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/base/company" element={<BaseCompany />} />
             <Route path="/base/material" element={<BaseMaterial/>} />
             <Route path="/base/product" element={<BaseProduct/>} />
-            {/* <Route path="/delivery-note" element={<DeliveryNote />} /> */}
-            {/* <Route path='/base/companyReg' element={<CompanyReg/>} /> */}
+            {/* 대시보드 */}
+            <Route path="/dashboard/material" element={<MaterialDashboard/>} />
           </Routes>
         </ContentArea>
       </Box>
