@@ -14,6 +14,7 @@ import LabelDatepicker from '../../component/LabelDatepicker';
 import SearchBar from '../../component/SearchBar';
 import type { AxiosError } from 'axios';
 import { deleteProductInput, getProductInput, updateProductInput } from '../../api/productInputApi';
+import LotProcessModal from '../../component/LotProcessModal';
 
 interface RowData {
     id: number;
@@ -33,6 +34,16 @@ interface RowData {
 function InputState() {
     const [rows, setRows ] = useState<RowData[]>([])
     const [temp, setTemp] = useState<RowData>(rows[0])
+
+    const [lotModalOpen, setLotModalOpen] = useState(false);
+    const [selectedProductInputId, setSelectedProductInputId] = useState<number | null>(null);
+
+    // LotNo 클릭 이벤트
+    const handleRunningPage = (row: RowData) => {
+    setSelectedProductInputId(row.productInputId || null);
+    setLotModalOpen(true);
+};
+
     /* Search */
     const [searchInfo, setSearchInfo] = useState({
             companyName: '',
@@ -136,9 +147,9 @@ function InputState() {
         console.log('작업지시서를 켤 행의 data', row)
     }
     // Lot번호 클릭, 공정진행화면을 팝업해야함
-    const handleRunningPage = (row: RowData) => {
-        console.log('공정진행화면을 켤 행의 data', row)
-    }
+    // const handleRunningPage = (row: RowData) => {
+    //     console.log('공정진행화면을 켤 행의 data', row)
+    // }
 
     /* 검색/초기화 관련함수 */
     const handleSearch = () => {
@@ -393,6 +404,11 @@ function InputState() {
                         </Box>
                     </Box>
                 </Box>
+                <LotProcessModal
+                    open={lotModalOpen}
+                    onClose={() => setLotModalOpen(false)}
+                    productInputId={selectedProductInputId}
+                />
             </Card>
         </LocalizationProvider>
     )
