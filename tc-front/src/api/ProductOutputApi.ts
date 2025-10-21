@@ -8,45 +8,44 @@ const getAxiosConfig = () => ({
 
 // 출고 관련 API
 export const productOutputApi = {
-  getAll: async () => axios.get(`${BASE_URL}/product-output`, getAxiosConfig()),
-  getById: async (id: number) => axios.get(`${BASE_URL}/product-output/${id}`, getAxiosConfig()),
+  // 전체 출고 목록 조회 
+  getAll: async () => {
+    const res = await axios.get(`${BASE_URL}/product-output`, getAxiosConfig());
+    return res.data;
+  },
+
+  // 출고 단건 조회
+  getById: async (id: number) => {
+    const res = await axios.get(`${BASE_URL}/product-output/${id}`, getAxiosConfig());
+    return res.data;
+  },
+
+  // 출고 등록
   create: async (data: {
     productInputId: number;
     productOutputQty: number;
     productOutputDate: string;
     remark?: string;
-  }) => axios.post(`${BASE_URL}/product-output`, data, getAxiosConfig()),
-  update: async (id: number, data: { productOutputQty: number; productOutputDate: string }) =>
-    axios.put(`${BASE_URL}/product-output/${id}`, data, getAxiosConfig()),
-  remove: async (id: number) => axios.delete(`${BASE_URL}/product-output/${id}`, getAxiosConfig()),
-};
+  }) => {
+    const res = await axios.post(`${BASE_URL}/product-output`, data, getAxiosConfig());
+    return res.data;
+  },
 
-// 출하증 관련 API
-export const deliveryNoteApi = {
-  // 전체 출하증
-  getAll: async () => axios.get(`${BASE_URL}/delivery-note`, getAxiosConfig()),
+  // 출고 수정
+  update: async (id: number, data: { productOutputQty?: number; productOutputDate?: string; remark?: string }) => {
+    const res = await axios.put(`${BASE_URL}/product-output/${id}`, data, getAxiosConfig());
+    return res.data;
+  },
 
-  // productOutputId로 출하증 단건 조회
-  getByOutputId: async (outputId: number) =>
-    axios.get(`${BASE_URL}/delivery-note/by-output/${outputId}`, getAxiosConfig()),
+  // 출고 삭제 (Soft Delete)
+  remove: async (id: number) => {
+    const res = await axios.delete(`${BASE_URL}/product-output/${id}`, getAxiosConfig());
+    return res.data;
+  },
 
-  create: async (data: {
-    productOutputId: number;
-    receiverName: string;
-    address: string;
-    contact: string;
-    issueDate: string;
-  }) => axios.post(`${BASE_URL}/delivery-note`, data, getAxiosConfig()),
-
-  update: async (
-    id: number,
-    data: Partial<{
-      receiverName: string;
-      address: string;
-      contact: string;
-      issueDate: string;
-    }>
-  ) => axios.put(`${BASE_URL}/delivery-note/${id}`, data, getAxiosConfig()),
-
-  remove: async (id: number) => axios.delete(`${BASE_URL}/delivery-note/${id}`, getAxiosConfig()),
+  // 출하증 단건 조회
+  getDeliveryNote: async (id: number) => {
+    const res = await axios.get(`${BASE_URL}/product-output/${id}/delivery-note`, getAxiosConfig());
+    return res.data;
+  },
 };
