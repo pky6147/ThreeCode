@@ -6,14 +6,15 @@ interface LabelDatepickerProps {
     labelText?: string;
     value?: number | string;
     color?: string;
+    fontSize?: number;
     onChange?: (value: Dayjs | null) => void;
 }
 
-export default function LabelDatepicker({labelText, value, color, onChange}: LabelDatepickerProps) {
+export default function LabelDatepicker({labelText, value, color, fontSize, onChange}: LabelDatepickerProps) {
     return (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: '320px'}}>
             <Typography sx={{
-                color: color || 'white', fontSize: 18, fontWeight: 'bold', minWidth: '70px'
+                color: color || 'white', fontSize: fontSize || 18, fontWeight: 'bold', minWidth: '70px'
             }}
             >
                 {labelText}
@@ -25,7 +26,8 @@ export default function LabelDatepicker({labelText, value, color, onChange}: Lab
               slotProps={{
                 textField: {
                   size: 'small',
-                  sx: { width: '100%', backgroundColor: 'white', border: '1px solid', borderRadius: 1 },
+                  // sx: { width: '100%', backgroundColor: 'white', border: '1px solid', borderRadius: 1 },
+                  sx: { width: '246px', minWidth: '246px', backgroundColor: 'white', border: '1px solid', borderRadius: 1 },
                 },
               }}
             />

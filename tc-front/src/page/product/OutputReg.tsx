@@ -18,17 +18,18 @@ import type { AxiosError } from 'axios';
 
 interface RowData {
     id?: number;
-    productInputId: number;
+    productInputId: number;      // 입고 아이디
     lotNo: string;
     companyName: string;
     productNo: string;
     productName: string;
     category: string;
     paintType: string;
-    productInputQty: number;
-    productInputDate: string;
-    productOutputQty?: number;
-    productOutputDate?: string;
+    productInputQty: number;    // 입고수량
+    productInputDate: string;   // 입고일자
+    productOutputQty?: number;  // 출고수량 (입력 필드)
+    productOutputDate?: string; // 출고일자 (입력 필드)
+    remark?: string;     // 비고
 }
 
 function OutputReg() {
@@ -274,26 +275,31 @@ const columns: GridColDef[] = [
                         <LabelInput 
                             labelText='거래처명'
                             value={searchInfo.companyName}
+                            fontSize={22}
                             onChange={(e) => handleSearchChange('companyName', e.target.value)}
                         />
                         <LabelInput 
                             labelText='품목번호'
                             value={searchInfo.productNo}
+                            fontSize={22}
                             onChange={(e) => handleSearchChange('productNo', e.target.value)}
                         />
                         <LabelInput 
                             labelText='품목명'
                             value={searchInfo.productName}
+                            fontSize={22}
                             onChange={(e) => handleSearchChange('productName', e.target.value)}
                         />
                         <LabelInput 
                             labelText='입고번호'
                             value={searchInfo.lotNo}
+                            fontSize={22}
                             onChange={(e) => handleSearchChange('lotNo', e.target.value)}
                         />
                         <LabelDatepicker 
                             labelText='입고일자'
                             value={searchInfo.productInputDate}
+                            fontSize={22}
                             onChange={(date) => handleSearchChange('productInputDate', date ? date.format('YYYY-MM-DD') : '')}
                         />
                       </SearchBar>

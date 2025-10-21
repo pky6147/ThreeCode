@@ -12,12 +12,11 @@ import ExcelBtn from '../../component/ExcelBtn';
 import LabelInput from '../../component/LabelInput';
 import SearchBar from '../../component/SearchBar';
 import { getProducts, getProductDetail } from '../../api/productApi';
+import { createProductInput } from '../../api/productInputApi'
 import { getCompanies } from '../../api/CompanyApi';
 import type { CompanyRow } from '../base/Company/Company'
 import ProductDetail from '../base/Product/ProductDetail'
-import type { AxiosError } from 'axios';
 import AlertPopup, {type AlertProps} from '../../component/AlertPopup';
-import { createProductInput } from '../../api/productInputApi';
 
 interface RowData {
     id: number;
@@ -58,14 +57,14 @@ function InputReg() {
             try {
                 const companyData = await getCompanies();
                 const productData = await getProducts();
-                console.log('productData', productData)
+                
                 const filteredCompany = companyData.filter((row) => row.isActive === 'Y' && row.companyType === '거래처') // 업체사용여부 Y, 거래처
                 const filteredProduct = productData
                 .filter((row: RowData) => row.isActive === 'Y') // 수주품목 사용여부 Y 인것
                 .filter((row: CompanyRow) =>
                   filteredCompany.some((company) => company.companyId === row.companyId)
                 );
-                console.log('filteredProduct', filteredProduct)
+                
                 // => 업체 매입처, 사용여부 Y, 원자재 사용여부 Y인 것만 노출
                 const result = filteredProduct
                 .map((row:RowData, index:number) => ({
@@ -75,7 +74,7 @@ function InputReg() {
                     productInputQty: 0,
                     productInputDate: '',
                 }))
-                console.log('result', result)
+                
                 setRows(result)
             }
             catch(err) {
@@ -119,10 +118,14 @@ function InputReg() {
 
     // 입고버튼 클릭
     const handleInput = async (row: RowData) => {
-    console.log('row값', row)
     
     if (!row.productInputQty || !row.productInputDate) {
-        handleAlertFail(`입고수량과 입고일자를 입력해주세요.`);
+        setAlertInfo({
+            type: 'error',
+            title: '수주대상 입고 등록 실패',
+            text: '입고수량과 입고일자를 입력해주세요.'
+        })
+        handleAlert();
         return;
     }
 
@@ -132,11 +135,21 @@ function InputReg() {
             productInputQty: row.productInputQty,
             productInputDate: row.productInputDate,
         });
-        handleAlertSuccess();
+        setAlertInfo({
+            type: 'success',
+            title: '수주대상 입고 등록',
+            text: '수주대상 입고 등록이 완료되었습니다.'
+        })
+        handleAlert();
         BoardRefresh();
     } catch(err) {
         console.error(err);
-        handleAlertFail("수주대상 입고 등록 실패");
+        setAlertInfo({
+            type: 'error',
+            title: '수주대상 입고 등록 실패',
+            text: '예기치 못한 오류로 입고 등록을 실패하였습니다.'
+        })
+        handleAlert();
     }
 }
 
@@ -198,25 +211,9 @@ function InputReg() {
     const handleCloseAlert = () => {
         setAlertOpen(false)
     }
-    const handleAlertSuccess = () => {
-        setAlertInfo({
-            type: 'success',
-            title: '수주대상 입고 등록',
-            text: '수주대상 입고 등록이 완료되었습니다.'
-        })
+    const handleAlert = () => {
         setAlertOpen(true)
-
-        setTimeout(() => setAlertOpen(false), 2000)
-    }
-    const handleAlertFail = () => {
-        setAlertInfo({
-            type: 'error',
-            title: '수주대상 입고 등록',
-            text: '수주대상 입고 등록 실패'
-        })
-        setAlertOpen(true)
-
-        setTimeout(()=> setAlertOpen(false), 3000)
+        setTimeout(() => setAlertOpen(false), 3000)
     }
 
     const columns: GridColDef[] = [
@@ -228,9 +225,10 @@ function InputReg() {
             <Typography
                 variant="body2"
                 sx={{ 
-                    cursor: 'pointer', textDecoration: 'underline', color: 'blue', 
+                    cursor: 'pointer', color: 'blue', // textDecoration: 'underline', 
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    height: '100%', width: '100%'}}
+                    height: '100%', width: '100%', fontWeight: 'bold', fontSize: 16
+                }}
                 onClick={() => handleDetail(params.row.id)}
             >
               {params.value}
@@ -304,16 +302,19 @@ function InputReg() {
                             <LabelInput 
                                 labelText='거래처명'
                                 value={searchInfo.companyName}
+                                fontSize={22}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSearchChange('companyName', e.target.value)}
                             />
                             <LabelInput 
                                 labelText='품목번호'
                                 value={searchInfo.productNo}
+                                fontSize={22}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSearchChange('productNo', e.target.value)}
                             />
                             <LabelInput 
                                 labelText='품목명'
                                 value={searchInfo.productName}
+                                fontSize={22}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSearchChange('productName', e.target.value)}
                             />
                         </SearchBar>

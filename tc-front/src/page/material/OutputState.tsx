@@ -16,23 +16,25 @@ import SearchBar from '../../component/SearchBar';
 import { getMaterialOutput, updateMaterialOutput, deleteMaterialOutput } from '../../api/materialOutputApi'
 import AlertPopup, {type AlertProps } from '../../component/AlertPopup';
 
-interface RowData {
+export interface MaterialOutputType {
     id?: number;
     materialOutputId: number;
     materialOutputNo: string;
     companyName: string;
+    materialId: number;
     materialNo: string;
     materialName: string;
     maker: string;
     materialOutputQty: number;
     materialOutputDate: string;
     remainQty: number;
+    createdAt: string;
     isEditing? : boolean;
 }
 
 function OutputState() {
-    const [rows, setRows ] = useState<RowData[]>([])
-    const [temp, setTemp] = useState<RowData>(rows[0])
+    const [rows, setRows ] = useState<MaterialOutputType[]>([])
+    const [temp, setTemp] = useState<MaterialOutputType>(rows[0])
     /* Search */
     const [searchInfo, setSearchInfo] = useState({
             companyName: '',
@@ -41,7 +43,7 @@ function OutputState() {
             materialOutputNo: '',
             materialOutputDate: '',
         })
-    const [searchRows, setSearchRows] = useState<RowData[]>([])
+    const [searchRows, setSearchRows] = useState<MaterialOutputType[]>([])
     const [isSearch, setIsSearch] = useState(false)
     /* Alert */
     const [alertOpen, setAlertOpen] = useState(false)
@@ -51,7 +53,7 @@ function OutputState() {
         try {
             const data = await getMaterialOutput();
             
-            const result = data.map((row:RowData) => ({
+            const result = data.map((row:MaterialOutputType) => ({
                 ...row,
                 id: row.materialOutputId
             }))
@@ -72,10 +74,10 @@ function OutputState() {
     }
 
 
-    const handleChange = <K extends keyof RowData> (
+    const handleChange = <K extends keyof MaterialOutputType> (
         id: number,
         field: K,
-        value: RowData[K]
+        value: MaterialOutputType[K]
     ) => {
         setRows((prev) => 
             prev.map((row) =>
@@ -85,12 +87,12 @@ function OutputState() {
     }
 
     // 수정버튼 클릭
-    const handleEdit = (row: RowData, edit: boolean) => {
+    const handleEdit = (row: MaterialOutputType, edit: boolean) => {
         setTemp(row)
         setRows(prev => prev.map(r => r.id === row.id ? { ...r, isEditing: edit } : r));
     }
     // 저장 버튼 클릭
-    const handleSave = async (row: RowData) => {
+    const handleSave = async (row: MaterialOutputType) => {
         if( (row.materialOutputQty === 0 || isNaN(row.materialOutputQty)) ||
             (row.materialOutputDate === '' || null)) {
             setAlertInfo({
@@ -154,7 +156,7 @@ function OutputState() {
         }
     };
     // 취소 버튼 클릭
-    const handleCancel = (row: RowData) => {
+    const handleCancel = (row: MaterialOutputType) => {
       setRows(prev =>
         prev.map(r =>
           r.id === row.id
@@ -369,26 +371,31 @@ function OutputState() {
                             <LabelInput 
                                 labelText='매입처명'
                                 value={searchInfo.companyName}
+                                fontSize={22}
                                 onChange={(e) => handleSearchChange('companyName', e.target.value)}
                             />
                             <LabelInput 
                                 labelText='품목번호'
                                 value={searchInfo.materialNo}
+                                fontSize={22}
                                 onChange={(e) => handleSearchChange('materialNo', e.target.value)}
                             />
                             <LabelInput 
                                 labelText='품목명'
                                 value={searchInfo.materialName}
+                                fontSize={22}
                                 onChange={(e) => handleSearchChange('materialName', e.target.value)}
                             />
                             <LabelInput 
                                 labelText='출고번호'
                                 value={searchInfo.materialOutputNo}
+                                fontSize={22}
                                 onChange={(e) => handleSearchChange('materialOutputNo', e.target.value)}
                             />
                             <LabelDatepicker 
                                 labelText='출고일자'
                                 value={searchInfo.materialOutputDate}
+                                fontSize={22}
                                 onChange={(date) => handleSearchChange('materialOutputDate', date ? date.format('YYYY-MM-DD') : '')}
                             />
                         </SearchBar>

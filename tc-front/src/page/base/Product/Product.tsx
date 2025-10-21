@@ -242,9 +242,9 @@ function Company() {
         <Typography
           variant="body2"
           sx={{
-            cursor: 'pointer', textDecoration: 'underline', color: 'blue',
+            cursor: 'pointer', color: 'blue', // textDecoration: 'underline',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            height: '100%', width: '100%'
+            height: '100%', width: '100%', fontWeight: 'bold', fontSize: 16
           }}
           onClick={() => handleDetail(params.row.id)}
         >
@@ -323,21 +323,25 @@ function Company() {
             <LabelInput 
                 labelText='매입처명'
                 value={searchInfo.companyName}
+                fontSize={22}
                 onChange={(e) => handleSearchChange('companyName', e.target.value)}
             />
             <LabelInput 
                 labelText='품목번호'
                 value={searchInfo.productNo}
+                fontSize={22}
                 onChange={(e) => handleSearchChange('productNo', e.target.value)}
             />
             <LabelInput 
                 labelText='품목명'
                 value={searchInfo.productName}
+                fontSize={22}
                 onChange={(e) => handleSearchChange('productName', e.target.value)}
             />
             <LabelSelect 
                 labelText='사용여부'
                 value={searchInfo.isActive?.toString() || ''}
+                fontSize={22}
                 onChange={handleSelectChange}
                 options={listActiveYN}
             />

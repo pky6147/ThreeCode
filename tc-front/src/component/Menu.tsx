@@ -28,6 +28,11 @@ const baseData = [
     {title: '수주품목 관리', path: '/base/product'},
 ]
 
+const dashboardData = [
+    {title: '원자재 대시보드', path: '/dashboard/material'},
+    // {title: '수주대상 대시보드', path: '/dashboard/product'},
+]
+
 function Menu() {
   const navigate = useNavigate();
 
@@ -64,6 +69,19 @@ function Menu() {
             <ListSubheader sx={{backgroundColor:'black', color: 'white'}}>기준정보 관리</ListSubheader>
             <MenuList>
                 { baseData.map((item, index) => (
+                    <MenuItem
+                        sx={index > 0 ? {borderTop: '0.5px solid'} : {}} 
+                        key={index}  
+                        onClick={() => navigate(item.path)}
+                    >
+                        <ListItemText primary={item.title} />
+                    </MenuItem>
+                    
+                ))}
+            </MenuList>
+            <ListSubheader sx={{backgroundColor:'black', color: 'white'}}>대시보드</ListSubheader>
+            <MenuList>
+                { dashboardData.map((item, index) => (
                     <MenuItem
                         sx={index > 0 ? {borderTop: '0.5px solid'} : {}} 
                         key={index}  
