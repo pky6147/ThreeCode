@@ -269,7 +269,6 @@ function OutputReg() {
           width="60px"
           text="출고"
           icon="check"
-          disabled={params.row.processStatus !== '최종'}
           onClick={() => handleOutput(params.row)}
         />
       )
@@ -324,21 +323,16 @@ function OutputReg() {
                         </Box>
                     </Box>
 
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 2 }}>
-            <Typography sx={{ fontSize: 24, fontWeight: 'bold' }}>수주대상품목 출고 등록</Typography>
-            <ExcelBtn mappingdata={excelData} sheetName="출고등록목록" fileName="출고등록목록" />
-          </Box>
+                    <Box sx={{ padding: 2 }}>
+                      <CommonTable columns={columns} rows={isSearch ? searchRows : rows} />
+                    </Box>
+                </Box>
 
-          <Box sx={{ padding: 2 }}>
-            <CommonTable columns={columns} rows={isSearch ? searchRows : rows} />
-          </Box>
-        </Box>
-
-        <Dialog open={alertOpen} onClose={handleCloseAlert}>
-          <AlertPopup type={alertInfo.type} title={alertInfo.title} text={alertInfo.text} />
-        </Dialog>
-      </Card>
-    </LocalizationProvider>
+                <Dialog open={alertOpen} onClose={handleCloseAlert}>
+                  <AlertPopup type={alertInfo.type} title={alertInfo.title} text={alertInfo.text} />
+                </Dialog>
+            </Card>
+        </LocalizationProvider>
   );
 }
 
