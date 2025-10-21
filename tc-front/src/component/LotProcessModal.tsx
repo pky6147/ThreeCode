@@ -77,7 +77,6 @@ export default function LotProcessModal({ open, onClose, productInputId }: Props
     }
   };
 
-  // ✅ “시작” 버튼 눌렀을 때
   const handleStartProcess = async (row: LotProcessHistoryRow) => {
     try {
       const now = dayjs().format('YYYY-MM-DDTHH:mm:ss');
@@ -91,14 +90,13 @@ export default function LotProcessModal({ open, onClose, productInputId }: Props
     }
   };
 
-  // ✅ “완료” 버튼 눌렀을 때
   const handleCompleteProcess = async (row: LotProcessHistoryRow) => {
     try {
       const now = dayjs().format('YYYY-MM-DDTHH:mm:ss');
       console.log("✅ Completing process:", row.lotProcessHistoryId, now);
       await updateLotProcess(row.lotProcessHistoryId, { processEnd: now });
       alert(`공정 "${row.processName}"이 완료되었습니다.`);
-      fetchHistory(); // 자동으로 다음 공정 생성 반영됨
+      fetchHistory();
     } catch (err) {
       console.error("❌ 공정 완료 실패:", err);
       alert("공정 완료 실패");
@@ -123,6 +121,11 @@ export default function LotProcessModal({ open, onClose, productInputId }: Props
         return 'black';
     }
   };
+
+  // ✅ 모든 공정 완료 여부 확인
+  const allCompleted =
+    history.length > 0 &&
+    history.every((h) => h.processEnd !== null && h.processEnd !== undefined);
 
   return (
     <Dialog
@@ -218,6 +221,15 @@ export default function LotProcessModal({ open, onClose, productInputId }: Props
                   </TableRow>
                 );
               })}
+
+              {/* ✅ 모든 공정 완료 시 문구 표시 */}
+              {allCompleted && (
+                <TableRow>
+                  <TableCell colSpan={9} align="center" sx={{ background: '#f5f5f5', color: 'green', fontWeight: 'bold' }}>
+                    ✅ 모든 공정이 완료되었습니다.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         )}
