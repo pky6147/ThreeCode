@@ -14,7 +14,7 @@ import SearchBar from '../../component/SearchBar';
 import LabelInput from '../../component/LabelInput';
 import LabelDatepicker from '../../component/LabelDatepicker';
 import AlertPopup, { type AlertProps}  from '../../component/AlertPopup';
-import type { AxiosError } from 'axios';
+// import type { AxiosError } from 'axios';
 import { getOutPut } from '../../api/productInputApi';
 
 interface RowData {
@@ -54,32 +54,33 @@ function OutputReg() {
     const getTableData = async () => {
         try {
             const data = await getOutPut();
-            const result = data
+            const results = data
             .map((row:RowData) => ({
                 ...row,
                 id: row.productInputId,
                 productOutputQty: 0,
                 productOutputDate: '',
             }))
+            setRows(results)
 
     /* 출고되지 않은 입고만 필터링 */    
-    const filtered = inputs.filter(
-        (i: any) => !outputIds.has(i.productInputId)
-      );
+    // const filtered = inputs.filter(
+    //     (i: any) => !outputIds.has(i.productInputId)
+    //   );
 
-    /* 출고 가능 상태만 남김 */
-    const valid = filtered.filter(
-        (i: any) => i.processStatus === '최종' || i.processStatus
-    );
+    // /* 출고 가능 상태만 남김 */
+    // const valid = filtered.filter(
+    //     (i: any) => i.processStatus === '최종' || i.processStatus
+    // );
 
-     const result = valid.map((row: RowData) => ({
-        ...row,
-        id: row.productInputId,
-        productOutputQty: 0,
-        productOutputDate: dayjs().format('YYYY-MM-DD') // 등록 시 자동 오늘 날짜
-      }));
+    //  const result = valid.map((row: RowData) => ({
+    //     ...row,
+    //     id: row.productInputId,
+    //     productOutputQty: 0,
+    //     productOutputDate: dayjs().format('YYYY-MM-DD') // 등록 시 자동 오늘 날짜
+    //   }));
 
-      setRows(result);
+    //   setRows(result);
     } catch (err) {
       console.error(err);
       alert("조회 실패!");
