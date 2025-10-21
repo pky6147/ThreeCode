@@ -20,4 +20,6 @@ public interface ProductOutputRepository extends JpaRepository<ProductOutput, Lo
 
     // 오늘 날짜 기준 출고 수 카운트 (출고번호 생성용)
     long countByProductOutputDate(LocalDate productOutputDate);
+
+    List<ProductOutput> findByProductInputId(Long productInputId);
 }

@@ -137,13 +137,15 @@ public class LotProcessHistoryService {
                 .orElse(false); // 다음 공정이 없음 → 마지막 공정
     }
 
+    // --- 모든 공정 완료된, 출고되지 않은 수주품목 조회 ---
     @Transactional(readOnly = true)
     public List<CompletedProductInputDto> getCompletedProductInputs() {
         return productInputRepository.findAll().stream()
                 .filter(input -> {
-                    List<LotProcessHistory> histories = lotProcessHistoryRepository
-                            .findByProductInput_ProductInputId(input.getProductInputId());
-                    return !histories.isEmpty() && histories.stream().allMatch(h -> h.getProcessEnd() != null);
+                    var histories = lotProcessHistoryRepository.findByProductInput_ProductInputId(input.getProductInputId());
+                    boolean allProcessesCompleted = !histories.isEmpty() && histories.stream().allMatch(h -> h.getProcessEnd() != null);
+                    boolean notShipped = productOutputRepository.findByProductInputId(input.getProductInputId()).isEmpty();
+                    return allProcessesCompleted && notShipped;
                 })
                 .map(input -> CompletedProductInputDto.builder()
                         .productInputId(input.getProductInputId())
