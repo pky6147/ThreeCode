@@ -325,13 +325,12 @@ function InputState() {
                 )
             }
         },
-        { field: 'guide', headerName: '작업지시서', width: 110, headerAlign: 'center', align: 'center',
+        { field: 'guide', headerName: '작업지시서', width: 120, headerAlign: 'center', align: 'center',
             renderCell: (params) => {
                 return (
                     <CustomBtn
-                        width="85px"
                         text="작업지시서"
-                        backgroundColor='green'
+                        icon="print"
                         onClick={() => handleGuide(params.row)}
                     />
                 )

@@ -336,10 +336,10 @@ function OutputState() {
     {
       field: 'delivery_note',
       headerName: '출하증',
-      width: 120,
+      width: 100,
       headerAlign: 'center', align: 'center',
       renderCell: (params) => (
-        <CustomBtn text="출하증" backgroundColor="green" onClick={() => handleOpenDeliveryNote(params.row)} />
+        <CustomBtn text="" color="black" icon="print" onClick={() => handleOpenDeliveryNote(params.row)} />
       ),
     },
   ];

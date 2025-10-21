@@ -30,7 +30,7 @@ const baseData = [
 
 const dashboardData = [
     {title: '원자재 대시보드', path: '/dashboard/material'},
-    {title: '수주대상 대시보드', path: '/dashboard/product'},
+    // {title: '수주대상 대시보드', path: '/dashboard/product'},
 ]
 
 function Menu() {

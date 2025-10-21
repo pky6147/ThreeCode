@@ -6,6 +6,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
+import PrintIcon from '@mui/icons-material/Print';
 
 interface CustomButtonProps {
     width? : string;
@@ -18,7 +19,7 @@ interface CustomButtonProps {
     onClick? : React.MouseEventHandler<HTMLButtonElement>,
     text? : string;
     endIcon?: React.ReactNode;
-    icon?: 'add' | 'edit' | 'delete' | 'search' | 'reset' | 'check' | 'close' | ''
+    icon?: 'add' | 'edit' | 'delete' | 'search' | 'reset' | 'check' | 'close' | 'print' | ''
 }
 
 function CustomBtn(props: CustomButtonProps) {
@@ -164,6 +165,26 @@ function CustomBtn(props: CustomButtonProps) {
                     
                 >
                     <CloseIcon />
+                </Button>
+            )
+        case 'print':
+            return (
+                <Button 
+                    sx={{
+                        width: props.width || '80px',
+                        height: props.height || '35px',
+                        color: props.color || 'white',
+                        fontWeight: props.fontWeight || 'bold',
+                        fontSize: props.fontSize || '16px',
+                        backgroundColor: '#ffa425ff',
+                        border: props.border || '',
+                        borderRadius: 3,
+                        boxShadow: '0px 3px 0px black'
+                    }}
+                    onClick={props.onClick? props.onClick : ()=>{}}
+                    
+                >
+                    <PrintIcon />
                 </Button>
             )
         default:
