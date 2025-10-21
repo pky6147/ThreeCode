@@ -20,7 +20,6 @@ public class ProductOutputController {
     @PostMapping
     public ResponseEntity<ProductOutputResponseDto> createOutput(
             @RequestBody ProductOutputRequestDto requestDto) {
-
         ProductOutputResponseDto created = productOutputService.createOutput(requestDto);
         return ResponseEntity.ok(created);
     }

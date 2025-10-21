@@ -91,4 +91,22 @@ public class ProductInputService {
         productInputRepository.save(input);
     }
 
+    // 단건 조회 후 DTO 반환
+    public ProductInputResponseDto getInputById(Long id) {
+        ProductInput input = productInputRepository.findById(id)
+                .filter(i -> "N".equals(i.getIsDelete()))
+                .orElseThrow(() -> new RuntimeException("입고 정보를 찾을 수 없습니다. ID=" + id));
+
+        return ProductInputResponseDto.builder()
+                .productInputId(input.getProductInputId())
+                .lotNo(input.getLotNo())
+                .companyName(input.getProduct().getCompany().getCompanyName())
+                .productNo(input.getProduct().getProductNo())
+                .productName(input.getProduct().getProductName())
+                .category(input.getProduct().getCategory())
+                .paintType(input.getProduct().getPaintType())
+                .productInputQty(input.getProductInputQty())
+                .productInputDate(input.getProductInputDate())
+                .build();
+    }
 }

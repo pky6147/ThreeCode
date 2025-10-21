@@ -9,10 +9,10 @@ import java.util.List;
 @Repository
 public interface ProductOutputRepository extends JpaRepository<ProductOutput, Long> {
 
-    // 특정 입고 ID 기준 출고 조회 (입고별 출고 이력 조회할 때 사용)
+    // 특정 입고 ID 기준 출고 조회 (입고별 출고 이력 조회)
     List<ProductOutput> findByProductInputIdAndIsDelete(Long productInputId, String isDelete);
 
-    // 삭제되지 않은 출고 목록 조회
+    // 삭제되지 않은 전체 출고 목록 조회
     List<ProductOutput> findByIsDelete(String isDelete);
 
     // 출고번호 기준 조회
