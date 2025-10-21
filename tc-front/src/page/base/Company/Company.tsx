@@ -161,9 +161,9 @@ function Company() {
       renderCell: (params) => (
         <Typography
           variant="body2"
-          sx={{ cursor: 'pointer', textDecoration: 'underline', color: 'blue',
+          sx={{ cursor: 'pointer', color: 'blue', // textDecoration: 'underline',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                height: '100%', width: '100%'
+                height: '100%', width: '100%', fontWeight: 'bold', fontSize: 16
            }}
           onClick={() => handleOpenDetail(params.row)}
         >
@@ -207,20 +207,24 @@ function Company() {
                 value={searchInfo.companyType?.toString() || ''}
                 onChange={handleSelectChange_CompanyType}
                 options={listType}
+                fontSize={22}
             />
             <LabelInput 
                 labelText='업체명'
                 value={searchInfo.companyName}
+                fontSize={22}
                 onChange={(e) => handleSearchChange('companyName', e.target.value)}
             />
             <LabelInput 
                 labelText='대표명'
                 value={searchInfo.ceoName}
+                fontSize={22}
                 onChange={(e) => handleSearchChange('ceoName', e.target.value)}
             />
             <LabelSelect 
                 labelText='사용여부'
                 value={searchInfo.isActive?.toString() || ''}
+                fontSize={22}
                 onChange={handleSelectChange_IsActive}
                 options={listActiveYN}
             />

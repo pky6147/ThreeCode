@@ -17,6 +17,7 @@ import { productOutputApi } from '../../api/ProductOutputApi';
 import OutputMemo from './OutputMemo';
 
 export interface OutputData {
+  id?: number;
   productOutputId: number;
   productInputId: number;
   productOutputNo: string;
@@ -335,9 +336,10 @@ function OutputState() {
     {
       field: 'delivery_note',
       headerName: '출하증',
-      width: 120,
+      width: 100,
+      headerAlign: 'center', align: 'center',
       renderCell: (params) => (
-        <CustomBtn text="출하증" backgroundColor="green" onClick={() => handleOpenDeliveryNote(params.row)} />
+        <CustomBtn text="" color="black" icon="print" onClick={() => handleOpenDeliveryNote(params.row)} />
       ),
     },
   ];
@@ -354,26 +356,31 @@ return (
               <LabelInput 
                   labelText='거래처명'
                   value={searchInfo.companyName}
+                  fontSize={22}
                   onChange={(e) => handleSearchChange('companyName', e.target.value)}
               />
               <LabelInput 
                   labelText='품목번호'
                   value={searchInfo.productNo}
+                  fontSize={22}
                   onChange={(e) => handleSearchChange('productNo', e.target.value)}
               />
               <LabelInput 
                   labelText='품목명'
                   value={searchInfo.productName}
+                  fontSize={22}
                   onChange={(e) => handleSearchChange('productName', e.target.value)}
               />
               <LabelInput 
                   labelText='출고번호'
                   value={searchInfo.productOutputNo}
+                  fontSize={22}
                   onChange={(e) => handleSearchChange('productOutputNo', e.target.value)}
               />
               <LabelDatepicker 
                   labelText='출고일자'
                   value={searchInfo.productOutputDate}
+                  fontSize={22}
                   onChange={(date) => handleSearchChange('productOutputDate', date ? date.format('YYYY-MM-DD') : '')}
               />
             </SearchBar>
@@ -382,9 +389,9 @@ return (
           <Box>
             {/* title & button */}
             <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-              <Typography sx={{ fontSize: '24px', fontWeight: 'bold', paddingLeft: 2 }}>수주대상품목 입고 현황</Typography>
+              <Typography sx={{ fontSize: '24px', fontWeight: 'bold', paddingLeft: 2 }}>수주대상품목 출고 현황</Typography>
               <Box sx={{paddingRight: 2}}>
-                <ExcelBtn mappingdata={excelData} sheetName="수주대상품목 입고 현황" fileName="수주대상품목 입고 현황" />
+                <ExcelBtn mappingdata={excelData} sheetName="수주대상품목 출고 현황" fileName="수주대상품목 출고 현황" />
               </Box>
             </Box>
             {/* table */}

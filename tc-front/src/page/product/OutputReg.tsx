@@ -17,7 +17,8 @@ import AlertPopup, { type AlertProps}  from '../../component/AlertPopup';
 import { getProductInput } from '../../api/productInputApi';
 
 interface RowData {
-    productInputId: number;     
+    id?: number;
+    productInputId: number;      // 입고 아이디
     lotNo: string;
     companyName: string;
     productNo: string;
@@ -276,19 +277,52 @@ function OutputReg() {
   ];
 
     return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Card sx={{ height: '98%', margin: '0.5%' }}>
-        <Box>
-          <CustomBC text="출고 등록" subText="수주대상 입출고 관리" />
-          <Box sx={{ padding: 2 }}>
-            <SearchBar onSearch={handleSearch} onReset={handleReset}>
-              <LabelInput labelText="거래처명" value={searchInfo.companyName} onChange={(e) => handleSearchChange('companyName', e.target.value)} />
-              <LabelInput labelText="품목번호" value={searchInfo.productNo} onChange={(e) => handleSearchChange('productNo', e.target.value)} />
-              <LabelInput labelText="품목명" value={searchInfo.productName} onChange={(e) => handleSearchChange('productName', e.target.value)} />
-              <LabelInput labelText="Lot번호" value={searchInfo.lotNo} onChange={(e) => handleSearchChange('lotNo', e.target.value)} />
-              <LabelDatepicker labelText="입고일자" value={searchInfo.productInputDate} onChange={(date) => handleSearchChange('productInputDate', date ? date.format('YYYY-MM-DD') : '')} />
-            </SearchBar>
-          </Box>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Card sx={{ height: '98%', margin: '0.5%' }}>
+                <Box>
+                    {/* Breadcrumbs 영역 */}
+                    <CustomBC text="출고 등록" subText='수주대상 입출고 관리' />
+                    {/* Content 영역 */}
+                    <Box sx={{padding: 2}}>
+                      <SearchBar onSearch={handleSearch} onReset={handleReset}>
+                        <LabelInput 
+                            labelText='거래처명'
+                            value={searchInfo.companyName}
+                            fontSize={22}
+                            onChange={(e) => handleSearchChange('companyName', e.target.value)}
+                        />
+                        <LabelInput 
+                            labelText='품목번호'
+                            value={searchInfo.productNo}
+                            fontSize={22}
+                            onChange={(e) => handleSearchChange('productNo', e.target.value)}
+                        />
+                        <LabelInput 
+                            labelText='품목명'
+                            value={searchInfo.productName}
+                            fontSize={22}
+                            onChange={(e) => handleSearchChange('productName', e.target.value)}
+                        />
+                        <LabelInput 
+                            labelText='입고번호'
+                            value={searchInfo.lotNo}
+                            fontSize={22}
+                            onChange={(e) => handleSearchChange('lotNo', e.target.value)}
+                        />
+                        <LabelDatepicker 
+                            labelText='입고일자'
+                            value={searchInfo.productInputDate}
+                            fontSize={22}
+                            onChange={(date) => handleSearchChange('productInputDate', date ? date.format('YYYY-MM-DD') : '')}
+                        />
+                      </SearchBar>
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 2 }}>
+                        <Typography sx={{ fontSize: 24, fontWeight: 'bold' }}>수주대상품목 출고 등록</Typography>
+                        <Box sx={{paddingRight: 2}}>
+                            <ExcelBtn mappingdata={excelData} sheetName="수주대상품목 출고 등록" fileName="수주대상품목 출고 등록" />
+                        </Box>
+                    </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 2 }}>
             <Typography sx={{ fontSize: 24, fontWeight: 'bold' }}>수주대상품목 출고 등록</Typography>

@@ -317,16 +317,19 @@ function InputReg() {
                             <LabelInput 
                                 labelText='매입처명'
                                 value={searchInfo.companyName}
+                                fontSize={22}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSearchChange('companyName', e.target.value)}
                             />
                             <LabelInput 
                                 labelText='품목번호'
                                 value={searchInfo.materialNo}
+                                fontSize={22}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSearchChange('materialNo', e.target.value)}
                             />
                             <LabelInput 
                                 labelText='품목명'
                                 value={searchInfo.materialName}
+                                fontSize={22}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSearchChange('materialName', e.target.value)}
                             />
                         </SearchBar>

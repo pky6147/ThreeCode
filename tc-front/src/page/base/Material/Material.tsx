@@ -25,7 +25,7 @@ interface RowData {
     category?: string;
     color?: string;
     spec?: string;
-    specValue?: string;
+    specValue: string;
     maker?: string;
     remark?: string;
     isActive?: string;
@@ -33,7 +33,7 @@ interface RowData {
 
 function Material() {
     const [rows, setRows ] = useState<RowData[]>([]) // tableData
-    const [clickedRow, setClickedRow] = useState<RowData>({})
+    const [clickedRow, setClickedRow] = useState<RowData>(rows[0])
     /* Search */
     const [searchInfo, setSearchInfo] = useState({
             companyName: '',
@@ -236,9 +236,10 @@ function Material() {
             <Typography
                 variant="body2"
                 sx={{ 
-                    cursor: 'pointer', textDecoration: 'underline', color: 'blue', 
+                    cursor: 'pointer', color: 'blue', //textDecoration: 'underline',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    height: '100%', width: '100%'}}
+                    height: '100%', width: '100%', fontWeight: 'bold', fontSize: 16
+                }}
                 onClick={()=> handleOpenDetail(params.row)}
             >
               {params.value}
@@ -288,21 +289,25 @@ function Material() {
                         <LabelInput 
                             labelText='매입처명'
                             value={searchInfo.companyName}
+                            fontSize={22}
                             onChange={(e) => handleSearchChange('companyName', e.target.value)}
                         />
                         <LabelInput 
                             labelText='품목번호'
                             value={searchInfo.materialNo}
+                            fontSize={22}
                             onChange={(e) => handleSearchChange('materialNo', e.target.value)}
                         />
                         <LabelInput 
                             labelText='품목명'
                             value={searchInfo.materialName}
+                            fontSize={22}
                             onChange={(e) => handleSearchChange('materialName', e.target.value)}
                         />
                         <LabelSelect 
                             labelText='사용여부'
                             value={searchInfo.isActive?.toString() || ''}
+                            fontSize={22}
                             onChange={handleSelectChange}
                             options={listActiveYN}
                         />

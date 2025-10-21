@@ -1,9 +1,19 @@
 import { useEffect, useState } from 'react';
-import { Dialog, Box, Typography, CircularProgress, Table, TableHead, TableRow, TableCell, TableBody, TextField, Button } from '@mui/material';
+import {
+  Dialog,
+  Box,
+  Typography,
+  CircularProgress,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  TextField,
+  Button,
+} from '@mui/material';
 import dayjs from 'dayjs';
 import { getLotProcessHistory, updateLotProcess } from '../api/productInputApi';
-
-
 
 interface LotProcessHistoryRow {
   lotProcessHistoryId: number;
@@ -32,51 +42,64 @@ export default function LotProcessModal({ open, onClose, productInputId }: Props
     }
   }, [open, productInputId]);
 
- const fetchHistory = async () => {
-  setLoading(true);
-  try {
-    console.log('Fetching history for productInputId:', productInputId);
-    const data = await getLotProcessHistory(productInputId!);
-    console.log('Fetched history data:', data); // 🔹 데이터 확인용
-    setHistory(data);
-  } catch (err) {
-    console.error(err);
-    alert("공정진행현황 조회 실패");
-  } finally {
-    setLoading(false);
-  }
-};
-
-  const handleRemarkChange = (id: number, value: string) => {
-    setHistory(prev => prev.map(h => h.lotProcessHistoryId === id ? { ...h, remark: value } : h));
+  const fetchHistory = async () => {
+    setLoading(true);
+    try {
+      console.log("📦 Fetching process history for:", productInputId);
+      const data = await getLotProcessHistory(productInputId!);
+      console.log("✅ Loaded data:", data);
+      setHistory(data);
+    } catch (err) {
+      console.error("❌ 공정진행현황 조회 실패:", err);
+      alert("공정진행현황 조회 실패");
+    } finally {
+      setLoading(false);
+    }
   };
 
- const handleSaveRemark = async (row: LotProcessHistoryRow) => {
-  console.log('Saving remark for row:', row); // 🔹 클릭 시 row 확인
-  console.log('lotProcessHistoryId:', row.lotProcessHistoryId); // 🔹 ID 확인
-  try {
-    if (!row.lotProcessHistoryId) {
-      alert("ID가 존재하지 않습니다!");
-      return;
+  const handleRemarkChange = (id: number, value: string) => {
+    setHistory((prev) =>
+      prev.map((h) =>
+        h.lotProcessHistoryId === id ? { ...h, remark: value } : h
+      )
+    );
+  };
+
+  const handleSaveRemark = async (row: LotProcessHistoryRow) => {
+    try {
+      console.log("💾 Saving remark:", row);
+      await updateLotProcess(row.lotProcessHistoryId, { remark: row.remark });
+      alert("비고가 저장되었습니다.");
+      fetchHistory();
+    } catch (err) {
+      console.error("❌ 비고 저장 실패:", err);
+      alert("비고 저장 실패");
     }
-    await updateLotProcess(row.lotProcessHistoryId, { remark: row.remark });
-    alert("저장되었습니다.");
-    fetchHistory();
-  } catch (err) {
-    console.error(err);
-    alert("저장 실패");
-  }
-};
+  };
+
+  const handleStartProcess = async (row: LotProcessHistoryRow) => {
+    try {
+      const now = dayjs().format('YYYY-MM-DDTHH:mm:ss');
+      console.log("🚀 Starting process:", row.lotProcessHistoryId, now);
+      await updateLotProcess(row.lotProcessHistoryId, { processStart: now });
+      alert(`공정 "${row.processName}"이 시작되었습니다.`);
+      fetchHistory();
+    } catch (err) {
+      console.error("❌ 공정 시작 실패:", err);
+      alert("공정 시작 실패");
+    }
+  };
 
   const handleCompleteProcess = async (row: LotProcessHistoryRow) => {
     try {
       const now = dayjs().format('YYYY-MM-DDTHH:mm:ss');
+      console.log("✅ Completing process:", row.lotProcessHistoryId, now);
       await updateLotProcess(row.lotProcessHistoryId, { processEnd: now });
-      alert(`공정 "${row.processName}" 완료`);
-      fetchHistory(); // 완료 후 갱신 (다음 공정 자동 생성 포함)
+      alert(`공정 "${row.processName}"이 완료되었습니다.`);
+      fetchHistory();
     } catch (err) {
-      console.error(err);
-      alert("공정 완료 처리 실패");
+      console.error("❌ 공정 완료 실패:", err);
+      alert("공정 완료 실패");
     }
   };
 
@@ -88,17 +111,37 @@ export default function LotProcessModal({ open, onClose, productInputId }: Props
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case '미시작': return 'gray';
-      case '진행중': return 'orange';
-      case '완료': return 'green';
-      default: return 'black';
+      case '미시작':
+        return 'gray';
+      case '진행중':
+        return 'orange';
+      case '완료':
+        return 'green';
+      default:
+        return 'black';
     }
   };
 
+  // ✅ 모든 공정 완료 여부 확인
+  const allCompleted =
+    history.length > 0 &&
+    history.every((h) => h.processEnd !== null && h.processEnd !== undefined);
+
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <Box sx={{ padding: 3 }}>
-        <Typography variant="h6" mb={2}>공정 진행 현황</Typography>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="lg"
+      fullWidth
+      PaperProps={{
+        sx: { minHeight: '70vh', minWidth: '80vw', p: 2 },
+      }}
+    >
+      <Box>
+        <Typography variant="h6" mb={2}>
+          공정 진행 현황
+        </Typography>
+
         {loading ? (
           <CircularProgress />
         ) : (
@@ -117,28 +160,54 @@ export default function LotProcessModal({ open, onClose, productInputId }: Props
               </TableRow>
             </TableHead>
             <TableBody>
-              {history.map(row => {
+              {history.map((row) => {
                 const status = getStatus(row);
                 return (
                   <TableRow key={row.lotProcessHistoryId}>
                     <TableCell>{row.processSeq}</TableCell>
                     <TableCell>{row.processName}</TableCell>
                     <TableCell>{row.processCode}</TableCell>
-                    <TableCell>{row.processStart ? dayjs(row.processStart).format('YYYY-MM-DD HH:mm') : '-'}</TableCell>
-                    <TableCell>{row.processEnd ? dayjs(row.processEnd).format('YYYY-MM-DD HH:mm') : '-'}</TableCell>
+                    <TableCell>
+                      {row.processStart ? (
+                        dayjs(row.processStart).format('YYYY-MM-DD HH:mm')
+                      ) : (
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          size="small"
+                          onClick={() => handleStartProcess(row)}
+                        >
+                          시작
+                        </Button>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {row.processEnd
+                        ? dayjs(row.processEnd).format('YYYY-MM-DD HH:mm')
+                        : '-'}
+                    </TableCell>
                     <TableCell>{row.processTime}</TableCell>
                     <TableCell>
                       <TextField
                         size="small"
                         value={row.remark || ''}
-                        onChange={(e) => handleRemarkChange(row.lotProcessHistoryId, e.target.value)}
+                        onChange={(e) =>
+                          handleRemarkChange(row.lotProcessHistoryId, e.target.value)
+                        }
                         sx={{ width: '100%' }}
                       />
-                      <Button size="small" onClick={() => handleSaveRemark(row)}>저장</Button>
+                      <Button
+                        size="small"
+                        onClick={() => handleSaveRemark(row)}
+                      >
+                        저장
+                      </Button>
                     </TableCell>
-                    <TableCell sx={{ color: getStatusColor(status) }}>{status}</TableCell>
+                    <TableCell sx={{ color: getStatusColor(status) }}>
+                      {status}
+                    </TableCell>
                     <TableCell>
-                      {status !== '완료' && (
+                      {status === '진행중' && (
                         <Button
                           variant="contained"
                           color="primary"
@@ -150,8 +219,17 @@ export default function LotProcessModal({ open, onClose, productInputId }: Props
                       )}
                     </TableCell>
                   </TableRow>
-                )
+                );
               })}
+
+              {/* ✅ 모든 공정 완료 시 문구 표시 */}
+              {allCompleted && (
+                <TableRow>
+                  <TableCell colSpan={9} align="center" sx={{ background: '#f5f5f5', color: 'green', fontWeight: 'bold' }}>
+                    ✅ 모든 공정이 완료되었습니다.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         )}

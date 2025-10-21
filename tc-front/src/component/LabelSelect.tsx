@@ -11,6 +11,7 @@ interface LabelSelectProps {
     // Label
     labelText?: string;
     color?: string;
+    fontSize?: number;
     // SelectBox
     value?: string;
     onChange?: (event: SelectChangeEvent<string>) => void;
@@ -19,12 +20,12 @@ interface LabelSelectProps {
     required?: boolean;
 }
 
-export default function LabelSelect({labelText, color, value,  onChange, options, disabled, required}: LabelSelectProps) {
+export default function LabelSelect({labelText, color, value, fontSize, onChange, options, disabled, required}: LabelSelectProps) {
 
     return (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: '320px'}}>
             <Box sx={{ display: 'flex', minWidth: '70px'}}>
-                <Typography sx={{ color: color || 'white', fontSize: 18, fontWeight: 'bold' }}>
+                <Typography sx={{ color: color || 'white', fontSize: fontSize || 18, fontWeight: 'bold' }}>
                     {labelText}                
                 </Typography>
                 {required && (
