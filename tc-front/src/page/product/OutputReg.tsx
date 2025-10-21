@@ -232,7 +232,7 @@ const columns: GridColDef[] = [
                 value={params.row.productOutputDate ? dayjs(params.row.productOutputDate) : null}
                 onChange={(newValue) => 
                     handleChange(params.row.id, 'productOutputDate', newValue?.format('YYYY-MM-DD') || '')}
-                slotProps={{ textField: { size: 'small', sx: { width: '100%' } } }}
+                slotProps={{ textField: { size: 'small', sx: { width: '100%', paddingTop: 0.7 } } }}
             />
         )
     },
