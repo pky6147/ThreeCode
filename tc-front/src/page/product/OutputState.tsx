@@ -18,17 +18,17 @@ import OutputMemo from './OutputMemo';
 export interface OutputData {
   id?: number;
   productOutputId: number;
-  productInputId: number;
   productOutputNo: string;
   productOutputQty: number;
   productOutputDate: string;
   remark?: string;
-  lotNo: string;
   companyName: string;
   productNo: string;
   productName: string;
   category: string;
   paintType: string;
+  productInputId: number;
+  lotNo: string;
   productInputQty: number;
   productInputDate: string;
   isEditing?: boolean;
@@ -218,7 +218,19 @@ const handleDelete = async (id: number) => {
     { field: 'productName', headerName: '품목명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
     { field: 'category', headerName: '분류', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
     { field: 'paintType', headerName: '도장방식', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
-    { field: 'productOutputQty', headerName: '출고수량', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'right',
+    { field: 'lotNo', headerName: 'Lot번호',  width: 180, headerAlign: 'center', align: 'center' },
+    { field: 'productInputQty', headerName: '입고수량', flex: 1, minWidth: 100, headerAlign: 'center', align: 'right',
+        renderCell: (params) => {
+            return params.value?.toLocaleString();
+        }
+     },
+    { field: 'productInputDate', headerName: '입고일자', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center',
+        renderCell: (params) => {
+            if (!params.value) return ''; // 값 없으면 빈 문자열
+            return dayjs(params.value).format('YY.MM.DD'); 
+        }
+    },
+    { field: 'productOutputQty', headerName: '출고수량', flex: 1, minWidth: 100, headerAlign: 'center', align: 'right',
       renderCell: (params) => {
         if(params.row.isEditing) {
             return (
@@ -240,7 +252,7 @@ const handleDelete = async (id: number) => {
         }
       }
     },
-    { field: 'productOutputDate', headerName: '출고일자', flex: 2, minWidth: 200, headerAlign: 'center', align: 'center',
+    { field: 'productOutputDate', headerName: '출고일자', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center',
       renderCell: (params) => {
         if(params.row.isEditing) {
             return (

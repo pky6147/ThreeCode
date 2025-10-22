@@ -230,7 +230,7 @@ function OutputReg() {
                 return value?.toLocaleString();  // 천단위 콤마
             }
         },
-        { field: 'materialInputDate', headerName: '입고일자', flex: 2, minWidth: 200, headerAlign: 'center', align: 'center',
+        { field: 'materialInputDate', headerName: '입고일자', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center',
             renderCell: (params) => {
                 if (!params.value) return ''; // 값 없으면 빈 문자열
                 return dayjs(params.value).format('YY.MM.DD'); 
@@ -253,7 +253,7 @@ function OutputReg() {
                 />
             )
         },
-        { field: 'materialOutputDate', headerName: '출고일자', flex: 2, minWidth: 200, headerAlign: 'center', align: 'center',
+        { field: 'materialOutputDate', headerName: '출고일자', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center',
             renderCell: (params) => (
                 <DatePicker
                   format="YYYY-MM-DD"

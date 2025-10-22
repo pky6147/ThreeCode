@@ -27,6 +27,10 @@ export interface MaterialOutputType {
     maker: string;
     materialOutputQty: number;
     materialOutputDate: string;
+    materialInputId: number;
+    materialInputNo: string;
+    materialInputQty: number;
+    materialInputDate: string;
     remainQty: number;
     createdAt: string;
     isEditing? : boolean;
@@ -269,7 +273,21 @@ function OutputState() {
         { field: 'materialNo', headerName: '품목번호', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
         { field: 'materialName', headerName: '품목명', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'center' },
         { field: 'maker', headerName: '제조사', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center' },
-        { field: 'materialOutputQty', headerName: '출고수량', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'right',
+        { field: 'materialInputNo', headerName: '입고번호', minWidth: 180, headerAlign: 'center', align: 'center' },
+        { field: 'materialInputQty', headerName: '입고수량', flex: 1, minWidth: 100, headerAlign: 'center', align: 'right',
+            renderCell: (params) => {
+                const value = params.value;
+                return value?.toLocaleString();  // 천단위 콤마
+            }
+        },
+        { field: 'materialInputDate', headerName: '입고일자', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center',
+            renderCell: (params) => {
+                if (!params.value) return ''; // 값 없으면 빈 문자열
+                return dayjs(params.value).format('YY.MM.DD'); 
+                
+            }
+        },
+        { field: 'materialOutputQty', headerName: '출고수량', flex: 1, minWidth: 100, headerAlign: 'center', align: 'right',
             renderCell: (params) => {
                 if(params.row.isEditing) {
                     return (
@@ -291,7 +309,7 @@ function OutputState() {
                 }
             }
          },
-        { field: 'materialOutputDate', headerName: '출고일자', flex: 2, minWidth: 200, headerAlign: 'center', align: 'center',
+        { field: 'materialOutputDate', headerName: '출고일자', flex: 1, minWidth: 100, headerAlign: 'center', align: 'center',
             renderCell: (params) => {
                 if(params.row.isEditing) {
                     return (

@@ -48,6 +48,7 @@ public class MaterialOutputDto {
     private Long materialInputId;
     private String materialInputNo;
     private LocalDate materialInputDate;
+    private Integer materialInputQty;
 
     /** ✅ DTO → Entity 변환 */
     public MaterialOutput toEntity(Material material, MaterialInput materialInput) {
@@ -97,6 +98,11 @@ public class MaterialOutputDto {
                 .materialInputDate(
                         materialInput != null
                                 ? materialInput.getMaterialInputDate()
+                                : null
+                )
+                .materialInputQty(
+                        materialInput != null
+                                ? materialInput.getMaterialInputQty()
                                 : null
                 )
                 .remainQty(null)
