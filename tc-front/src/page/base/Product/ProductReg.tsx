@@ -103,7 +103,7 @@ export default function ProductReg({ doClose, initialData, isEdit = false }: Pro
     <Box
       sx={{
         backgroundColor: "white",
-        width: "100%",
+        width: "1600px",
         minWidth: "0",
         height: "auto",
         display: "flex",
@@ -115,9 +115,8 @@ export default function ProductReg({ doClose, initialData, isEdit = false }: Pro
       <Box
         sx={{
           backgroundColor: "white",
-          width: "1500px",
-          minWidth: "2000px",
-          height: "800px",
+          // minWidth: "1500px",
+          // height: "800px",
           p: 3,
           display: "flex",
           flexDirection: "column",
