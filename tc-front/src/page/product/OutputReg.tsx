@@ -344,15 +344,17 @@ function OutputReg() {
                         />
                       </SearchBar>
                     </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 2 }}>
-                        <Typography sx={{ fontSize: 24, fontWeight: 'bold' }}>수주대상품목 출고 등록</Typography>
-                        <Box sx={{paddingRight: 2}}>
-                            <ExcelBtn mappingdata={excelData} sheetName="수주대상품목 출고 등록" fileName="수주대상품목 출고 등록" />
-                        </Box>
-                    </Box>
+                    <Box>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Typography sx={{ fontSize: 24, fontWeight: 'bold', paddingLeft: 2 }}>수주대상품목 출고 등록</Typography>
+                          <Box sx={{paddingRight: 2}}>
+                              <ExcelBtn mappingdata={excelData} sheetName="수주대상품목 출고 등록" fileName="수주대상품목 출고 등록" />
+                          </Box>
+                      </Box>
 
-                    <Box sx={{ padding: 2 }}>
-                      <CommonTable columns={columns} rows={isSearch ? searchRows : rows} />
+                      <Box sx={{ padding: 2 }}>
+                        <CommonTable columns={columns} rows={isSearch ? searchRows : rows} />
+                      </Box>
                     </Box>
                 </Box>
 
