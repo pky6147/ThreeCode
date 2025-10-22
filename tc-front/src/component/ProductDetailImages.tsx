@@ -38,9 +38,9 @@ export default function ProductDetailImages({ images }: ProductDetailImagesProps
               src={url}
               alt={fileName}
               style={{
-                width: 100,
-                height: 100,
-                objectFit: "cover",
+                width: 200,
+                height: 200,
+                objectFit: "contain",
                 border: index === 0 ? "2px solid red" : "1px solid #ccc",
               }}
             />

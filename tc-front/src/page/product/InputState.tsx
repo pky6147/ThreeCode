@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Box, Typography, Card, TextField } from '@mui/material'
 import CustomBC from '../../component/CustomBC';
 import CustomBtn from '../../component/CustomBtn';
@@ -14,6 +14,8 @@ import LabelDatepicker from '../../component/LabelDatepicker';
 import SearchBar from '../../component/SearchBar';
 import { deleteProductInput, getProductInput, updateProductInput } from '../../api/productInputApi';
 import LotProcessModal from '../../component/LotProcessModal';
+import { getProductDetail } from '../../api/productApi';
+import WorkGuideDialog from './WorkGuideDialog';
 
 interface RowData {
     id?: number;
@@ -30,12 +32,67 @@ interface RowData {
     isEditing? : boolean;
 }
 
+interface ProductGuideResponseDto {
+  productId: number;
+  companyName: string;
+  productName: string;
+  productNo: string;
+  category: string;
+  color: string;
+  paintType: string;
+  price: number;
+  remark: string;
+  isActive: string;
+  imagePaths: string[];
+  routingSteps: {
+    processSeq: number;
+    processCode: string;
+    processName: string;
+    processTime: number;
+    remark: string;
+  }[];
+  productInputs: {
+    productInputId: number;
+    lotNo: string;
+    productInputQty: number;
+    productInputDate: string;
+  }[];
+}
+
 function InputState() {
     const [rows, setRows ] = useState<RowData[]>([])
     const [temp, setTemp] = useState<RowData>(rows[0])
 
     const [lotModalOpen, setLotModalOpen] = useState(false);
     const [selectedProductInputId, setSelectedProductInputId] = useState<number | null>(null);
+
+    const [guideOpen, setGuideOpen] = useState(false);
+    const [guideData, setGuideData] = useState<ProductGuideResponseDto | null>(null);
+
+    const printRef = useRef<HTMLDivElement>(null);
+
+    const handleGuide = async (row: RowData) => {
+    if (!row.productId) return;
+    try {
+        const res = await getProductDetail(row.productId); // 이미지/라우팅 데이터
+        const mergedData: ProductGuideResponseDto = {
+            ...res,
+            productInputs: [row], // 선택된 입고 row를 배열로 넣음
+            productName: row.productName,
+            productNo: row.productNo,
+            companyName: row.companyName,
+            category: row.category,
+            paintType: row.paintType,
+        };
+        setGuideData(mergedData);
+        setGuideOpen(true);
+    } catch (err) {
+        console.error(err);
+        alert('작업지시서 데이터를 불러오지 못했습니다.');
+    }
+};
+
+    
 
     // LotNo 클릭 이벤트
     const handleRunningPage = (row: RowData) => {
@@ -142,9 +199,9 @@ function InputState() {
     }
 };
     // 작업지시서 버튼 클릭
-    const handleGuide = (row: RowData) => {
-        console.log('작업지시서를 켤 행의 data', row)
-    }
+    // const handleGuide = (row: RowData) => {
+    //     console.log('작업지시서를 켤 행의 data', row)
+    // }
     // Lot번호 클릭, 공정진행화면을 팝업해야함
     // const handleRunningPage = (row: RowData) => {
     //     console.log('공정진행화면을 켤 행의 data', row)
@@ -412,6 +469,14 @@ function InputState() {
                     onClose={() => setLotModalOpen(false)}
                     productInputId={selectedProductInputId}
                 />
+
+                <WorkGuideDialog
+                    open={guideOpen}
+                    onClose={() => setGuideOpen(false)}
+                    data={guideData}
+                    printRef={printRef} // 새 prop 추가
+                />
+
             </Card>
         </LocalizationProvider>
     )

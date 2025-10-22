@@ -26,6 +26,7 @@ public class ProductInputController {
         // DTO로 변환해서 반환
         ProductInputResponseDto response = new ProductInputResponseDto(
                 saved.getProductInputId(),
+                saved.getProduct().getProductId(),
                 saved.getLotNo(),
                 saved.getProduct().getCompany().getCompanyName(),
                 saved.getProduct().getProductNo(),
@@ -60,6 +61,7 @@ public class ProductInputController {
 
         ProductInputResponseDto response = new ProductInputResponseDto(
                 updated.getProductInputId(),
+                updated.getProduct().getProductId(),
                 updated.getLotNo(),
                 updated.getProduct().getCompany().getCompanyName(),
                 updated.getProduct().getProductNo(),

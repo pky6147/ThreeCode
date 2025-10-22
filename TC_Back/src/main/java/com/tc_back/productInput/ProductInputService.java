@@ -54,6 +54,7 @@ public class ProductInputService {
         return list.stream()
                 .map(pi -> new ProductInputResponseDto(
                         pi.getProductInputId(),
+                        pi.getProduct().getProductId(),
                         pi.getLotNo(),
                         pi.getProduct().getCompany().getCompanyName(),
                         pi.getProduct().getProductNo(),
@@ -117,6 +118,7 @@ public class ProductInputService {
         return inputs.stream()
                 .map(pi -> new ProductInputResponseDto(
                         pi.getProductInputId(),
+                        pi.getProduct().getProductId(),
                         pi.getLotNo(),
                         pi.getProduct().getCompany().getCompanyName(),
                         pi.getProduct().getProductNo(),
