@@ -23,7 +23,7 @@ public class ProductOutputService {
     public ProductOutputResponseDto createOutput(ProductOutputRequestDto requestDto) {
 
         // 1. 출고번호 자동 생성
-        String outputNo = generateOutputNo();
+        String outputNo = generateOutputNo(requestDto.getProductOutputDate());
 
         ProductOutput entity = ProductOutput.builder()
                 .productInputId(requestDto.getProductInputId())
@@ -115,10 +115,9 @@ public class ProductOutputService {
                 .build();
     }
 
-    // 출고번호 생성 (오늘 기준 카운트)
-    private String generateOutputNo() {
-        LocalDate today = LocalDate.now();
-        long countToday = repository.countByProductOutputDate(today);
-        return String.format("OUT-%s-%04d", today.toString().replace("-", ""), countToday + 1);
+    // 출고번호 생성 (출고일 기준 카운트)
+    private String generateOutputNo(LocalDate outputDate) {
+        long countToday = repository.countByProductOutputDate(outputDate);
+        return String.format("OUT-%s-%04d", outputDate.toString().replace("-", ""), countToday + 1);
     }
 }
