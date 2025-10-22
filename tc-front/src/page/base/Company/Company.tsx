@@ -253,7 +253,7 @@ function Company() {
       </Box>
 
       <Dialog open={openForm} onClose={handleCloseForm} maxWidth={false}>
-        <CompanyForm mode={editData ? 'edit' : 'create'} initialData={editData || undefined} onSubmit={handleAfterSubmit} />
+        <CompanyForm mode={editData ? 'edit' : 'create'} initialData={editData || undefined} onSubmit={handleAfterSubmit} onClose={handleCloseForm}/>
       </Dialog>
 
       {detailData && <CompanyDetail company={detailData} open={openDetail} onClose={handleCloseDetail} />}

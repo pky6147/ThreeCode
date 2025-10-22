@@ -19,15 +19,17 @@
   font-size: 1.25rem; /* h6 기준 */
 }
 
-/* 폼 필드 그룹 */
+/* 폼 필드 그룹: 2열로 변경 */
 .company-form-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 기본 4열 */
+  grid-template-columns: repeat(2, 1fr); /* 2열 */
   gap: 16px; /* spacing 2 */
   margin-bottom: 16px;
 }
 
-/* 버튼 */
-.company-submit-btn {
+/* 버튼 그룹 */
+.company-button-group {
   margin-top: 24px;
+  display: flex;
+  gap: 16px;
 }
