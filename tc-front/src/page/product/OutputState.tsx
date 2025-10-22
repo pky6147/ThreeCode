@@ -164,30 +164,26 @@ function OutputState() {
   }
   // 저장 버튼 클릭
   const handleSave = async (row: OutputData) => {
-      try {
-          if (!row.id) {
-            console.error("❌ 수정할 데이터에 id가 없습니다.");
-            return;
-          }
-          // await updateMaterialInput(row.id, {
-          //     materialId: row.materialId,
-          //     materialInputQty: row.materialInputQty,
-          //     materialInputDate: row.materialInputDate,
-          //     makeDate: row.makeDate,
-          // }).then(()=>{
-          //     // handleAlertSuccess()
-          //     BoardRefresh()
-          // })
-      } catch(err) {
-          const axiosError = err as AxiosError;
-          console.error(err)
-          if (axiosError.response && axiosError.response.data) {
-              // handleAlertFail()
-          } else {
-              // handleAlertFail()
-          }
-      }
-  };
+  try {
+      if (!row.id) return;
+
+      await productOutputApi.update(row.id, {
+          productOutputQty: row.productOutputQty,
+          productOutputDate: row.productOutputDate,
+          remark: row.remark,
+      });
+
+      // 수정 완료 후 테이블 갱신
+      setRows(prev =>
+        prev.map(r => r.id === row.id ? { ...r, isEditing: false } : r)
+      );
+
+  } catch(err) {
+      console.error(err);
+      alert('출고 수정 중 오류가 발생했습니다.');
+  }
+};
+
   // 취소 버튼 클릭
   const handleCancel = (row: OutputData) => {
     setRows(prev =>
@@ -204,19 +200,15 @@ function OutputState() {
   }
   // 삭제 버튼 클릭
   const handleDelete = async (id: number) => {
-    console.log('delete id', id)
-    if (!confirm("정말 삭제하시겠습니까?")) return;
-                    
-    try {
-        // await deleteMaterialInput(id).then(()=>{
-        //     // handleAlertSuccess()
-        //     // BoardRefresh()
-        // })
-    } catch(err) {
-        console.error(err);
-        // handleAlertFail()
-    }
+  if (!confirm("정말 삭제하시겠습니까?")) return;
+  try {
+      await productOutputApi.remove(id);
+      setRows(prev => prev.filter(r => r.id !== id));
+  } catch(err) {
+      console.error(err);
+      alert('출고 삭제 중 오류가 발생했습니다.');
   }
+}
 
   const columns: GridColDef[] = [
     { field: 'productOutputNo', headerName: '출고번호', width: 180, headerAlign: 'center', align: 'center' },

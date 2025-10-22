@@ -92,29 +92,32 @@ function OutputReg() {
    }, []);
 
     /* 출고 등록 */
-    const handleOutput = async (row: RowData) => {
-        console.log("등록", row)
-        if (!row.productOutputDate || !row.productOutputQty) {
-            alert('출고일자와 출고 수량을 모두 입력해주세요.');
-            return;
-        }
+const handleOutput = async (row: RowData) => {
+    if (!row.productOutputDate || !row.productOutputQty) {
+        alert('출고일자와 출고 수량을 모두 입력해주세요.');
+        return;
+    }
 
-        try {
-           const res = await productOutputApi.create({
+    try {
+        // Date 객체(dayjs) → YYYY-MM-DD 문자열로 변환
+        const outputDate = dayjs(row.productOutputDate).format('YYYY-MM-DD');
+
+        const res = await productOutputApi.create({
             productInputId: row.productInputId,
             productOutputQty: row.productOutputQty,
-            productOutputDate: row.productOutputDate
-           });
-        
-           if (res) {
-        // handleAlertSuccess();
-        getTableData(); // 새로고침
-      }
+            productOutputDate: outputDate,  // 변환된 문자열 전달
+        });
+
+        if (res) {
+            getTableData(); // 새로고침
+            // handleAlertSuccess(); 필요 시 알림
+        }
     } catch (err) {
-      console.error(err);
-      handleAlertFail();
+        console.error(err);
+        handleAlertFail();
     }
-  };
+};
+
 
   const handleChange = <K extends keyof RowData> (
         id: number,
@@ -260,32 +263,32 @@ function OutputReg() {
           />
       )
     },
-    {
-      field: 'productOutputDate',
-      headerName: '출고일자',
-      flex: 1.2,
-      headerAlign: 'center',
-      align: 'center',
-      renderCell: (params) => (
-          <DatePicker
-            format="YYYY-MM-DD"
-            value={params.row.productOutputDate ? dayjs(params.row.productOutputDate) : null}
-            onChange={(newValue) =>
-              handleChange(
-                params.row.id,
-                'productOutputDate',
-                newValue?.format('YYYY-MM-DD') || ''
-              )
-            }
-            slotProps={{
-              textField: {
-                size: 'small',
-                sx: { width: '100%', paddingTop: 0.7 },
-              },
-            }}
-          />
-      ),
-    },
+   {
+  field: 'productOutputDate',
+  headerName: '출고일자',
+  flex: 1.2,
+  headerAlign: 'center',
+  align: 'center',
+  renderCell: (params) => (
+      <DatePicker
+        format="YYYY-MM-DD"
+        value={params.row.productOutputDate ? dayjs(params.row.productOutputDate) : null}
+        onChange={(newValue) =>
+          handleChange(
+            params.row.id,
+            'productOutputDate',
+            newValue?.format('YYYY-MM-DD') || '' // <- 여기서 YYYY-MM-DD로 변환
+          )
+        }
+        slotProps={{
+          textField: {
+            size: 'small',
+            sx: { width: '100%', paddingTop: 0.7 },
+          },
+        }}
+      />
+  )
+},
     {
       field: 'outputbtn',
       headerName: '출고',

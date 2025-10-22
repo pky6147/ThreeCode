@@ -76,16 +76,36 @@ public class ProductOutputService {
     // 출고 수정
     public ProductOutputResponseDto updateOutput(Long id, ProductOutputUpdateDto updateDto) {
         ProductOutput existing = getOutputEntityById(id);
-        if (updateDto.getProductOutputQty() != null)
+        ProductInputResponseDto inputDto = productInputService.getInputById(existing.getProductInputId());
+
+        // 1. 출고일자 검증
+        if (updateDto.getProductOutputDate() != null
+                && updateDto.getProductOutputDate().isBefore(inputDto.getProductInputDate())) {
+            throw new IllegalArgumentException("출고일자는 입고일자 이전으로 설정할 수 없습니다.");
+        }
+
+        // 2. 출고수량 검증
+        if (updateDto.getProductOutputQty() != null) {
+            int totalOutputQty = repository.findByProductInputIdAndIsDelete(existing.getProductInputId(), "N")
+                    .stream().mapToInt(ProductOutput::getProductOutputQty)
+                    .sum() - existing.getProductOutputQty(); // 수정 전 값 제외
+            int remainingQty = inputDto.getProductInputQty() - totalOutputQty;
+            if (updateDto.getProductOutputQty() > remainingQty) {
+                throw new IllegalArgumentException("출고 수량이 남은 입고 수량을 초과했습니다.");
+            }
             existing.setProductOutputQty(updateDto.getProductOutputQty());
+        }
+
         if (updateDto.getProductOutputDate() != null)
             existing.setProductOutputDate(updateDto.getProductOutputDate());
         if (updateDto.getRemark() != null)
             existing.setRemark(updateDto.getRemark());
+
         existing.setUpdatedAt(LocalDateTime.now());
         ProductOutput updated = repository.save(existing);
         return convertToResponseDto(updated);
     }
+
 
     // Soft Delete
     public void softDeleteOutput(Long id) {
