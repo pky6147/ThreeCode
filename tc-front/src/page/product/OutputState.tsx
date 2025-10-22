@@ -12,7 +12,6 @@ import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import type { AxiosError } from 'axios';
 import { productOutputApi } from '../../api/ProductOutputApi';
 import OutputMemo from './OutputMemo';
 
@@ -198,17 +197,19 @@ function OutputState() {
       )
     );
   }
-  // 삭제 버튼 클릭
-  const handleDelete = async (id: number) => {
+  // 삭제 버튼 클릭 (Soft Delete)
+const handleDelete = async (id: number) => {
   if (!confirm("정말 삭제하시겠습니까?")) return;
+
   try {
-      await productOutputApi.remove(id);
-      setRows(prev => prev.filter(r => r.id !== id));
-  } catch(err) {
-      console.error(err);
-      alert('출고 삭제 중 오류가 발생했습니다.');
+    await productOutputApi.remove(id); // Soft Delete API 호출
+    setRows(prev => prev.filter(r => r.productOutputId !== id));
+    if (isSearch) setSearchRows(prev => prev.filter(r => r.productOutputId !== id));
+  } catch (err) {
+    console.error(err);
+    alert('출고 삭제 중 오류가 발생했습니다.');
   }
-}
+};
 
   const columns: GridColDef[] = [
     { field: 'productOutputNo', headerName: '출고번호', width: 180, headerAlign: 'center', align: 'center' },
