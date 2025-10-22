@@ -2,6 +2,8 @@ package com.tc_back.MaterialOutput;
 
 import com.tc_back.MaterialOutput.entity.MaterialOutput;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,6 +24,9 @@ public interface MaterialOutputRepository extends JpaRepository<MaterialOutput, 
     // 날짜별 마지막 시퀀스 조회 (삭제 여부 상관 없이)
     Optional<MaterialOutput> findTopByMaterialOutputNoStartingWithOrderByMaterialOutputNoDesc(String prefix);
 
-    // 출고 현황 조회
     List<MaterialOutput> findByIsDeleteOrderByMaterialOutputNoDesc(String isDelete);
+
+    // 🔹 출고번호가 특정 날짜로 시작하는 가장 마지막 번호 조회
+    @Query("SELECT m.materialOutputNo FROM MaterialOutput m WHERE m.materialOutputNo LIKE :prefix ORDER BY m.materialOutputNo DESC")
+    List<String> findLastOutputNoByDate(@Param("prefix") String prefix, org.springframework.data.domain.Pageable pageable);
 }

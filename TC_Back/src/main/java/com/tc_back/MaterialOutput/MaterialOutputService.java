@@ -11,6 +11,7 @@ import com.tc_back.MaterialOutput.entity.MaterialOutput;
 import com.tc_back.MaterialOutput.MaterialOutputRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -85,6 +86,7 @@ public class MaterialOutputService {
                     return MaterialOutputDto.builder()
                             .materialInputId(input.getMaterialInputId())
                             .materialInputNo(input.getMaterialInputNo())
+                            .materialInputDate(input.getMaterialInputDate())
                             .materialId(material.getMaterialId())
                             .materialName(material.getMaterialName())
                             .materialNo(material.getMaterialNo())
@@ -133,16 +135,53 @@ public class MaterialOutputService {
     }
     /** 5️⃣ 출고 수정 */
     public MaterialOutputDto update(Long materialOutputId, MaterialOutputDto dto) {
-        // 1. 기존 출고 데이터 조회
+        // 1️⃣ 기존 출고 데이터 조회
         MaterialOutput entity = materialOutputRepository.findById(materialOutputId)
                 .orElseThrow(() -> new RuntimeException("해당 출고 데이터를 찾을 수 없습니다."));
 
-        // 2. 출고일자, 출고수량 수정
+        // 2️⃣ 연관된 입고 데이터 조회 (입고일자, 입고수량 확인용)
+        MaterialInput input = entity.getMaterialInput();
+        if (input == null) {
+            throw new RuntimeException("해당 출고에 연결된 입고 데이터가 없습니다.");
+        }
+
+        // 3️⃣ 유효성 검증
+        if (dto.getMaterialOutputDate().isBefore(input.getMaterialInputDate())) {
+            throw new RuntimeException("출고일자는 입고일자보다 빠를 수 없습니다.");
+        }
+
+        if (dto.getMaterialOutputQty() > input.getMaterialInputQty()) {
+            throw new RuntimeException("출고수량은 입고수량보다 많을 수 없습니다.");
+        }
+
+        // 4️⃣ 출고번호 재설정 (출고일자가 바뀐 경우)
+        if (!dto.getMaterialOutputDate().equals(entity.getMaterialOutputDate())) {
+            String newOutputNo = generateNewOutputNo(dto.getMaterialOutputDate());
+            entity.setMaterialOutputNo(newOutputNo);
+        }
+
+        // 5️⃣ 데이터 수정
         entity.setMaterialOutputDate(dto.getMaterialOutputDate());
         entity.setMaterialOutputQty(dto.getMaterialOutputQty());
 
-        // 3. 저장 후 DTO 반환
+        // 6️⃣ 저장 후 DTO 반환
         MaterialOutput updated = materialOutputRepository.save(entity);
         return MaterialOutputDto.fromEntity(updated);
+    }
+    private String generateNewOutputNo(LocalDate outputDate) {
+        String datePrefix = outputDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String prefix = "MOUT-" + datePrefix + "-";
+
+        String lastOutputNo = materialOutputRepository
+                .findLastOutputNoByDate(prefix + "%", PageRequest.of(0, 1))
+                .stream().findFirst().orElse(null);
+
+        int nextSeq = 1;
+        if (lastOutputNo != null && lastOutputNo.length() >= 16) {
+            String seqStr = lastOutputNo.substring(lastOutputNo.lastIndexOf("-") + 1);
+            nextSeq = Integer.parseInt(seqStr) + 1;
+        }
+
+        return String.format("MOUT-%s-%03d", datePrefix, nextSeq);
     }
 }

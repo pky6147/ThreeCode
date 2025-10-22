@@ -19,6 +19,7 @@ interface RowData {
     id: number;
     materialInputId?: number;
     materialInputNo: string;
+    materialInputDate: string;
     companyId: string;
     companyName: string;
     materialId: number;
@@ -87,6 +88,16 @@ function OutputReg() {
 
     // 출고
     const handleOutput = async (row: RowData) => {
+        if(row.materialOutputDate < row.materialInputDate) {
+            setAlertInfo({
+                type: 'error',
+                title: '출고 등록 실패',
+                text: '출고일자는 입고일자보다 빠를 수 없습니다.'
+            })
+            setAlertOpen(true)
+            setTimeout(()=> setAlertOpen(false), 3000)
+            return;
+        }
         if ((row.materialOutputQty === 0 || isNaN(row.materialOutputQty)) ||
             (row.materialOutputDate === '' || null)) {
             setAlertInfo({
@@ -106,7 +117,7 @@ function OutputReg() {
             setAlertOpen(true)
             setTimeout(()=> setAlertOpen(false), 3000)
             return;
-        }
+        } else if (row.materialOutputDate > row.materialInputDate)
 
         try {
             await createMaterialOutput({
@@ -217,6 +228,13 @@ function OutputReg() {
             renderCell: (params) => {
                 const value = params.value;
                 return value?.toLocaleString();  // 천단위 콤마
+            }
+        },
+        { field: 'materialInputDate', headerName: '입고일자', flex: 2, minWidth: 200, headerAlign: 'center', align: 'center',
+            renderCell: (params) => {
+                if (!params.value) return ''; // 값 없으면 빈 문자열
+                return dayjs(params.value).format('YY.MM.DD'); 
+                
             }
         },
         { field: 'materialOutputQty', headerName: '출고수량', flex: 1.5, minWidth: 150, headerAlign: 'center', align: 'right',

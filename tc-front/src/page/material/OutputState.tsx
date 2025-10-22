@@ -114,11 +114,11 @@ function OutputState() {
 
             setTimeout(()=> setAlertOpen(false), 3000)
             return;
-        } else if (row.materialOutputQty > row.remainQty) {
+        } else if (row.materialOutputQty > row.remainQty + temp.materialOutputQty) {
             setAlertInfo({
                 type: 'error',
                 title: '출고 이력 수정 실패',
-                text: `출고수량이 남은 재고량 (${row.remainQty}) 초과합니다.`
+                text: `출고수량이 남은 재고량 ${row.remainQty+temp.materialOutputQty} (재고: ${row.remainQty} + 기존: ${temp.materialOutputQty}) 초과합니다.`
             })
             setAlertOpen(true)
 
@@ -149,7 +149,16 @@ function OutputState() {
             const axiosError = err as AxiosError;
             console.error(err)
             if (axiosError.response && axiosError.response.data) {
-                // handleAlertFail()
+                if(axiosError.response.data == '출고일자는 입고일자보다 빠를 수 없습니다.') {
+                    setAlertInfo({
+                        type: 'error',
+                        title: '수정 오류',
+                        text: '출고일자는 입고일자보다 빠를 수 없습니다.'
+                    })
+                    setAlertOpen(true)
+    
+                    setTimeout(()=> handleCloseAlert(), 3000)
+                }
             } else {
                 // handleAlertFail()
             }
@@ -182,7 +191,7 @@ function OutputState() {
                 })
                 setAlertOpen(true)
 
-                setTimeout(()=> setAlertOpen(false), 3000)
+                setTimeout(()=> handleCloseAlert(), 3000)
                 BoardRefresh()
             })
         } catch(err) {
