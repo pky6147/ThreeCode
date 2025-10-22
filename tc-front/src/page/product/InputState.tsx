@@ -268,14 +268,14 @@ function InputState() {
     );
 
     const columns: GridColDef[] = [
-        { field: 'lotNo', headerName: 'Lot.No', width: 150, headerAlign: 'center', align: 'center',
+        { field: 'lotNo', headerName: 'Lot.No', width: 180, headerAlign: 'center', align: 'center',
             renderCell: (params) => (
                 <Typography
                     variant="body2"
                     sx={{ 
-                        cursor: 'pointer', textDecoration: 'underline', color: 'blue', 
+                        cursor: 'pointer', color: 'blue', //textDecoration: 'underline',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        height: '100%', width: '100%'}}
+                        height: '100%', width: '100%', fontWeight: 'bold', fontSize: 16}}
                     onClick={() => handleRunningPage(params.row)}
                 >
                   {params.value}
@@ -388,6 +388,7 @@ function InputState() {
                     <CustomBtn
                         text="작업지시서"
                         icon="print"
+                        color="black"
                         onClick={() => handleGuide(params.row)}
                     />
                 )
