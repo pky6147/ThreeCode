@@ -25,7 +25,6 @@ export const productOutputApi = {
     productInputId: number;
     productOutputQty: number;
     productOutputDate: string;
-    remark?: string;
   }) => {
     const res = await axios.post(`${BASE_URL}/product-output`, data, getAxiosConfig());
     return res.data;

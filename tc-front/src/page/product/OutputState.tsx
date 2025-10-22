@@ -59,26 +59,12 @@ function OutputState() {
     try {
       const res = await productOutputApi.getAll();
       
-      const mapped = res.data.map((item: OutputData) => ({
+      const mapped = res.map((item: OutputData) => ({
         ...item,
         id: item.productOutputId
       }))
+      
       setRows(mapped)
-      // const mapped = res.data.map((item: any, i: number) => ({
-      //   id: item.productOutputId ?? i + 1,
-      //   productOutputId: item.productOutputId,
-      //   product_output_no: item.productOutputNo || '-',
-      //   company_name: item.companyName || '-',
-      //   product_no: item.productNo || '-',
-      //   product_name: item.productName || '-',
-      //   category: item.category || '-',
-      //   paint_type: item.paintType || '-',
-      //   product_output_qty: item.productOutputQty ?? 0,
-      //   product_output_date: item.productOutputDate || '-',
-      //   product_input_date: item.productInputDate || '-', // 입고일자는 임시로 '-' 처리
-      //   isEditing: false,
-      // }));
-      // setRows(mapped);
     } catch (err) {
       console.error(err);
       alert('출고 목록을 불러오는 중 오류가 발생했습니다.');
