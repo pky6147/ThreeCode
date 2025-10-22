@@ -21,21 +21,36 @@ public class ProductOutputService {
     private final ProductInputService productInputService;      // 입고 정보 조회용
     // 출고 등록
     public ProductOutputResponseDto createOutput(ProductOutputRequestDto requestDto) {
+        LocalDate outputDate = requestDto.getProductOutputDate() != null ? requestDto.getProductOutputDate() : LocalDate.now();
 
-        // 1. 출고번호 자동 생성
-        String outputNo = generateOutputNo(requestDto.getProductOutputDate());
+        // 1. 입고 정보 조회
+        ProductInputResponseDto inputDto = productInputService.getInputById(requestDto.getProductInputId());
 
+        // 2. 출고 수량 검증
+        int totalOutputQty = repository.findByProductInputIdAndIsDelete(requestDto.getProductInputId(), "N")
+                .stream().mapToInt(ProductOutput::getProductOutputQty).sum();
+        int remainingQty = inputDto.getProductInputQty() - totalOutputQty;
+        if (requestDto.getProductOutputQty() > remainingQty) {
+            throw new IllegalArgumentException("출고 수량이 남은 입고 수량을 초과했습니다.");
+        }
+
+        // 3. 출고번호 생성
+        String outputNo = generateOutputNo(outputDate);
+
+        // 4. 엔티티 생성 및 저장
         ProductOutput entity = ProductOutput.builder()
                 .productInputId(requestDto.getProductInputId())
                 .productOutputNo(outputNo)
                 .productOutputQty(requestDto.getProductOutputQty())
-                .productOutputDate(requestDto.getProductOutputDate() != null ? requestDto.getProductOutputDate() : LocalDate.now())
+                .productOutputDate(outputDate)
                 .remark(requestDto.getRemark())
                 .isDelete("N")
                 .build();
+
         ProductOutput saved = repository.save(entity);
         return convertToResponseDto(saved);
     }
+
 
 
     // 전체 출고 조회 (삭제되지 않은 데이터)
