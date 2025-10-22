@@ -47,6 +47,7 @@ public class MaterialOutputDto {
     // MaterialInput 참조
     private Long materialInputId;
     private String materialInputNo;
+    private LocalDate materialInputDate;
 
     /** ✅ DTO → Entity 변환 */
     public MaterialOutput toEntity(Material material, MaterialInput materialInput) {
@@ -63,6 +64,7 @@ public class MaterialOutputDto {
 
     /** ✅ Entity → DTO 변환 */
     public static MaterialOutputDto fromEntity(MaterialOutput entity) {
+        MaterialInput materialInput = entity.getMaterialInput();
         Material material = entity.getMaterial();
         Company company = material.getCompany();
 
@@ -83,13 +85,18 @@ public class MaterialOutputDto {
                 .companyName(company.getCompanyName())
                 // MaterialInput 참조 (출고 시 입고번호 표시용)
                 .materialInputId(
-                        entity.getMaterialInput() != null
-                                ? entity.getMaterialInput().getMaterialInputId()
+                        materialInput != null
+                                ? materialInput.getMaterialInputId()
                                 : null
                 )
                 .materialInputNo(
-                        entity.getMaterialInput() != null
-                                ? entity.getMaterialInput().getMaterialInputNo()
+                        materialInput != null
+                                ? materialInput.getMaterialInputNo()
+                                : null
+                )
+                .materialInputDate(
+                        materialInput != null
+                                ? materialInput.getMaterialInputDate()
                                 : null
                 )
                 .remainQty(null)
