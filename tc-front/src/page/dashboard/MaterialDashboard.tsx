@@ -249,14 +249,14 @@ export default function MaterialDashboard() {
                                             </Box>
                                         </Box>
                                     ) : (
-                                        <Box sx={{display: 'flex'}}>
+                                        <Box sx={{display: 'flex', alignItems: 'center'}}>
                                             <KeyboardDoubleArrowDownIcon sx={{color:'red'}} />
                                             <Box sx={{ display: 'flex', gap: 3 }}>
-                                                <Typography>{ '품목번호: ' + item.materialNo}</Typography>      
-                                                <Typography>{ '품목명: ' + item.materialName}</Typography>    
-                                                <Typography>{ '출고일자: ' + item.materialDate}</Typography>   
-                                                <Typography>{ '출고수량: ' + item.materialQty.toLocaleString()}</Typography>
-                                                <Typography>{ '출고번호: ' + item.materialNumber }</Typography>    
+                                                <Typography sx={{fontSize: 20}}>{ '품목번호: ' + item.materialNo}</Typography>      
+                                                <Typography sx={{fontSize: 20}}>{ '품목명: ' + item.materialName}</Typography>    
+                                                <Typography sx={{fontSize: 20}}>{ '출고일자: ' + item.materialDate}</Typography>   
+                                                <Typography sx={{fontSize: 20}}>{ '출고수량: ' + item.materialQty.toLocaleString()}</Typography>
+                                                <Typography sx={{fontSize: 20}}>{ '출고번호: ' + item.materialNumber }</Typography>    
                                             </Box>
                                         </Box>
                                     )}
