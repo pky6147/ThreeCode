@@ -19,23 +19,44 @@ public class ProductOutputService {
 
     private final ProductOutputRepository repository;
     private final ProductInputService productInputService;      // 입고 정보 조회용
+
     // 출고 등록
     public ProductOutputResponseDto createOutput(ProductOutputRequestDto requestDto) {
+        LocalDate outputDate = requestDto.getProductOutputDate() != null ? requestDto.getProductOutputDate() : LocalDate.now();
 
-        // 1. 출고번호 자동 생성
-        String outputNo = generateOutputNo();
+        // 1. 입고 정보 조회
+        ProductInputResponseDto inputDto = productInputService.getInputById(requestDto.getProductInputId());
 
+        // 2. 출고일자 검증: 입고일자 이전이면 등록 불가
+        if (outputDate.isBefore(inputDto.getProductInputDate())) {
+            throw new IllegalArgumentException("출고일자는 입고일자 이전으로 설정할 수 없습니다.");
+        }
+
+        // 3. 출고 수량 검증
+        int totalOutputQty = repository.findByProductInputIdAndIsDelete(requestDto.getProductInputId(), "N")
+                .stream().mapToInt(ProductOutput::getProductOutputQty).sum();
+        int remainingQty = inputDto.getProductInputQty() - totalOutputQty;
+        if (requestDto.getProductOutputQty() > remainingQty) {
+            throw new IllegalArgumentException("출고 수량이 남은 입고 수량을 초과했습니다.");
+        }
+
+        // 4. 출고번호 생성
+        String outputNo = generateOutputNo(outputDate);
+
+        // 5. 엔티티 생성 및 저장
         ProductOutput entity = ProductOutput.builder()
                 .productInputId(requestDto.getProductInputId())
                 .productOutputNo(outputNo)
                 .productOutputQty(requestDto.getProductOutputQty())
-                .productOutputDate(requestDto.getProductOutputDate() != null ? requestDto.getProductOutputDate() : LocalDate.now())
+                .productOutputDate(outputDate)
                 .remark(requestDto.getRemark())
                 .isDelete("N")
                 .build();
+
         ProductOutput saved = repository.save(entity);
         return convertToResponseDto(saved);
     }
+
 
 
     // 전체 출고 조회 (삭제되지 않은 데이터)
@@ -55,16 +76,36 @@ public class ProductOutputService {
     // 출고 수정
     public ProductOutputResponseDto updateOutput(Long id, ProductOutputUpdateDto updateDto) {
         ProductOutput existing = getOutputEntityById(id);
-        if (updateDto.getProductOutputQty() != null)
+        ProductInputResponseDto inputDto = productInputService.getInputById(existing.getProductInputId());
+
+        // 1. 출고일자 검증
+        if (updateDto.getProductOutputDate() != null
+                && updateDto.getProductOutputDate().isBefore(inputDto.getProductInputDate())) {
+            throw new IllegalArgumentException("출고일자는 입고일자 이전으로 설정할 수 없습니다.");
+        }
+
+        // 2. 출고수량 검증
+        if (updateDto.getProductOutputQty() != null) {
+            int totalOutputQty = repository.findByProductInputIdAndIsDelete(existing.getProductInputId(), "N")
+                    .stream().mapToInt(ProductOutput::getProductOutputQty)
+                    .sum() - existing.getProductOutputQty(); // 수정 전 값 제외
+            int remainingQty = inputDto.getProductInputQty() - totalOutputQty;
+            if (updateDto.getProductOutputQty() > remainingQty) {
+                throw new IllegalArgumentException("출고 수량이 남은 입고 수량을 초과했습니다.");
+            }
             existing.setProductOutputQty(updateDto.getProductOutputQty());
+        }
+
         if (updateDto.getProductOutputDate() != null)
             existing.setProductOutputDate(updateDto.getProductOutputDate());
         if (updateDto.getRemark() != null)
             existing.setRemark(updateDto.getRemark());
+
         existing.setUpdatedAt(LocalDateTime.now());
         ProductOutput updated = repository.save(existing);
         return convertToResponseDto(updated);
     }
+
 
     // Soft Delete
     public void softDeleteOutput(Long id) {
@@ -115,10 +156,9 @@ public class ProductOutputService {
                 .build();
     }
 
-    // 출고번호 생성 (오늘 기준 카운트)
-    private String generateOutputNo() {
-        LocalDate today = LocalDate.now();
-        long countToday = repository.countByProductOutputDate(today);
-        return String.format("OUT-%s-%04d", today.toString().replace("-", ""), countToday + 1);
+    // 출고번호 생성
+    private String generateOutputNo(LocalDate outputDate) {
+        long countToday = repository.countByProductOutputDate(outputDate);
+        return String.format("OUT-%s-%04d", outputDate.toString().replace("-", ""), countToday + 1);
     }
 }

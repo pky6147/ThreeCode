@@ -234,29 +234,29 @@ export default function MaterialDashboard() {
                 <Card sx={{ padding: 2, backgroundColor: '#ffdf61ff', height: '97%'}}>
                     <Box sx={{height: '50%'}}>
                         <Typography sx={{fontSize: 24, fontWeight: 'bold'}}>금일 원자재 입출고 </Typography>
-                        <Box sx={{padding: 1}}>
+                        <Box sx={{padding: 1, backgroundColor: 'white', height: '435px', marginTop: 1}}>
                             { mIOdata.slice(0, 8).map((item, index) => (
-                                <Card key={index} sx={{marginBottom:1 }}>
+                                <Card key={index} sx={{marginBottom:1, backgroundColor: '#ccc' }}>
                                     {item.type === '입고' ? (
-                                        <Box sx={{display: 'flex'}}>
+                                        <Box sx={{display: 'flex', alignItems: 'center'}}>
                                             <KeyboardDoubleArrowUpIcon sx={{color:'blue'}} />
                                             <Box sx={{ display: 'flex', gap: 3 }}>
-                                                <Typography>{ '품목번호: ' + item.materialNo}</Typography>      
-                                                <Typography>{ '품목명: ' + item.materialName}</Typography>    
-                                                <Typography>{ '입고일자: ' + item.materialDate}</Typography>   
-                                                <Typography>{ '입고수량: ' + item.materialQty.toLocaleString()}</Typography>
-                                                <Typography>{ '입고번호: ' + item.materialNumber }</Typography>    
+                                                <Typography sx={{fontSize: 20}}>{ '품목번호: ' + item.materialNo}</Typography>      
+                                                <Typography sx={{fontSize: 20}}>{ '품목명: ' + item.materialName}</Typography>    
+                                                <Typography sx={{fontSize: 20}}>{ '입고일자: ' + item.materialDate}</Typography>   
+                                                <Typography sx={{fontSize: 20}}>{ '입고수량: ' + item.materialQty.toLocaleString()}</Typography>
+                                                <Typography sx={{fontSize: 20}}>{ '입고번호: ' + item.materialNumber }</Typography>    
                                             </Box>
                                         </Box>
                                     ) : (
-                                        <Box sx={{display: 'flex'}}>
+                                        <Box sx={{display: 'flex', alignItems: 'center'}}>
                                             <KeyboardDoubleArrowDownIcon sx={{color:'red'}} />
                                             <Box sx={{ display: 'flex', gap: 3 }}>
-                                                <Typography>{ '품목번호: ' + item.materialNo}</Typography>      
-                                                <Typography>{ '품목명: ' + item.materialName}</Typography>    
-                                                <Typography>{ '출고일자: ' + item.materialDate}</Typography>   
-                                                <Typography>{ '출고수량: ' + item.materialQty.toLocaleString()}</Typography>
-                                                <Typography>{ '출고번호: ' + item.materialNumber }</Typography>    
+                                                <Typography sx={{fontSize: 20}}>{ '품목번호: ' + item.materialNo}</Typography>      
+                                                <Typography sx={{fontSize: 20}}>{ '품목명: ' + item.materialName}</Typography>    
+                                                <Typography sx={{fontSize: 20}}>{ '출고일자: ' + item.materialDate}</Typography>   
+                                                <Typography sx={{fontSize: 20}}>{ '출고수량: ' + item.materialQty.toLocaleString()}</Typography>
+                                                <Typography sx={{fontSize: 20}}>{ '출고번호: ' + item.materialNumber }</Typography>    
                                             </Box>
                                         </Box>
                                     )}
@@ -264,7 +264,7 @@ export default function MaterialDashboard() {
                             ))}
                         </Box>
                     </Box>
-                    <Box>
+                    <Box sx={{marginTop: 1}}>
                         <Typography sx={{fontSize: 24, fontWeight: 'bold'}}>
                             이번 달 원자재 품목별 입출고수량
                         </Typography>
@@ -296,11 +296,11 @@ export default function MaterialDashboard() {
             <Card sx={{width: '50%', padding: 1, gap: 1}}>
                 <Card sx={{ padding: 2, backgroundColor: '#ffdf61ff', height: '97%'}}>
                     <Box sx={{height: '50%'}}>
-                        <Typography sx={{fontSize: 24, fontWeight: 'bold'}}>
+                        <Typography sx={{fontSize: 24, fontWeight: 'bold' }}>
                             원자재 재고현황
                         </Typography>
                         <Box sx={{backgroundColor: 'white', marginTop:1}}>
-                            <ResponsiveContainer width="100%" height={300}>
+                            <ResponsiveContainer width="100%" height={450}>
                             <PieChart>
                                 <Pie
                                     data={stockData}
@@ -322,11 +322,16 @@ export default function MaterialDashboard() {
                             </ResponsiveContainer>
                         </Box>
                     </Box>
-                    <Box>
-                        <CommonTable 
-                            columns={columns}
-                            rows={tableData}
-                        />
+                    <Box sx={{marginTop: 1}}>
+                        <Typography sx={{fontSize: 24, fontWeight: 'bold'}}>
+                            원자재 재고현황 테이블
+                        </Typography>
+                        <Box sx={{marginTop: 1}}>
+                            <CommonTable 
+                                columns={columns}
+                                rows={tableData}
+                            />
+                        </Box>
                     </Box>
                 </Card>   
             </Card>

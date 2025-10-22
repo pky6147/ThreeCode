@@ -92,29 +92,44 @@ function OutputReg() {
    }, []);
 
     /* 출고 등록 */
-    const handleOutput = async (row: RowData) => {
-        if (!row.productOutputDate || !row.productOutputQty) {
-            alert('출고일자와 출고 수량을 모두 입력해주세요.');
-            return;
-        }
+const handleOutput = async (row: RowData) => {
+    if (!row.productOutputDate || !row.productOutputQty) {
+        alert('출고일자와 출고 수량을 모두 입력해주세요.');
+        return;
+    }
 
-        try {
-           const res = await productOutputApi.create({
+    try {
+        // Date 객체(dayjs) → YYYY-MM-DD 문자열로 변환
+        const outputDate = dayjs(row.productOutputDate).format('YYYY-MM-DD');
+
+        const res = await productOutputApi.create({
             productInputId: row.productInputId,
             productOutputQty: row.productOutputQty,
-            productOutputDate: row.productOutputDate || dayjs().format('YYYY-MM-DD'),
-            remark: row.remark || ''
-           });
-        
-           if (res) {
-        handleAlertSuccess();
-        getTableData(); // 새로고침
-      }
+            productOutputDate: outputDate,  // 변환된 문자열 전달
+        });
+
+        if (res) {
+            getTableData(); // 새로고침
+            // handleAlertSuccess(); 필요 시 알림
+        }
     } catch (err) {
-      console.error(err);
-      handleAlertFail();
+        console.error(err);
+        handleAlertFail();
     }
-  };
+};
+
+
+  const handleChange = <K extends keyof RowData> (
+        id: number,
+        field: K,
+        value: RowData[K]
+    ) => {
+        setRows((prev) => 
+            prev.map((row) =>
+                row.id === id ? { ...row, [field]: value } : row
+            )
+        )
+    }
 
         /** 검색 & 초기화 **/
   const handleSearch = () => {
@@ -147,15 +162,15 @@ function OutputReg() {
 
   /* Alert 팝업 */
   const handleCloseAlert = () => setAlertOpen(false); 
-  const handleAlertSuccess = () => {
-      setAlertInfo({
-          type: 'success',
-          title: '출고 성공',
-          text: '출고가 완료되었습니다.'
-      })
-      setAlertOpen(true)
-      setTimeout(() => setAlertOpen(false), 2000)
-  }
+  // const handleAlertSuccess = () => {
+  //     setAlertInfo({
+  //         type: 'success',
+  //         title: '출고 성공',
+  //         text: '출고가 완료되었습니다.'
+  //     })
+  //     setAlertOpen(true)
+  //     setTimeout(() => setAlertOpen(false), 2000)
+  // }
   const handleAlertFail = () => {
       setAlertInfo({
           type: 'error',
@@ -202,7 +217,7 @@ function OutputReg() {
 
 /* 테이블 컬럼 정의 */
   const columns: GridColDef[] = [
-    { field: 'lotNo', headerName: 'Lot.No', width: 150, headerAlign: 'center', align: 'center' },
+    { field: 'lotNo', headerName: 'Lot.No', width: 180, headerAlign: 'center', align: 'center' },
     { field: 'companyName', headerName: '거래처명', flex: 1.2, headerAlign: 'center', align: 'center' },
     { field: 'productNo', headerName: '품목번호', flex: 1, headerAlign: 'center', align: 'center' },
     { field: 'productName', headerName: '품목명', flex: 1.3, headerAlign: 'center', align: 'center' },
@@ -217,52 +232,63 @@ function OutputReg() {
       renderCell: (params) => dayjs(params.value).format('YY.MM.DD')
     },
     {
+      field: 'productInputQty',
+      headerName: '입고수량',
+      flex: 1,
+      headerAlign: 'center',
+      align: 'right',
+      renderCell: (params) => {
+          const value = params.value;
+          return value?.toLocaleString();  // 천단위 콤마
+      }
+    },
+    {
       field: 'productOutputQty',
       headerName: '출고수량',
       flex: 1.2,
       headerAlign: 'center',
       align: 'center',
       renderCell: (params) => (
-        <TextField
-          type="number"
-          size="small"
-          value={params.row.productOutputQty || ''}
-          onChange={(e) =>
-            setRows((prev) =>
-              prev.map((r) =>
-                r.productInputId === params.row.productInputId
-                  ? { ...r, productOutputQty: Number(e.target.value) }
-                  : r
-              )
-            )
-          }
-          sx={{ width: '100px' }}
-        />
+          <TextField
+              type="text"
+              size="small"
+              value={params.row.productOutputQty?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") || ''}
+              onChange={(e) => {
+                  // 입력값에서 콤마 제거 후 숫자로 변환
+                  const rawValue = e.target.value.replace(/,/g, '');
+                  handleChange(params.row.id, 'productOutputQty', Number(rawValue))
+              }}
+              sx={{ width: '100%', paddingTop: 0.7, display: 'flex' }}
+              InputProps={{ sx: { '& input': { textAlign: 'right' } } }}
+          />
       )
     },
-    {
-      field: 'productOutputDate',
-      headerName: '출고일자',
-      flex: 1.2,
-      headerAlign: 'center',
-      align: 'center',
-      renderCell: (params) => (
-        <DatePicker
-          format="YYYY-MM-DD"
-          value={dayjs(params.row.productOutputDate)}
-          onChange={(newValue) =>
-            setRows((prev) =>
-              prev.map((r) =>
-                r.productInputId === params.row.productInputId
-                  ? { ...r, productOutputDate: newValue?.format('YYYY-MM-DD') || '' }
-                  : r
-              )
-            )
-          }
-          slotProps={{ textField: { size: 'small', sx: { width: '120px', paddingTop: 0.7 } } }}
-        />
-      )
-    },
+   {
+  field: 'productOutputDate',
+  headerName: '출고일자',
+  flex: 1.2,
+  headerAlign: 'center',
+  align: 'center',
+  renderCell: (params) => (
+      <DatePicker
+        format="YYYY-MM-DD"
+        value={params.row.productOutputDate ? dayjs(params.row.productOutputDate) : null}
+        onChange={(newValue) =>
+          handleChange(
+            params.row.id,
+            'productOutputDate',
+            newValue?.format('YYYY-MM-DD') || '' // <- 여기서 YYYY-MM-DD로 변환
+          )
+        }
+        slotProps={{
+          textField: {
+            size: 'small',
+            sx: { width: '100%', paddingTop: 0.7 },
+          },
+        }}
+      />
+  )
+},
     {
       field: 'outputbtn',
       headerName: '출고',
@@ -321,15 +347,17 @@ function OutputReg() {
                         />
                       </SearchBar>
                     </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 2 }}>
-                        <Typography sx={{ fontSize: 24, fontWeight: 'bold' }}>수주대상품목 출고 등록</Typography>
-                        <Box sx={{paddingRight: 2}}>
-                            <ExcelBtn mappingdata={excelData} sheetName="수주대상품목 출고 등록" fileName="수주대상품목 출고 등록" />
-                        </Box>
-                    </Box>
+                    <Box>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Typography sx={{ fontSize: 24, fontWeight: 'bold', paddingLeft: 2 }}>수주대상품목 출고 등록</Typography>
+                          <Box sx={{paddingRight: 2}}>
+                              <ExcelBtn mappingdata={excelData} sheetName="수주대상품목 출고 등록" fileName="수주대상품목 출고 등록" />
+                          </Box>
+                      </Box>
 
-                    <Box sx={{ padding: 2 }}>
-                      <CommonTable columns={columns} rows={isSearch ? searchRows : rows} />
+                      <Box sx={{ padding: 2 }}>
+                        <CommonTable columns={columns} rows={isSearch ? searchRows : rows} />
+                      </Box>
                     </Box>
                 </Box>
 
