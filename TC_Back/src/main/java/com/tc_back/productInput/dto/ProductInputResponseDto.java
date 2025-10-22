@@ -10,7 +10,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class ProductInputResponseDto {
-    private Long productInputId;     // 입고 이력 아이디
+    private Long productInputId;    // 입고 이력 아이디
+    private Long productId;
     private String lotNo;
     private String companyName;
     private String productNo;
