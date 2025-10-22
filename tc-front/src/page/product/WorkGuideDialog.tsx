@@ -1,4 +1,4 @@
-import { Dialog, Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, Divider } from "@mui/material";
+import { Dialog, Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, Divider, Button } from "@mui/material";
 
 import GuideImg from "../../component/GuideImg";
 
@@ -37,15 +37,44 @@ interface WorkGuideDialogProps {
   open: boolean;
   onClose: () => void;
   data: WorkGuideData | null;
+  printRef?: React.RefObject<HTMLDivElement>;
 }
 
-export default function WorkGuideDialog({ open, onClose, data }: WorkGuideDialogProps) {
+export default function WorkGuideDialog({ open, onClose, data, printRef }: WorkGuideDialogProps) {
   if (!data) return null;
+
+const handlePrint = () => {
+  if (!printRef?.current) return console.error("printRef is null");
+
+  const printContents = printRef.current.innerHTML;
+  const popup = window.open("", "_blank");
+  if (popup) {
+    popup.document.write(`
+      <html>
+        <head>
+          <title>작업지시서</title>
+          <style>
+            /* 테이블 스타일 유지 */
+            table { border-collapse: collapse; width: 100%; }
+            th, td { border: 1px solid #000; padding: 4px; text-align: center; }
+            th { background-color: #f0f0f0; }
+          </style>
+        </head>
+        <body>
+          ${printContents}
+        </body>
+      </html>
+    `);
+    popup.document.close();
+    popup.onload = () => popup.print();
+  }
+};
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <Box sx={{ p: 3 }}>
         {/* 타이틀 */}
+        <Box ref={printRef}>
         <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2, textAlign: "center" }}>
           작업지시서
         </Typography>
@@ -128,6 +157,9 @@ export default function WorkGuideDialog({ open, onClose, data }: WorkGuideDialog
         ) : (
           <Typography color="text.secondary">입고 정보 없음</Typography>
         )}
+        
+      </Box>
+      <Button onClick={handlePrint} sx={{ mb: 2 }}>인쇄</Button>
       </Box>
     </Dialog>
   );

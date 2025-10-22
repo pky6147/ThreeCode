@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Box, Typography, Card, TextField } from '@mui/material'
 import CustomBC from '../../component/CustomBC';
 import CustomBtn from '../../component/CustomBtn';
@@ -68,6 +68,8 @@ function InputState() {
 
     const [guideOpen, setGuideOpen] = useState(false);
     const [guideData, setGuideData] = useState<ProductGuideResponseDto | null>(null);
+
+    const printRef = useRef<HTMLDivElement>(null);
 
     const handleGuide = async (row: RowData) => {
     if (!row.productId) return;
@@ -472,6 +474,7 @@ function InputState() {
                     open={guideOpen}
                     onClose={() => setGuideOpen(false)}
                     data={guideData}
+                    printRef={printRef} // 새 prop 추가
                 />
 
             </Card>

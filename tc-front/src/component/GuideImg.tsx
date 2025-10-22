@@ -34,9 +34,9 @@ export default function GuideImg({ images }: ProductDetailImagesProps) {
         src={url}
         alt={fileName}
         style={{
-          width: 600,      // 원하는 크기로 조절
-          height: 600,
-          objectFit: "cover",
+          width: 400,      // 원하는 크기로 조절
+          height: 400,
+          objectFit: "contain",
           border: "3px solid red",
           borderRadius: 4,
         }}
