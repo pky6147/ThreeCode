@@ -30,13 +30,16 @@ function Routing() {
       try {
         const data: RoutingType[] = await getRoutings();
 
-        const result = data.map((row, index) => ({
+        const result = data.map((row) => ({
           ...row,
           id: row.routingMasterId, // DataGrid id
-          idx: index + 1,          // 번호 컬럼
+        //   idx: index + 1,          // 번호 컬럼
         }));
 
-        const sortedResult = result.sort((a, b) => a.processCode.localeCompare(b.processCode));
+        const sortedResult = result.sort((a, b) => a.processCode.localeCompare(b.processCode)).map((row, index) => ({
+            ...row,
+            idx: index + 1,
+        }));
         // setRows(result);
         setRows(sortedResult);
 
