@@ -36,7 +36,10 @@ function Routing() {
           idx: index + 1,          // 번호 컬럼
         }));
 
-        setRows(result);
+        const sortedResult = result.sort((a, b) => a.processCode.localeCompare(b.processCode));
+        // setRows(result);
+        setRows(sortedResult);
+
       } catch (err) {
         console.error(err);
         alert("조회 실패!");
@@ -156,9 +159,9 @@ function Routing() {
                         <CommonTable 
                             columns={columns}
                             rows={rows}
-                            // pageSize={10}
+                            pageSize={10}
                             // check={true}
-                            // height={630}
+                            height={630}
                         />
                     </Box>
                 </Box>
