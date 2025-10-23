@@ -5,6 +5,7 @@ import { getRoutings } from "../api/routingApi";
 export interface RoutingMasterDto {
   routingMasterId: number;
   processName: string;
+  processCode: string;
   processTime: number;
   processOrder:number;
   remark: string;
@@ -20,6 +21,26 @@ export default function RoutingMasterView({ selectedIds, setSelectedIds }: Routi
   const fetchRoutings = async () => {
     try {
       const res: RoutingMasterDto[] = await getRoutings();
+
+      const sortedResult = res.sort((a, b) => {
+        // 예: "LC-100" → ["LC", "100"]
+        const [prefixA, numA] = a.processCode.split('-');
+        const [prefixB, numB] = b.processCode.split('-');
+        // 1️⃣ 접두사 문자열 비교
+        const prefixCompare = prefixA.localeCompare(prefixB);
+        if (prefixCompare !== 0) return prefixCompare;
+        // 2️⃣ 숫자 부분 비교 (문자열이지만 숫자로 변환)
+        const numberCompare = Number(numA) - Number(numB);
+        if (numberCompare !== 0) return numberCompare;
+        // 3️⃣ processOrder 기준 정렬 (숫자)
+        return a.processOrder - b.processOrder;
+      }).map((row) => ({
+          ...row,
+          id: row.routingMasterId
+      }))
+      
+      setRoutings(sortedResult);
+
       setRoutings(res);
     } catch (err) {
       console.error("라우팅 조회 실패", err);
@@ -44,6 +65,7 @@ export default function RoutingMasterView({ selectedIds, setSelectedIds }: Routi
         <TableHead>
           <TableRow>
             <TableCell>선택</TableCell>
+            <TableCell>공정코드</TableCell>
             <TableCell>공정명</TableCell>
             <TableCell>공정순서</TableCell>
             <TableCell>공정시간</TableCell>
@@ -59,7 +81,8 @@ export default function RoutingMasterView({ selectedIds, setSelectedIds }: Routi
                   onChange={(e) => handleCheck(r.routingMasterId, e.target.checked)}
                 />
               </TableCell>
-              <TableCell sx={{ color: "black" }}>{r.processName}</TableCell>
+              <TableCell>{r.processCode}</TableCell>
+              <TableCell>{r.processName}</TableCell>
               <TableCell>{r.processOrder}</TableCell>
               <TableCell>{r.processTime}</TableCell>
               <TableCell>{r.remark}</TableCell>
