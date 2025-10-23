@@ -30,29 +30,28 @@ export default function ProductReg({ doClose, initialData, isEdit = false }: Pro
   });
 
   // ✅ 수정모드: 기존 데이터 세팅
-  useEffect(() => {
-    if (isEdit && initialData) {
-      setData({
-        companyId: initialData.companyId ?? 0,
-        productName: initialData.productName ?? "",
-        productCode: initialData.productNo ?? "", // ✅ 백엔드에선 productNo
-        paintType: initialData.paintType ?? "",
-        category: initialData.category ?? "",
-        color: initialData.color ?? "",
-        price: initialData.price ?? 0,
-        isActive: initialData.isActive ?? "Y",
-        remark: initialData.remark ?? "",
-      });
+ useEffect(() => {
+  if (isEdit && initialData) {
+    setData({
+      companyId: initialData.companyId ?? 0,
+      productName: initialData.productName ?? "",
+      productCode: initialData.productNo ?? "",
+      paintType: initialData.paintType ?? "",
+      category: initialData.category ?? "",
+      color: initialData.color ?? "",
+      price: initialData.price ?? 0,
+      isActive: initialData.isActive ?? "Y",
+      remark: initialData.remark ?? "",
+    });
 
-      // 라우팅 스텝 ID 세팅
-      if (initialData.routingSteps) {
-        setSelectedRoutingIds(initialData.routingSteps.map((s: any) => s.routingMasterId));
-      }
-
-      // 이미지 미리보기용 세팅
-      setExistingImages(initialData.imagePaths || []);
+    // 라우팅 스텝 ID 세팅: processCode 사용
+    if (initialData.routingSteps) {
+      setSelectedRoutingIds(initialData.routingSteps.map((s: any) => Number(s.processCode)));
     }
-  }, [isEdit, initialData]);
+
+    setExistingImages(initialData.imagePaths || []);
+  }
+}, [isEdit, initialData]);
 
   // 거래처 목록 호출
   useEffect(() => {
