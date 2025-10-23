@@ -116,9 +116,10 @@ function CompanyForm({ mode, initialData, onSubmit, onClose }: CompanyFormProps)
       </RadioGroup>
     </FormControl>
 
-    <TextField label="업체명" name="companyName" value={form.companyName} onChange={handleChange} fullWidth />
+    {/* 업체명만 한 줄 전체로 */}
+  <TextField label="업체명" name="companyName" value={form.companyName} onChange={handleChange} fullWidth className="full-width"/>
     <TextField label="대표명" name="ceoName" value={form.ceoName} onChange={handleChange} fullWidth />
-    <TextField label="대표 전화번호" name="ceoPhone" value={form.ceoPhone} onChange={handleChange} fullWidth />
+    <TextField label="대표 전화번호" name="ceoPhone" value={form.ceoPhone} onChange={handleChange} fullWidth placeholder='010-0000-0000'/>
     <TextField label="주소" name="address" value={form.address} onChange={handleChange} fullWidth />
     <TextField label="비고" name="remark" value={form.remark} onChange={handleChange} fullWidth />
   </div>
@@ -126,8 +127,8 @@ function CompanyForm({ mode, initialData, onSubmit, onClose }: CompanyFormProps)
   <Typography className="company-section-title">상세 정보</Typography>
   <div className="company-form-grid">
     <TextField label="담당자명" name="contactName" value={form.contactName} onChange={handleChange} fullWidth />
-    <TextField label="담당자 전화번호" name="contactPhone" value={form.contactPhone} onChange={handleChange} fullWidth />
-    <TextField label="담당자 이메일" name="contactEmail" value={form.contactEmail} onChange={handleChange} fullWidth />
+    <TextField label="담당자 전화번호" name="contactPhone" value={form.contactPhone} onChange={handleChange} fullWidth placeholder='010-0000-0000' />
+    <TextField label="담당자 이메일" name="contactEmail" value={form.contactEmail} onChange={handleChange} fullWidth placeholder="test@0000.com" />
   </div>
 
   {mode === 'edit' && (

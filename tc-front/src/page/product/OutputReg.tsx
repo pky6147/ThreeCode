@@ -93,29 +93,43 @@ function OutputReg() {
 
     /* 출고 등록 */
 const handleOutput = async (row: RowData) => {
-    if (!row.productOutputDate || !row.productOutputQty) {
-        alert('출고일자와 출고 수량을 모두 입력해주세요.');
-        return;
+  if (!row.productOutputDate || !row.productOutputQty) {
+    alert('출고일자와 출고 수량을 모두 입력해주세요.');
+    return;
+  }
+
+  // ① 날짜 비교
+  const inputDate = dayjs(row.productInputDate);
+  const outputDate = dayjs(row.productOutputDate);
+  if (outputDate.isBefore(inputDate, 'day')) {
+    alert('출고일자는 입고일자보다 이전일 수 없습니다.');
+    return;
+  }
+
+  // ② 수량 비교
+  const inputQty = Number(row.productInputQty);
+  const outputQty = Number(row.productOutputQty);
+  if (outputQty > inputQty) {
+    alert('출고 수량이 입고 수량을 초과할 수 없습니다.');
+    return;
+  }
+
+  try {
+    const formattedOutputDate = dayjs(row.productOutputDate).format('YYYY-MM-DD');
+    const res = await productOutputApi.create({
+      productInputId: row.productInputId,
+      productOutputQty: row.productOutputQty,
+      productOutputDate: formattedOutputDate,
+    });
+
+    if (res) {
+      alert('출고가 완료되었습니다.');
+      getTableData(); // 테이블 새로고침
     }
-
-    try {
-        // Date 객체(dayjs) → YYYY-MM-DD 문자열로 변환
-        const outputDate = dayjs(row.productOutputDate).format('YYYY-MM-DD');
-
-        const res = await productOutputApi.create({
-            productInputId: row.productInputId,
-            productOutputQty: row.productOutputQty,
-            productOutputDate: outputDate,  // 변환된 문자열 전달
-        });
-
-        if (res) {
-            getTableData(); // 새로고침
-            // handleAlertSuccess(); 필요 시 알림
-        }
-    } catch (err) {
-        console.error(err);
-        handleAlertFail();
-    }
+  } catch (err) {
+    console.error(err);
+    handleAlertFail();
+  }
 };
 
 
