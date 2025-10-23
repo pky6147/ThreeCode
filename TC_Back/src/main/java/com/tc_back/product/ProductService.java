@@ -140,6 +140,7 @@ public class ProductService {
                 .sorted(Comparator.comparingInt(RoutingStep::getProcessSeq))
 //                .map(rs -> new RoutingStepInfo(rs.getRoutingMaster().getProcessName(), rs.getProcessSeq()))
                 .map(rs -> new RoutingStepInfo(
+                        rs.getRoutingMaster().getRoutingMasterId(),
                         rs.getProcessSeq(),
                         rs.getRoutingMaster().getProcessCode(),   // RoutingMaster에서 가져오기
                         rs.getRoutingMaster().getProcessName(),   // RoutingMaster에서 가져오기
@@ -265,6 +266,7 @@ public class ProductService {
         List<RoutingStepInfo> routingSteps = product.getRoutingSteps().stream()
                 .sorted(Comparator.comparingInt(RoutingStep::getProcessSeq))
                 .map(rs -> new RoutingStepInfo(
+                        rs.getRoutingMaster().getRoutingMasterId(),
                         rs.getProcessSeq(),
                         rs.getRoutingMaster().getProcessCode(),
                         rs.getRoutingMaster().getProcessName(),

@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class RoutingStepInfo {
+    private Long routingMasterId;
     private int processSeq;
     private String processCode;
     private String processName;
