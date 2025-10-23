@@ -319,7 +319,7 @@ const handleDelete = async (id: number) => {
                     text="삭제"
                     icon="delete"
                     backgroundColor='red'
-                    onClick={() => handleDelete(params.row.productInputId)}
+                    onClick={() => handleDelete(params.row.productOutputId)}
                 />
             )
         }

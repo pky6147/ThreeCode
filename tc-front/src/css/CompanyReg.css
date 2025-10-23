@@ -33,3 +33,8 @@
   display: flex;
   gap: 16px;
 }
+
+/* 업체명만 한 줄 전체 차지 */
+.full-width {
+  grid-column: span 2;
+}
