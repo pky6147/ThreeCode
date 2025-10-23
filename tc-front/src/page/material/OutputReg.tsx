@@ -116,7 +116,7 @@ function OutputReg() {
             setAlertOpen(true)
             setTimeout(()=> setAlertOpen(false), 3000)
             return;
-        } else if (row.materialOutputDate > row.materialInputDate)
+        }
 
         try {
             await createMaterialOutput({
