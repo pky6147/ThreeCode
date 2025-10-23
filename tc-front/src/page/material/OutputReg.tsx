@@ -97,8 +97,7 @@ function OutputReg() {
             setAlertOpen(true)
             setTimeout(()=> setAlertOpen(false), 3000)
             return;
-        }
-        if ((row.materialOutputQty === 0 || isNaN(row.materialOutputQty)) ||
+        } else if ((row.materialOutputQty === 0 || isNaN(row.materialOutputQty)) ||
             (row.materialOutputDate === '' || null)) {
             setAlertInfo({
                 type: 'error',
