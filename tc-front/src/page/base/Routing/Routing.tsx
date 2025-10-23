@@ -36,10 +36,25 @@ function Routing() {
         //   idx: index + 1,          // 번호 컬럼
         }));
 
-        const sortedResult = result.sort((a, b) => a.processCode.localeCompare(b.processCode)).map((row, index) => ({
+        const sortedResult = result.sort((a, b) => {
+          // 예: "LC-100" → ["LC", "100"]
+          const [prefixA, numA] = a.processCode.split('-');
+          const [prefixB, numB] = b.processCode.split('-');
+
+          // 1️⃣ 접두사 문자열 비교
+          const prefixCompare = prefixA.localeCompare(prefixB);
+          if (prefixCompare !== 0) return prefixCompare;
+
+          // 2️⃣ 숫자 부분 비교 (문자열이지만 숫자로 변환)
+          const numberCompare = Number(numA) - Number(numB);
+          if (numberCompare !== 0) return numberCompare;
+
+          // 3️⃣ processOrder 기준 정렬 (숫자)
+          return a.processOrder - b.processOrder;
+        }).map((row, index) => ({
             ...row,
-            idx: index + 1,
-        }));
+            idx: index+1
+        }))
         // setRows(result);
         setRows(sortedResult);
 
